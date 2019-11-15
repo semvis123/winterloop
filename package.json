@@ -6,7 +6,7 @@
     "jquery": "^3.4.1"
   },
   "scripts": {
-    "dev": "parcel serve --no-hmr index.html",
+    "dev": "parcel serve index.html",
     "build": "parcel build -d build --no-source-maps --public-url . index.html"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 // Import stylesheets
 import './style.css';
-import 'jquery';
+import $ from 'jquery';
 
 // Write Javascript code!
-$('#app').append('<h1>JS Starter</h1>');
+$('#app').append('<h1>Dit staat in de JS!</h1>');
