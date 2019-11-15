@@ -2,7 +2,9 @@
   "name": "js-vavcgr",
   "version": "0.0.0",
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "jquery": "^3.4.1"
+  },
   "scripts": {
     "dev": "parcel serve --no-hmr index.html",
     "build": "parcel build -d build --no-source-maps --public-url . index.html"

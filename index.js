@@ -1,6 +1,6 @@
 // Import stylesheets
 import './style.css';
+import 'jquery';
 
 // Write Javascript code!
-const appDiv = document.getElementById('app');
-appDiv.innerHTML = `<h1>JS Starter</h1>`;
+$('#app').append('<h1>JS Starter</h1>');
