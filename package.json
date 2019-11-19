@@ -1,15 +1,21 @@
 {
-  "name": "js-vavcgr",
-  "version": "0.0.0",
-  "private": true,
-  "dependencies": {
-    "jquery": "^3.4.1"
-  },
+  "name": "winterloop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
     "dev": "parcel serve index.html",
     "build": "parcel build -d build --no-source-maps --public-url . index.html"
   },
-  "devDependencies": {
-    "cssnano": "^4.1.10"
-  }
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/semvis123/winterloop.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/semvis123/winterloop/issues"
+  },
+  "homepage": "https://github.com/semvis123/winterloop#readme"
 }
