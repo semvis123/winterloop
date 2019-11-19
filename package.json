@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "parcel serve index.html",
+    "devSem": "parcel serve index.html",
+    "devWouter": "parcel serve index.html",
     "build": "parcel build -d build --no-source-maps --public-url . index.html"
   },
   "repository": {
