@@ -1,0 +1,28 @@
+{
+  "name": "winterloop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "parcel serve index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/semvis123/winterloop.git"
+  },
+  "author": "semvis123 and Wjtje Software",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/semvis123/winterloop/issues"
+  },
+  "homepage": "https://github.com/semvis123/winterloop#readme",
+  "dependencies": {
+    "@uifabric/fluent-theme": "^7.1.4",
+    "jquery": "^3.4.1",
+    "office-ui-fabric-core": "^11.0.0",
+    "office-ui-fabric-react": "^7.63.0"
+  },
+  "devDependencies": {
+    "sass": "^1.23.7"
+  }
+}
