@@ -1,7 +1,0 @@
-.gitignore
-.cache/*
-dist/*
-node_modules/*
-.vscode/*
-.git/*
-build/*
