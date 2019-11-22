@@ -6,10 +6,29 @@ $('header nav div.activeTip').css({
   width: $('header nav a')[0].offsetWidth + 2
 });
 
-// Animate activeTib when tab changes
+$($('header nav a')[0]).addClass('active');
+
+// When click on pivot
 $('header nav a').click(e => {
+  // Move activeTib
   $('header nav div.activeTip').css({
     left: e.target.offsetLeft - 1,
     width: e.target.offsetWidth + 2
   });
+
+  // Make active bold
+  $('header nav a.active').removeClass('active');
+  $(e.target).addClass('active');
+
+  // Add change to history
+  history.pushState(
+    {},
+    e.target.dataset.page,
+    "#" + e.target.dataset.page
+  );
+});
+
+// When you change pages
+$(window).on('popstate', e => {
+  console.log(e);
 });
