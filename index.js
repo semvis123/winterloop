@@ -40,8 +40,8 @@ $('header nav a').click(e => {
   // Add change to history
   history.pushState(
     {},
-    e.target.dataset.page,
-    "#" + e.target.dataset.page
+    e.target.dataset.name,
+    "#" + e.target.dataset.name
   );
 });
 
