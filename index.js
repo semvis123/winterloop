@@ -37,4 +37,15 @@ $('header nav a').click(e => {
   // Update main
   $('main').removeClass('active').addClass('nonactive');
   $('main[data-name="' + e.target.dataset.name + '"]').addClass('active').removeClass('nonactive');
+  // Add change to history
+  history.pushState(
+    {},
+    e.target.dataset.page,
+    "#" + e.target.dataset.page
+  );
+});
+
+// When you change pages
+$(window).on('popstate', e => {
+  console.log(e);
 });
