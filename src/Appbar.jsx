@@ -19,9 +19,8 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function TextAppBar(props: Props) {
+export default function TextAppBar() {
     const classes = useStyles();
-    const {props} = this;
     return (
       <div className={classes.root}>
       <AppBar position="static">
@@ -30,7 +29,7 @@ export default function TextAppBar(props: Props) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            {props.text}
+            {this.props.text} // waarom werkt dit niet???
           </Typography>
         </Toolbar>
       </AppBar>
