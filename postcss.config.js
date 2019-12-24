@@ -2,7 +2,7 @@ module.exports = {
     plugins: [
       require('postcss-uncss')({
         html: [
-          './index.html'
+          './src/index.html'
         ],
         ignore: [
         ]
