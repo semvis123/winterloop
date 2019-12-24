@@ -19,8 +19,16 @@
   "homepage": "https://github.com/semvis123/winterloop#readme",
   "description": "",
   "dependencies": {
+    "jquery": "^3.4.1",
     "@material-ui/core": "^4.8.1",
     "react": "^16.12.0",
-    "react-dom": "^16.12.0"
+    "react-dom": "^16.12.0",
+    "uncss": "^0.17.2"
+  },
+  "devDependencies":{
+    "node-sass": "^4.13.0",
+    "postcss-modules": "^1.4.1",
+    "postcss-uncss": "^0.17.0",
+    "typescript": "^3.7.4"
   }
 }
