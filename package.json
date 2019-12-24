@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "parcel serve index.html",
+    "start": "parcel serve index.html --port 4321",
     "build": "parcel build -d build --no-source-maps --public-url . index.html"
   },
   "repository": {
@@ -30,6 +30,7 @@
     "node-sass": "^4.13.0",
     "postcss-modules": "^1.4.1",
     "postcss-uncss": "^0.17.0",
+    "sass": "^1.24.0",
     "typescript": "^3.7.4"
   }
 }
