@@ -19,7 +19,7 @@ export default function FabBtn(props) {
 
   return (
     <ThemeProvider theme={BedumerTheme}>
-      <Fab aria-label="Add" className={classes.fab} color="primary">
+      <Fab aria-label="Add" className={classes.fab} color="secondary">
         <AddIcon/>
       </Fab>
     </ThemeProvider>
