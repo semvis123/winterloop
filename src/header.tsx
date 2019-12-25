@@ -16,6 +16,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import BedumerLogo from './logo.js';
 
 // Icons
 import CreateIcon from '@material-ui/icons/Create';
@@ -38,11 +39,16 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     drawerTitle: {
       marginLeft: 16,
-      marginTop: 110
+      marginTop: 10
     },
     drawerSubTitle: {
       marginLeft: 16,
       marginBottom: 11
+    },
+    logo: {
+      margin: 16,
+      width: 218,
+      boxSizing: 'content-box'
     }
   }),
 );
@@ -87,6 +93,7 @@ export default function ButtonAppBar(props) {
             onKeyDown={toggleDrawer(false)}
           >
             <List>
+              <img src={BedumerLogo} className={classes.logo}/>
               <Typography variant="h6" className={classes.drawerTitle}>Winterloop</Typography>
               <Typography variant="body2" className={classes.drawerSubTitle}>Administratie</Typography>
               <Divider />
