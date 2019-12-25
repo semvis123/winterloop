@@ -1,7 +1,8 @@
 import React = require('react');
+import BedumerTheme from './theme';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme, ThemeProvider } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -17,8 +18,10 @@ export default function FabBtn(props) {
   const classes = useStyles(props);
 
   return (
-    <Fab aria-label="Add" className={classes.fab} color="primary">
-      <AddIcon/>
-    </Fab>
+    <ThemeProvider theme={BedumerTheme}>
+      <Fab aria-label="Add" className={classes.fab} color="primary">
+        <AddIcon/>
+      </Fab>
+    </ThemeProvider>
   );
 }

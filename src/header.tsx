@@ -1,5 +1,6 @@
 import React = require('react');
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme, ThemeProvider } from '@material-ui/core/styles';
+import BedumerTheme from './theme';
 
 // Header
 import AppBar from '@material-ui/core/AppBar';
@@ -66,43 +67,45 @@ export default function ButtonAppBar(props) {
 
   // Render
   return (
-    <div className={classes.root}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" className={classes.title}>
-            { props.title }
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Drawer open={state.left} onClose={toggleDrawer(false)}>
-        <div
-          className={classes.list}
-          role="presentation"
-          onClick={toggleDrawer(false)}
-          onKeyDown={toggleDrawer(false)}
-        >
-          <List>
-            <Typography variant="h6" className={classes.drawerTitle}>Winterloop</Typography>
-            <Typography variant="body2" className={classes.drawerSubTitle}>Administratie</Typography>
-            <Divider />
-            <ListItem button key="Registratie">
-              <ListItemIcon><CreateIcon /></ListItemIcon>
-              <ListItemText primary="Registratie"/>
-            </ListItem>
-            <ListItem button key="Stempels">
-              <ListItemIcon><PollIcon /></ListItemIcon>
-              <ListItemText primary="Stempels"/>
-            </ListItem>
-            <ListItem button key="Transacties">
-              <ListItemIcon><AccountBalanceWalletIcon /></ListItemIcon>
-              <ListItemText primary="Transacties"/>
-            </ListItem>
-          </List>
-        </div>
-      </Drawer>
-    </div>
+    <ThemeProvider theme={BedumerTheme}>
+      <div className={classes.root}>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" className={classes.title}>
+              { props.title }
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Drawer open={state.left} onClose={toggleDrawer(false)}>
+          <div
+            className={classes.list}
+            role="presentation"
+            onClick={toggleDrawer(false)}
+            onKeyDown={toggleDrawer(false)}
+          >
+            <List>
+              <Typography variant="h6" className={classes.drawerTitle}>Winterloop</Typography>
+              <Typography variant="body2" className={classes.drawerSubTitle}>Administratie</Typography>
+              <Divider />
+              <ListItem button key="Registratie">
+                <ListItemIcon><CreateIcon /></ListItemIcon>
+                <ListItemText primary="Registratie"/>
+              </ListItem>
+              <ListItem button key="Stempels">
+                <ListItemIcon><PollIcon /></ListItemIcon>
+                <ListItemText primary="Stempels"/>
+              </ListItem>
+              <ListItem button key="Transacties">
+                <ListItemIcon><AccountBalanceWalletIcon /></ListItemIcon>
+                <ListItemText primary="Transacties"/>
+              </ListItem>
+            </List>
+          </div>
+        </Drawer>
+      </div>
+    </ThemeProvider>
   );
 }
