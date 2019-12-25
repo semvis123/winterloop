@@ -5,6 +5,7 @@ import './style.scss';
 
 import Header from './header';
 
+import VirtualizedList from './list';
 // TEST
 import FabBtn from './fab';
 // TEST END
@@ -12,6 +13,11 @@ import FabBtn from './fab';
 ReactDOM.render(
   <Header title="Winterloop"/>,
   $('div[data-type="header"]')[0]
+);
+
+ReactDOM.render(
+  <VirtualizedList />,
+  $('div[data-type="content"]')[0]
 );
 
 // TEST
