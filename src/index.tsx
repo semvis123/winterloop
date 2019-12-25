@@ -1,17 +1,13 @@
-import ReactDOM from 'react-dom';
-import './style.scss';
 import React = require('react');
+import ReactDOM from 'react-dom';
+import $ from 'jquery';
+import './style.scss';
 
-import Button from '@material-ui/core/Button';
+import Header from './header';
 
-function App() {
-  return (
-    <Button variant="contained" color="primary">
-      Hello World
-    </Button>
-  );
-}
-
-ReactDOM.render(<App />, document.querySelector('#root'));
+ReactDOM.render(
+  <Header title="Winterloop"/>,
+  $('#root')[0]
+);
 
 // https://material-ui.com/getting-started/usage/
