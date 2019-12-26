@@ -5,7 +5,8 @@ import './style.scss';
 import CreateIcon from '@material-ui/icons/Create';
 import PollIcon from '@material-ui/icons/Poll';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
-import { createStyles, makeStyles, Theme, ThemeProvider } from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme, ThemeProvider, useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import BedumerTheme from './theme';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -23,6 +24,13 @@ import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import Zoom from '@material-ui/core/Zoom';
 import Fab from '@material-ui/core/Fab';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -60,10 +68,15 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 function AppReact(props) {
+  const theme = useTheme();
   const classes = useStyles(props);
   let [drawerOpen, setState] = React.useState(false);
   const [pageValue, setValue] = React.useState(0);
+  const [dialogValue, setDialog] = React.useState({
+    0: false
+  });
   const pageList = ['Registratie','Stempels','Transacties'];
+  const fullScreenDialog = useMediaQuery(theme.breakpoints.down('sm'));
 
   function Page(props: {
     value: number;
@@ -133,14 +146,14 @@ function AppReact(props) {
         </div>
       </Drawer>
       {/* Pages */}
-      <Page value={pageValue} index={0}>First Page</Page>
-      <Page value={pageValue} index={1}>Second Page</Page>
-      <Page value={pageValue} index={2}>Last Page</Page>
+      <Page value={pageValue} index={0}></Page>
+      <Page value={pageValue} index={1}></Page>
+      <Page value={pageValue} index={2}></Page>
       {/* FAB */}
       <Zoom
         in={pageValue === 0}
       >
-        <Fab color="secondary" className={classes.fab}>
+        <Fab color="secondary" className={classes.fab} onClick={e => setDialog({0: true})}>
           <AddIcon/>
         </Fab>
       </Zoom>
@@ -151,6 +164,60 @@ function AppReact(props) {
           <SearchIcon/>
         </Fab>
       </Zoom>
+      {/* Dialogs */}
+      <Dialog fullScreen={fullScreenDialog} open={dialogValue[0]} onClose={e => setDialog({0: false})} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Nieuwe wandelaar toevoegen</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Vul hieronder de gegevens in van de wandelaar.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Naam"
+            type="text"
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            label="Huisnummer"
+            type="number"
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            label="Postcode"
+            type="text"
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            label="Telefoonnummer"
+            type="number"
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            label="Vast bedrag"
+            type="number"
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            label="Bedrag per ronde"
+            type="number"
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={e => setDialog({0: false})} color="primary">
+            Annuleren
+          </Button>
+          <Button onClick={e => setDialog({0: false})} color="primary">
+            Opslaan
+          </Button>
+        </DialogActions>
+      </Dialog>
     </ThemeProvider>
   )
 }
