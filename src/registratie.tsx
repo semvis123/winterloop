@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function FabBtn(props) {
+export default function registratie(props) {
   const classes = useStyles(props);
 
   return (

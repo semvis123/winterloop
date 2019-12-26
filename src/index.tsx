@@ -2,23 +2,46 @@ import React = require('react');
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import './style.scss';
-
 import Header from './header';
 
-// TEST
-import FabBtn from './fab';
-// TEST END
+// Import icons
+import CreateIcon from '@material-ui/icons/Create';
+import PollIcon from '@material-ui/icons/Poll';
+import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
+
+// Import pages
+import RegistratiePage from './registratie';
+import StempelsPage from './stempels';
+import TransactiesPage from './transacties';
+
+const pages = [
+  {
+    name: 'Registratie',
+    icon: <CreateIcon />,
+    page: <RegistratiePage />
+  },
+  {
+    name: 'Stempels',
+    icon: <PollIcon />,
+    page: <StempelsPage />
+  },
+  {
+    name: 'Transacties',
+    icon: <AccountBalanceWalletIcon />,
+    page: <TransactiesPage />
+  }
+]
 
 ReactDOM.render(
-  <Header title="Winterloop"/>,
+  <Header pages={pages} index={0}/>,
   $('div[data-type="header"]')[0]
 );
 
-// TEST
+// Render page
 ReactDOM.render(
-  <FabBtn />,
-  $('div[data-type="fab"]')[0]
+  pages[0].page,
+  $('div[data-type="main"]')[0]
 );
-// TEST END
+
 
 // https://material-ui.com/getting-started/usage/

@@ -1,4 +1,6 @@
 import React = require('react');
+import ReactDOM from 'react-dom';
+import $ from 'jquery';
 import { createStyles, makeStyles, Theme, ThemeProvider } from '@material-ui/core/styles';
 import BedumerTheme from './theme';
 
@@ -17,11 +19,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import BedumerLogo from './logo.js';
-
-// Icons
-import CreateIcon from '@material-ui/icons/Create';
-import PollIcon from '@material-ui/icons/Poll';
-import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -59,6 +56,8 @@ export default function ButtonAppBar(props) {
   const [state, setState] = React.useState({
     left: false
   });
+  const pages = props.pages;
+  
 
   // Functions
   const toggleDrawer = (open: boolean) => (
@@ -71,6 +70,20 @@ export default function ButtonAppBar(props) {
     setState({ ...state, ['left']: open });
   }
 
+  function drawerBtnEvent(e, n) {
+    // Update header to correct title
+    ReactDOM.render(
+      <ButtonAppBar pages={pages} index={n}/>,
+      $('div[data-type="header"]')[0]
+    );
+    
+    // Render page
+    ReactDOM.render(
+      pages[n].page,
+      $('div[data-type="main"]')[0]
+    );
+  }
+
   // Render
   return (
     <ThemeProvider theme={BedumerTheme}>
@@ -81,7 +94,7 @@ export default function ButtonAppBar(props) {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-              { props.title }
+              { props.pages[props.index].name }
             </Typography>
           </Toolbar>
         </AppBar>
@@ -97,18 +110,12 @@ export default function ButtonAppBar(props) {
               <Typography variant="h6" className={classes.drawerTitle}>Winterloop</Typography>
               <Typography variant="body2" className={classes.drawerSubTitle}>Administratie</Typography>
               <Divider />
-              <ListItem button key="Registratie">
-                <ListItemIcon><CreateIcon /></ListItemIcon>
-                <ListItemText primary="Registratie"/>
-              </ListItem>
-              <ListItem button key="Stempels">
-                <ListItemIcon><PollIcon /></ListItemIcon>
-                <ListItemText primary="Stempels"/>
-              </ListItem>
-              <ListItem button key="Transacties">
-                <ListItemIcon><AccountBalanceWalletIcon /></ListItemIcon>
-                <ListItemText primary="Transacties"/>
-              </ListItem>
+              {pages.map((data, index) => (
+                <ListItem button key={data.name} onClick={e => drawerBtnEvent(e, index)}>
+                  <ListItemIcon>{data.icon}</ListItemIcon>
+                  <ListItemText primary={data.name} />
+                </ListItem>
+              ))}
             </List>
           </div>
         </Drawer>
