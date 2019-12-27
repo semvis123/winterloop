@@ -1,12 +1,13 @@
 /* uncss:ignore start */
 html,
-body {
+body,
+div[data-type="main"] {
   width: 100%;
   height: 100%;
   margin: 0;
 
   // THEME DARK:LIGHT
-  background-color: #424242;
+  //background-color: #424242;
   //background-color: #ffffff;
 }
 /* uncss:ignore end */

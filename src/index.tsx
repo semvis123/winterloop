@@ -32,11 +32,16 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import SettingsIcon from '@material-ui/icons/Settings';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import Switch from '@material-ui/core/Switch';
+import Brightness4Icon from '@material-ui/icons/Brightness4';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
+      color: (localStorage.getItem('dark') == 'true') ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
     },
     menuButton: {
       marginRight: theme.spacing(2),
@@ -64,6 +69,14 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'absolute',
       bottom: 16,
       right: 26,
+    },
+    settingsList: {
+      width: '100%',
+      maxWidth: 360,
+      backgroundColor: theme.palette.background.paper,
+    },
+    text: {
+      color: (localStorage.getItem('dark') == 'true') ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
     }
   }),
 );
@@ -84,7 +97,7 @@ interface pageObject {
 
 function AppReact(props) {
   const theme = useTheme();
-  const classes = useStyles(props);
+  const classes = useStyles(BedumerTheme);
 
   // States
   const [drawerState, setDrawer] = React.useState(false);
@@ -92,28 +105,54 @@ function AppReact(props) {
   const [dialogState, setDialog] = React.useState({
     0: false
   });
+  if (localStorage.getItem('dark') == undefined) { localStorage.setItem('dark', 'false') }
+  const [themeState, setTheme] = React.useState({
+    dark: (localStorage.getItem('dark') == 'true') ? true : false
+  })
 
   // Page list
   const pages:pageObject = [
     {
       name: 'Registatie',
       icon: <CreateIcon/>,
-      content: <Typography variant="h6">Hello World</Typography>
+      content: <Typography variant="h6" className={classes.root}>Hello World</Typography>
     },
     {
       name: 'Stempels',
       icon: <PollIcon/>,
-      content: <Typography variant="h6">Hello World</Typography>
+      content: <Typography variant="h6" className={classes.root}>Hello World</Typography>
     },
     {
       name: 'Transacties',
       icon: <AccountBalanceWalletIcon/>,
-      content: <Typography variant="h6">Hello World</Typography>
+      content: <Typography variant="h6" className={classes.root}>Hello World</Typography>
     },
     {
       name: 'Instellingen',
       icon: <SettingsIcon/>,
-      content: <Typography variant="h6">Instellingen</Typography>
+      content: <Typography component="div">
+        <List subheader={<ListSubheader>Thema</ListSubheader>} className={classes.root}>
+          <ListItem>
+            <ListItemIcon>
+              <Brightness4Icon />
+            </ListItemIcon>
+            <ListItemText id="switch-list-label-dark" primary="Donkere modus" />
+            <ListItemSecondaryAction>
+              <Switch
+                edge="end"
+                onChange={e => {
+                  var darkState = !themeState.dark;
+                  setTheme({dark: darkState});
+                  localStorage.setItem('dark', (darkState) ? 'true':'false');
+                  location.reload();
+                }}
+                checked={themeState.dark}
+                inputProps={{ 'aria-labelledby': 'switch-list-label-dark' }}
+              />
+            </ListItemSecondaryAction>
+          </ListItem>
+        </List>
+      </Typography>
     },
   ]
 
