@@ -116,7 +116,9 @@ function AppReact(props) {
     {
       name: 'Registatie',
       icon: <CreateIcon/>,
-      content: <Typography variant="h6" className={classes.root}>Hello World</Typography><VirtualizedList />
+      content: <Typography component="div" className={classes.root}>
+        <VirtualizedList />
+      </Typography>
     },
     {
       name: 'Stempels',
