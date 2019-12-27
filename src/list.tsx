@@ -3,6 +3,23 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
+// import * as mysql from 'mysql';
+//
+// const connection = mysql.createConnection({
+//   host     : 'localhost',
+//   user     : 'nodejs',
+//   password : 'SQL123',
+//   database : 'winterloop'
+// });
+//
+// connection.connect();
+//
+// connection.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
+//   if (error) throw error;
+//   console.log('The solution is: ', results[0].solution);
+// });
+//
+// connection.end();
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
