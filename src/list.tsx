@@ -1,4 +1,4 @@
-import React from 'react';
+import React = require('react');
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -23,8 +23,8 @@ function renderRow(props: ListChildComponentProps) {
   );
 }
 
-export default function VirtualizedList() {
-  const classes = useStyles();
+export default function VirtualizedList(props) {
+  const classes = useStyles(props);
 
   return (
     <div className={classes.root}>
