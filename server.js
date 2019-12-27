@@ -17,12 +17,24 @@ con.connect(function (err) {
 console.log("SERVER: created");
 http.createServer((req, res) => { // Request, Response
     console.log('SERVER: response');
-    con.query('SELECT naam FROM winterloop.user', (e, r, f) => { // Error, Result, Field
+    con.query('SELECT * FROM winterloop.user', (e, r, f) => { // Error, Result, Field
         console.log(r);
-        res.write('Response from server: ');
+        arr = new Array;
         r.forEach(ele => {
-            res.write(ele.naam + ' ');
+            arr.push({
+                'id': ele.id,
+                'naam': ele.naam,
+                'huisnummer': ele.huisnummer,
+                'postcode': ele.postcode,
+                'telefoonnummer': ele.telefoonnummer,
+                'vastBedrag': ele.vastBedrag,
+                'rondeBedrag': ele.rondeBedrag,
+                'rondes': ele.rondes,
+                'code': ele.code,
+                'create_time': ele.create_time
+            });
         });
+        res.write(JSON.stringify(arr))
         res.end();
     });
 }).listen(4322);
