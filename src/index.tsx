@@ -106,10 +106,13 @@ function AppReact(props) {
   const [dialogState, setDialog] = React.useState({
     0: false
   });
-  if (localStorage.getItem('dark') == undefined) { localStorage.setItem('dark', 'false') }
   const [themeState, setTheme] = React.useState({
     dark: (localStorage.getItem('dark') == 'true') ? true : false
   })
+  const [historyLoaded, setHistory] = React.useState(false);
+
+  // Setup localstorage
+  if (localStorage.getItem('dark') == undefined) { localStorage.setItem('dark', 'false') }
 
   // Page list
   const pages:pageObject = [
@@ -158,6 +161,25 @@ function AppReact(props) {
       </Typography>
     },
   ]
+
+  // Setting up history
+  if (history.state == null) {
+    history.replaceState(
+      { page: 0 },
+      pages[0].name,
+      '#' + pages[0].name
+    );
+  }
+
+  if (!historyLoaded) {
+    setPage(history.state.page);
+    setHistory(true);
+  }
+
+  // Add function for history change
+  $(window).on('popstate', function() {
+    setPage(history.state.page);
+  });
 
   // Other vars
   const fullScreenDialog = useMediaQuery(theme.breakpoints.down('sm'));
@@ -217,7 +239,14 @@ function AppReact(props) {
             <Divider />
             {/* Menu list */}
             {pages.map((data, index) => (
-              <ListItem button key={index} onClick={e => setPage(index)}>
+              <ListItem button key={index} onClick={e => {
+                setPage(index);
+                history.pushState(
+                  { page: index },
+                  data.name,
+                  "#" + data.name
+                );
+              }}>
                 <ListItemIcon>{data.icon}</ListItemIcon>
                 <ListItemText>{data.name}</ListItemText>
               </ListItem>
