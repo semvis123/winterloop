@@ -12,13 +12,22 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
+function api<T>: Promise<T> {
+  return fetch("http://localhost:4322/")
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(response.statusText)
+      }
+      return response.json() as Promise<T>
+    })
+}
 
 function renderRow(props: ListChildComponentProps) {
   const { index, style } = props;
 
   return (
     <ListItem button style={style} key={index}>
-      <ListItemText primary={`Item ${index + 1}`} />
+      <ListItemText primary={toString(api())} />
     </ListItem>
   );
 }
@@ -27,10 +36,10 @@ export default function VirtualizedList(props) {
   const classes = useStyles(props);
 
   return (
-    <div className={classes.root}>
-      <FixedSizeList height={300} itemSize={46} itemCount={2020}>
-        {renderRow}
-      </FixedSizeList>
-    </div>
-  );
+      <div className={classes.root}>
+        <FixedSizeList height={300} itemSize={46} itemCount={2}>
+          {renderRow}
+        </FixedSizeList>
+      </div>
+    );
 }

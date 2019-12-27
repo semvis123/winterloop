@@ -17,6 +17,7 @@ con.connect(function (err) {
 console.log("SERVER: created");
 http.createServer((req, res) => { // Request, Response
     console.log('SERVER: response');
+    res.setHeader("Access-Control-Allow-Origin", "*")
     con.query('SELECT * FROM winterloop.user', (e, r, f) => { // Error, Result, Field
         console.log(r);
         arr = new Array;
@@ -34,7 +35,7 @@ http.createServer((req, res) => { // Request, Response
                 'create_time': ele.create_time
             });
         });
-        res.write(JSON.stringify(arr))
+        res.write(JSON.stringify(arr));
         res.end();
     });
 }).listen(4322);
