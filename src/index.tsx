@@ -31,6 +31,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
+import SettingsIcon from '@material-ui/icons/Settings';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -67,17 +68,59 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+interface pageObject {
+  [index: number]: {
+    name: string;
+    icon: React.ReactNode;
+    content: React.ReactNode;
+    fab?: {
+      name: string;
+      icon: React.ReactNode;
+      action: any;
+    }
+  }
+  map: any;
+}
+
 function AppReact(props) {
   const theme = useTheme();
   const classes = useStyles(props);
-  let [drawerOpen, setState] = React.useState(false);
-  const [pageValue, setValue] = React.useState(0);
-  const [dialogValue, setDialog] = React.useState({
+
+  // States
+  const [drawerState, setDrawer] = React.useState(false);
+  const [pageValue, setPage] = React.useState(0);
+  const [dialogState, setDialog] = React.useState({
     0: false
   });
-  const pageList = ['Registratie','Stempels','Transacties'];
+
+  // Page list
+  const pages:pageObject = [
+    {
+      name: 'Registatie',
+      icon: <CreateIcon/>,
+      content: <Typography variant="h6">Hello World</Typography>
+    },
+    {
+      name: 'Stempels',
+      icon: <PollIcon/>,
+      content: <Typography variant="h6">Hello World</Typography>
+    },
+    {
+      name: 'Transacties',
+      icon: <AccountBalanceWalletIcon/>,
+      content: <Typography variant="h6">Hello World</Typography>
+    },
+    {
+      name: 'Instellingen',
+      icon: <SettingsIcon/>,
+      content: <Typography variant="h6">Instellingen</Typography>
+    },
+  ]
+
+  // Other vars
   const fullScreenDialog = useMediaQuery(theme.breakpoints.down('sm'));
 
+  // Page object
   function Page(props: {
     value: number;
     index: number;
@@ -93,6 +136,7 @@ function AppReact(props) {
     )
   }
 
+  // Functions
   const toggleDrawer = (open: boolean) => (
     event: React.KeyboardEvent | React.MouseEvent
   ) => {
@@ -100,7 +144,7 @@ function AppReact(props) {
       return;
     }
 
-    setState(open);
+    setDrawer(open);
   }
 
   return(
@@ -112,12 +156,12 @@ function AppReact(props) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6">
-            {pageList[pageValue]}
+            {pages[pageValue].name}
           </Typography>
         </Toolbar>
       </AppBar>
       {/* Menu */}
-      <Drawer open={drawerOpen} onClose={toggleDrawer(false)}>
+      <Drawer open={drawerState} onClose={toggleDrawer(false)}>
         <div
           className={classes.list}
           role="presentation"
@@ -130,25 +174,21 @@ function AppReact(props) {
             <Typography variant="body2" className={classes.drawerSubTitle}>Administratie</Typography>
             <Divider />
             {/* Menu list */}
-            <ListItem button key="Registratie" onClick={e => setValue(0)}>
-              <ListItemIcon><CreateIcon/></ListItemIcon>
-              <ListItemText primary="Registratie" />
-            </ListItem>
-            <ListItem button key="Stempels" onClick={e => setValue(1)}>
-              <ListItemIcon><PollIcon/></ListItemIcon>
-              <ListItemText primary="Stempels" />
-            </ListItem>
-            <ListItem button key="Transacties" onClick={e => setValue(2)}>
-              <ListItemIcon><AccountBalanceWalletIcon/></ListItemIcon>
-              <ListItemText primary="Transacties" />
-            </ListItem>
+            {pages.map((data, index) => (
+              <ListItem button key={index} onClick={e => setPage(index)}>
+                <ListItemIcon>{data.icon}</ListItemIcon>
+                <ListItemText>{data.name}</ListItemText>
+              </ListItem>
+            ))}
           </List>
         </div>
       </Drawer>
       {/* Pages */}
-      <Page value={pageValue} index={0}></Page>
-      <Page value={pageValue} index={1}></Page>
-      <Page value={pageValue} index={2}></Page>
+      {pages.map((data, index) => (
+        <Page value={pageValue} index={index} key={index}>
+          {data.content}
+        </Page>
+      ))}
       {/* FAB */}
       <Zoom
         in={pageValue === 0}
@@ -165,7 +205,7 @@ function AppReact(props) {
         </Fab>
       </Zoom>
       {/* Dialogs */}
-      <Dialog fullScreen={fullScreenDialog} open={dialogValue[0]} onClose={e => setDialog({0: false})} aria-labelledby="form-dialog-title">
+      <Dialog fullScreen={fullScreenDialog} open={dialogState[0]} onClose={e => setDialog({0: false})} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Nieuwe wandelaar toevoegen</DialogTitle>
         <DialogContent>
           <DialogContentText>
