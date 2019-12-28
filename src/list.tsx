@@ -12,34 +12,37 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
-function api<T>: Promise<T> {
-  return fetch("http://localhost:4322/")
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(response.statusText)
-      }
-      return response.json() as Promise<T>
-    })
-}
+export default class VirtualizedList extends React.Component {
 
-function renderRow(props: ListChildComponentProps) {
-  const { index, style } = props;
+  constructor(props) {
+    super(props);
+    const { index, style } = props;
 
-  return (
-    <ListItem button style={style} key={index}>
-      <ListItemText primary={toString(api())} />
-    </ListItem>
-  );
-}
+    this.state = {
+      persons: [],
+    };
+  }
+  componentDidMount() {
+    const that = this;
 
-export default function VirtualizedList(props) {
-  const classes = useStyles(props);
-
-  return (
-      <div className={classes.root}>
-        <FixedSizeList height={300} itemSize={46} itemCount={2}>
-          {renderRow}
-        </FixedSizeList>
-      </div>
-    );
+    console.log(true);
+    fetch('http://localhost:4322/')
+    .then(response => {response.json(); console.log(response)})
+    .then(data => {that.setState({ persons: data });console.log(data)});
+    console.log(that.state.persons);// werkt nog niet :(
+  }
+  render() {
+    const { persons } = this.state;
+    console.log(persons);
+    return (
+      <div>
+           {/* <FixedSizeList height={300} itemSize={46} itemCount={2}>
+             {persons.map(person =>
+               <ListItem button key={toString(person.id)}>
+                 <ListItemText primary={toString(person.naam)} />
+               </ListItem>
+             )}
+          </FixedSizeList> */}
+      </div>);
+    }
 }
