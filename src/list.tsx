@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
-export default class VirtualizedList extends React.Component {
+export default class PersonList extends React.Component {
 
   constructor(props) {
     super(props);
