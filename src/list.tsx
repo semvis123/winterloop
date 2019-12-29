@@ -1,5 +1,5 @@
 import React = require('react');
-import { createStyles, makeStyles, Theme, withStyles } from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme, withStyles, withTheme  } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -11,8 +11,10 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
-import { fullScreenDialog } from './index';
+import { fullScreenDialog,useStyles } from './index';
 import BedumerTheme from './theme';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { ThemeProvider } from '@material-ui/core/styles';
 
 const style = makeStyles((theme: Theme) =>
   createStyles({
@@ -93,7 +95,7 @@ class PersonList extends React.Component {
                </ListItem>
 
              )}
-          </List>):<h4></h4>/* loader */}
+          </List>):<CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
           {this.state.dialog?(<Dialog fullScreen={fullScreenDialog} open={this.state.dialog} onClose={e => this.setState({dialog: false})} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">{this.state.currentPerson["naam"]}</DialogTitle>
             <DialogContent>
@@ -103,8 +105,8 @@ class PersonList extends React.Component {
               <Button onClick={e => this.setState({dialog: false})} color="primary">
                 Annuleren
               </Button>
-              <Button onClick={e => this.setState({dialog: false})} color="primary">
-                Opslaan
+              <Button onClick={e => this.setState({dialog: false})} color="secondary">
+                Verwijderen
               </Button>
             </DialogActions>
           </Dialog>):null}
