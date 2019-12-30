@@ -4,9 +4,9 @@ var http = require('http');
 console.log('SERVER: starting');
 
 var con = mysql.createConnection({
-    host: "localhost",
-    user: "nodejs",
-    password: "SQL123"
+    host: "localhost", //change this
+    user: "nodejs", //change this
+    password: "SQL123" //change this
 });
 
 con.connect(function (err) {

@@ -16,6 +16,9 @@ import BedumerTheme from './theme';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { ThemeProvider } from '@material-ui/core/styles';
 
+/*
+  Dit is de lijst voor alle personen
+*/
 const style = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -75,13 +78,14 @@ class PersonList extends React.Component {
 
   }
   getData(){
+    // Haal de data op van de database
     const that = this;
     fetch('http://localhost:4322/')
      .then(response => {var a = response.json();return a})
      .then(data => {that.setState({ persons: data })})
      .catch(error => {
       that.setState({ persons: [{"id":1,"naam":"Kan niet verbinden met database.","huisnummer":"0","postcode":"0000AA","telefoonnummer":"0000000000","vastBedrag":0,"rondeBedrag":0,"rondes":0,"code":'00000',"create_time":"2019-12-27T15:16:48.000Z"}]], listClickDisabled: true })
-    }); // werkt alleen in build
+    });
   }
   componentDidMount() {
     this.getData();
