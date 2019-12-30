@@ -25,4 +25,4 @@ Local sponsored walk management
 3b) node server.js
 
 
-**Theserver should now be running, you can access it by going to the following url: localhost:4321/**
+**The server should now be running, you can access it by going to the following url: localhost:4321/**
