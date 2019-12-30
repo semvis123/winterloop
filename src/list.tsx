@@ -69,15 +69,19 @@ class PersonList extends React.Component {
     this.state = {
       persons: null,
       dialog: false,
-      currentPerson: null
+      currentPerson: null,
+      listClickDisabled: false
     };
 
   }
   getData(){
     const that = this;
-     fetch('http://localhost:4322/')
-    .then(response => {var a = response.json();return a})
-    .then(data => {that.setState({ persons: data })});
+    fetch('http://localhost:4322/')
+     .then(response => {var a = response.json();return a})
+     .then(data => {that.setState({ persons: data })})
+     .catch(error => {
+      that.setState({ persons: [{"id":1,"naam":"Kan niet verbinden met database.","huisnummer":"0","postcode":"0000AA","telefoonnummer":"0000000000","vastBedrag":0,"rondeBedrag":0,"rondes":0,"code":'00000',"create_time":"2019-12-27T15:16:48.000Z"}]], listClickDisabled: true })
+    }); // werkt alleen in build
   }
   componentDidMount() {
     this.getData();
@@ -90,7 +94,7 @@ class PersonList extends React.Component {
       <div>
            {this.state.persons? (<List className={classes.root}>
              {persons.map((person,i) =>
-               <ListItem divider button key={i} onClick={e=>this.setState({dialog:true, currentPerson: persons[i]})}>
+               <ListItem divider button key={i} onClick={e=>!this.state.listClickDisabled?this.setState({dialog:true, currentPerson: persons[i]}): null}>
                  <ListItemText id={person.id} primary={person.naam} secondary={person.code} />
                </ListItem>
 
