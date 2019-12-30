@@ -80,7 +80,7 @@ class PersonList extends React.Component {
   getData(){
     // Haal de data op van de database
     const that = this;
-    fetch('http://localhost:4322/')
+    fetch('http://localhost:4322/') // change this to yourip:4322
      .then(response => {var a = response.json();return a})
      .then(data => {that.setState({ persons: data })})
      .catch(error => {
