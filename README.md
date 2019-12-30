@@ -21,9 +21,9 @@ Local sponsored walk management
 
 **After you installed the needed packages start the server by running these commands simultaneously:**
 
-3a) npm run-script build **or when developing** npm start
+3) npm run-script build **or when developing** npm start
 
-3b) node server.js
+3) node server.js
 
 
 **The server should now be running, you can access it by going to the following url: localhost:4321/**
