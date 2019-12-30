@@ -11,6 +11,8 @@ Local sponsored walk management
 **Enter your user settings of the MYSQL in the winterloop/server.js**
 
 
+**Install Nodejs**
+
 **Open cmd in the main folder then run these commands:**
 
 1) npm install
