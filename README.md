@@ -12,6 +12,8 @@ Local sponsored walk management
 **Change your ip of server in the winterloop/server.js on line: 83**
 
 
+**Install Nodejs**
+
 **Open cmd in the main folder then run these commands:**
 
 1) npm install
