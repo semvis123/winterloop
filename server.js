@@ -1,7 +1,8 @@
-var mysql = require('mysql');
-var http = require('http');
+var mysql          = require('mysql');
+var http           = require('http');
 var HttpDispatcher = require('httpdispatcher');
 var dispatcher     = new HttpDispatcher();
+var url            = require('url');
 
 console.log('SERVER: starting');
 
@@ -60,6 +61,17 @@ dispatcher.onGet("/api/getUsers/", function (req, res) {
         });
         res.write(JSON.stringify(arr));
         res.end();
-    })
+    });
 });
+
+dispatcher.onGet("/api/addUser/", function (req, res) {
+    res.writeHead(200, {'Content-Type': 'text/html', "Access-Control-Allow-Origin": "*"});
+    var par = url.parse(req.url); // get parameters from url
+    con.query('INSERT INTO `members` (`id`,`naam`,`huisnummer`,`postcode`,`telefoonnummer`,`vastBedrag`,`rondeBedrag`,`code`)'
+    + ' VALUES (`' + par.id + '`,`' + par.naam + '`,`' + par.huisnummer + '`,`' + par.postcode + '`,`' + par.telefoonnummer + '`,`' + par.vastBedrag + '`,`' + par.rondeBedrag + '`,`' + code + '`)', (e, r, f) => { // Error, Result, Field
+        res.write(r);
+        res.end();
+    });
+});
+
 server.listen(PORT);
