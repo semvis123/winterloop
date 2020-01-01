@@ -63,15 +63,18 @@ dispatcher.onGet("/api/getUsers/", function (req, res) {
         res.end();
     });
 });
-
 dispatcher.onGet("/api/addUser/", function (req, res) {
+    var code = '123456';
     res.writeHead(200, {'Content-Type': 'text/html', "Access-Control-Allow-Origin": "*"});
     var par = url.parse(req.url); // get parameters from url
     con.query('INSERT INTO `members` (`id`,`naam`,`huisnummer`,`postcode`,`telefoonnummer`,`vastBedrag`,`rondeBedrag`,`code`)'
     + ' VALUES (`' + par.id + '`,`' + par.naam + '`,`' + par.huisnummer + '`,`' + par.postcode + '`,`' + par.telefoonnummer + '`,`' + par.vastBedrag + '`,`' + par.rondeBedrag + '`,`' + code + '`)', (e, r, f) => { // Error, Result, Field
-        res.write(r);
         res.end();
-    });
+    });// werkt nog niet
+});
+dispatcher.onError(function (req, res) {
+    res.writeHead(404);
+    res.end("Error, the URL doesn't exist");
 });
 
 server.listen(PORT);
