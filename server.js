@@ -1,5 +1,7 @@
 var mysql = require('mysql');
 var http = require('http');
+var HttpDispatcher = require('httpdispatcher');
+var dispatcher     = new HttpDispatcher();
 
 console.log('SERVER: starting');
 
@@ -15,9 +17,30 @@ con.connect(function (err) {
 });
 
 console.log("SERVER: created");
-http.createServer((req, res) => { // Request, Response
-    console.log('SERVER: response');
-    res.setHeader("Access-Control-Allow-Origin", "*")
+
+const PORT = 4322;
+
+// handle requests and send response
+function handleRequest(request, response) {
+    try {
+        // log the request on console
+        console.log(request.url);
+        // Dispatch
+        dispatcher.dispatch(request, response);
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+var server = http.createServer(handleRequest);
+
+dispatcher.onGet("/", function (req, res) {
+    res.writeHead(200, {'Content-Type': 'text/html', "Access-Control-Allow-Origin": "*"});
+    res.end('<h1>Server started successfully</h1>');
+});
+
+dispatcher.onGet("/api/getUsers/", function (req, res) {
+    res.writeHead(200, {'Content-Type': 'text/html', "Access-Control-Allow-Origin": "*"});
     con.query('SELECT * FROM winterloop.user', (e, r, f) => { // Error, Result, Field
         console.log(r);
         arr = new Array;
@@ -37,5 +60,6 @@ http.createServer((req, res) => { // Request, Response
         });
         res.write(JSON.stringify(arr));
         res.end();
-    });
-}).listen(4322);
+    })
+});
+server.listen(PORT);
