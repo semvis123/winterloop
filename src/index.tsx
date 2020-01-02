@@ -36,6 +36,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Switch from '@material-ui/core/Switch';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import VirtualizedList from './list'; //test
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -126,18 +127,23 @@ function AppReact(props) {
     {
       name: 'Stempels',
       icon: <PollIcon/>,
-      content: <Typography variant="h6" className={classes.root}>Hello World</Typography>
+      content: <Typography component="div" className={classes.root}></Typography>
     },
     {
       name: 'Transacties',
       icon: <AccountBalanceWalletIcon/>,
-      content: <Typography variant="h6" className={classes.root}>Hello World</Typography>
+      content: <Typography component="div" className={classes.root}></Typography>
+    },
+    {
+      name: 'Status',
+      icon: <MonetizationOnIcon/>,
+      content: <Typography component="div" className={classes.root}></Typography>
     },
     {
       name: 'Instellingen',
       icon: <SettingsIcon/>,
-      content: <Typography component="div">
-        <List subheader={<ListSubheader>Thema</ListSubheader>} className={classes.root}>
+      content: <Typography component="div" className={classes.root}>
+        <List subheader={<ListSubheader>Thema</ListSubheader>}>
           <ListItem>
             <ListItemIcon>
               <Brightness4Icon />
