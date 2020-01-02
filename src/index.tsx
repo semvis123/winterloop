@@ -37,7 +37,7 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import Switch from '@material-ui/core/Switch';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
-import VirtualizedList from './list'; //test
+import PersonList from './list'; //test
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -121,7 +121,7 @@ function AppReact(props) {
       name: 'Registatie',
       icon: <CreateIcon/>,
       content: <Typography component="div" className={classes.root}>
-        <VirtualizedList />
+        <PersonList />
       </Typography>
     },
     {

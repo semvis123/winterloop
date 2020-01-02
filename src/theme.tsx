@@ -5,6 +5,7 @@ $('div[data-type="main"]').css({
   background: (localStorage.getItem('dark') == 'true') ? '#424242' : '#fff'
 });
 
+/*creeer een thema*/
 export default createMuiTheme({
   palette: {
     type: (localStorage.getItem('dark') == 'true') ? 'dark' : 'light',
