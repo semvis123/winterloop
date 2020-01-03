@@ -1,5 +1,5 @@
 import React = require('react');
-import { createStyles, makeStyles, Theme, withStyles, withTheme  } from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme, withStyles, withTheme } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -11,7 +11,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
-import { fullScreenDialog,useStyles } from './index';
+import { fullScreenDialog, useStyles } from './index';
 import BedumerTheme from './theme';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { ThemeProvider } from '@material-ui/core/styles';
@@ -77,15 +77,15 @@ class PersonList extends React.Component {
     };
 
   }
-  getData(){
+  getData() {
     // Haal de data op van de database
     const that = this;
-    fetch('http://localhost:4322'+'/api/getUsers/') // change this to yourip:4322
-     .then(response => {var a = response.json();return a})
-     .then(data => {that.setState({ persons: data })})
-     .catch(error => {
-      that.setState({ persons: [{"id":1,"naam":"Kan niet verbinden met database.","huisnummer":"0","postcode":"0000AA","telefoonnummer":"0000000000","vastBedrag":0,"rondeBedrag":0,"rondes":0,"code":'00000',"create_time":"2019-12-27T15:16:48.000Z"}]], listClickDisabled: true })
-    });
+    fetch('http://localhost:4322' + '/api/getUsers/') // change this to yourip:4322
+      .then(response => { var a = response.json(); return a })
+      .then(data => { that.setState({ persons: data }) })
+      .catch(error => {
+        that.setState({ persons: [{ "id": 1, "naam": "Kan niet verbinden met database.", "huisnummer": "0", "postcode": "0000AA", "telefoonnummer": "0000000000", "vastBedrag": 0, "rondeBedrag": 0, "rondes": 0, "code": '00000', "create_time": "2019-12-27T15:16:48.000Z" }]], listClickDisabled: true })
+      });
   }
   componentDidMount() {
     this.getData();
@@ -96,28 +96,36 @@ class PersonList extends React.Component {
     const { persons } = this.state;
     return (
       <div>
-           {this.state.persons? (<List className={classes.root}>
-             {persons.map((person,i) =>
-               <ListItem divider button key={i} onClick={e=>!this.state.listClickDisabled?this.setState({dialog:true, currentPerson: persons[i]}): null}>
-                 <ListItemText id={person.id} primary={person.naam} secondary={person.code} />
-               </ListItem>
+        {this.state.persons ? (<List className={classes.root}>
+          {persons.map((person, i) =>
+            <ListItem divider button key={i} onClick={e => !this.state.listClickDisabled ? this.setState({ dialog: true, currentPerson: persons[i] }) : null}>
+              <ListItemText id={person.id} primary={person.naam} secondary={person.code} />
+            </ListItem>
 
-             )}
-          </List>):<CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
-          {this.state.dialog?(<Dialog fullScreen={fullScreenDialog} open={this.state.dialog} onClose={e => this.setState({dialog: false})} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">{this.state.currentPerson["naam"]}</DialogTitle>
-            <DialogContent>
-
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={e => this.setState({dialog: false})} color="primary">
-                Annuleren
+          )}
+        </List>) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
+        {this.state.dialog ? (<Dialog fullScreen={fullScreenDialog} open={this.state.dialog} onClose={e => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">{this.state.currentPerson.naam}</DialogTitle>
+          <DialogContent>
+              <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
+              <DialogContentText>huisnummer: {this.state.currentPerson.huisnummer}</DialogContentText>
+              <DialogContentText>postcode: {this.state.currentPerson.postcode}</DialogContentText>
+              <DialogContentText>telefoonnummer: {this.state.currentPerson.telefoonnummer}</DialogContentText>
+              <DialogContentText>vast bedrag: €{this.state.currentPerson.vastBedrag}</DialogContentText>
+              <DialogContentText>ronde bedrag: €{this.state.currentPerson.rondeBedrag}</DialogContentText>
+              <DialogContentText>aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
+              <DialogContentText>aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
+              <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={e => this.setState({ dialog: false })} color="primary">
+              Annuleren
               </Button>
-              <Button onClick={e => {fetch('http://localhost:4322/api/removeUser/',{method:'post',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8','Access-Control-Allow-Origin': '*'},body:"code="+this.state.currentPerson.code}).then(async r=>{await this.getData();this.setState({dialog: false})})}} color="secondary">
-                Verwijderen
+            <Button onClick={e => { fetch('http://localhost:4322/api/removeUser/', { method: 'post', headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' }, body: "code=" + this.state.currentPerson.code }).then(async r => { await this.getData(); this.setState({ dialog: false }) }) }} color="secondary">
+              Verwijderen
               </Button>
-            </DialogActions>
-          </Dialog>):null}
+          </DialogActions>
+        </Dialog>) : null}
       </div>);
 
   }

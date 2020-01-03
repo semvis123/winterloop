@@ -284,18 +284,20 @@ function AppReact(props) {
       </Zoom>
       {/* Dialogs */}
       <Dialog fullScreen={fullScreenDialog} open={dialogState[0]} onClose={e => setDialog({ 0: false })} aria-labelledby="form-dialog-title">
-        <form id="addUserForm" action="#" method="POST" onSubmit={e=>{
+        <form id="addUserForm" action="#" method="POST" onSubmit={e => {
           e.preventDefault(); // remove the redirect
-          fetch('http://localhost:4322/api/addUser/',{method:'post',
-          headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8','Access-Control-Allow-Origin': '*'},
-          body:"naam="+$("#addUserForm [name='naam']").val()+
-          "&huisnummer="+$("#addUserForm [name='huisnummer']").val()+
-          "&postcode="+$("#addUserForm [name='postcode']").val()+
-          "&telefoonnummer="+$("#addUserForm [name='telefoonnummer']").val()+
-          "&vastBedrag="+$("#addUserForm [name='vastBedrag']").val()+
-          "&rondeBedrag="+$("#addUserForm [name='rondeBedrag']").val()
-        }).then(r=>setDialog({ 0: false }));} //send the request and close dialog
-      }>
+          fetch('http://localhost:4322/api/addUser/', {
+            method: 'post',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' },
+            body: "naam=" + $("#addUserForm [name='naam']").val() +
+              "&huisnummer=" + $("#addUserForm [name='huisnummer']").val() +
+              "&postcode=" + $("#addUserForm [name='postcode']").val() +
+              "&telefoonnummer=" + $("#addUserForm [name='telefoonnummer']").val() +
+              "&vastBedrag=" + $("#addUserForm [name='vastBedrag']").val() +
+              "&rondeBedrag=" + $("#addUserForm [name='rondeBedrag']").val()
+          }).then(r => setDialog({ 0: false }));
+        } //send the request and close dialog
+        }>
           <DialogTitle id="form-dialog-title">Nieuwe wandelaar toevoegen</DialogTitle>
           <DialogContent>
             <DialogContentText>
