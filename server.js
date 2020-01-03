@@ -1,10 +1,14 @@
 const mysql = require('mysql');
 const express = require('express')
-const app = express()
+const util = require('util');
+const cors = require('cors');
+const app = express().use('*', cors());
+const bodyParser = require('body-parser');
 const port = 4322
-var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+app.use(bodyParser.urlencoded({
+    extended: true
+})); // support encoded bodies
 
 console.log('SERVER: starting');
 
@@ -14,42 +18,34 @@ var con = mysql.createConnection({
     password: "SQL123" //change this
 });
 
+// node native promisify
+const query = util.promisify(con.query).bind(con);
+
+
 con.connect(function (err) {
     if (err) throw err;
     console.log("SERVER: connected to mysql");
 });
 
-app.use(function (req, res, next) { // allow the cors
-    res.header("Access-Control-Allow-Origin", "*");
-    next();
-});
-
 app.get('/', (req, res) => res.status(200).send('<h1>Server started successfully</h1>'))
-app.get('/code/', (req, res) => {
-    var result = false;
-    var num = 0;
 
-    // while (!result || num > 1000) {
-        var code = Math.floor(100000 + Math.random() * 900000);
-        con.query("SELECT COUNT(1) FROM winterloop.user WHERE code = ?;", [code], (e, r, f) => { // Error, Result, Field
-            console.log(num);
-            console.log(result);
-            num++;
-            if (e) {
-                res.status(500).send(e.sqlMessage);
-            }else {
-                console.log(r);
-                res.status(200).send("success " + code + "  " + r[0]["COUNT(1)"]);
-                if (r[0]["COUNT(1)"] == 0) {
-                    result = true;
-                    console.log(result);
-                    break
-                }
-            }
-        });
-    // }
+async function genCode() {
+    let code = Math.floor(100000 + Math.random() * 900000);
+    let result = null;
+    const r = await query("SELECT COUNT(1) FROM winterloop.user WHERE code = ?;", [code]);
+    console.log(r[0]["COUNT(1)"]);
+    // console.log(r[""])
+    if (r[0]["COUNT(1)"] == 0) {
+        console.log(r);
+        return code;
+    } else {
+        return genCode();
+    }
+}
 
-    // res.status(500).send("oops, internal server error.");
+app.get('/code/', async (req, res) => {
+    const code = await genCode();
+    res.status(200).send("success " + code);
 })
 app.get('/api/getUsers/', (req, res) => {
     con.query('SELECT * FROM winterloop.user', (e, r, f) => { // Error, Result, Field
@@ -69,25 +65,28 @@ app.get('/api/getUsers/', (req, res) => {
                 'create_time': ele.create_time
             });
         });
+        res.status(200).send(JSON.stringify(arr));
     });
-    res.status(200).send(JSON.stringify(arr));
 })
-app.post('/api/addUser/', (req, res) => {
-    con.query("INSERT INTO winterloop.user (`id`,`naam`,`huisnummer`,`postcode`,`telefoonnummer`,`vastBedrag`,`rondeBedrag`,`code`)"
-    + " VALUES (?,?,?,?,?,?,?,?)", [par.id,par.naam,par.huisnummer,par.postcode,par.telefoonnummer,par.vastBedrag,par.rondeBedrag,code], (e, r, f) => { // Error, Result, Field
+app.post('/api/addUser/', async (req, res) => {
+    var code = await genCode();
+    var par = req.body; // get parameters from url
+    con.query("INSERT INTO winterloop.user (`naam`,`huisnummer`,`postcode`,`telefoonnummer`,`vastBedrag`,`rondeBedrag`,`code`)" +
+      " VALUES (?,?,?,?,?,?,?)", [par.naam, par.huisnummer, par.postcode, par.telefoonnummer, par.vastBedrag, par.rondeBedrag, code], (e, r, f) => {
         if (e) {
             res.status(500).send(e.sqlMessage);
-        }else {
+        } else {
             res.status(200).send("success");
         }
-    })
-    var code = '123456';
-    var par = req.body; // get parameters from url
-    con.query("INSERT INTO winterloop.user (`id`,`naam`,`huisnummer`,`postcode`,`telefoonnummer`,`vastBedrag`,`rondeBedrag`,`code`)"
-    + " VALUES (?,?,?,?,?,?,?,?)", [par.id,par.naam,par.huisnummer,par.postcode,par.telefoonnummer,par.vastBedrag,par.rondeBedrag,code], (e, r, f) => { // Error, Result, Field
+    });
+});
+app.post('/api/removeUser/', async (req, res) => {
+    console.log(req);
+    var par = req.body;
+    con.query("DELETE FROM winterloop.user WHERE code = ?", [par.code], (e, r, f) => {
         if (e) {
             res.status(500).send(e.sqlMessage);
-        }else {
+        } else {
             res.status(200).send("success");
         }
     });

@@ -113,7 +113,7 @@ class PersonList extends React.Component {
               <Button onClick={e => this.setState({dialog: false})} color="primary">
                 Annuleren
               </Button>
-              <Button onClick={e => this.setState({dialog: false})} color="secondary">
+              <Button onClick={e => {fetch('http://localhost:4322/api/removeUser/',{method:'post',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8','Access-Control-Allow-Origin': '*'},body:"code="+this.state.currentPerson.code}).then(async r=>{await this.getData();this.setState({dialog: false})})}} color="secondary">
                 Verwijderen
               </Button>
             </DialogActions>

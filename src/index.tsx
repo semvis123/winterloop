@@ -35,6 +35,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Switch from '@material-ui/core/Switch';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import PersonList from './list'; //test
@@ -116,32 +117,32 @@ function AppReact(props) {
   if (localStorage.getItem('dark') == undefined) { localStorage.setItem('dark', 'false') }
 
   // Page list
-  const pages:pageObject = [
+  const pages: pageObject = [
     {
       name: 'Registatie',
-      icon: <CreateIcon/>,
+      icon: <CreateIcon />,
       content: <Typography component="div" className={classes.root}>
         <PersonList />
       </Typography>
     },
     {
       name: 'Stempels',
-      icon: <PollIcon/>,
+      icon: <PollIcon />,
       content: <Typography component="div" className={classes.root}></Typography>
     },
     {
       name: 'Transacties',
-      icon: <AccountBalanceWalletIcon/>,
+      icon: <AccountBalanceWalletIcon />,
       content: <Typography component="div" className={classes.root}></Typography>
     },
     {
       name: 'Status',
-      icon: <MonetizationOnIcon/>,
+      icon: <MonetizationOnIcon />,
       content: <Typography component="div" className={classes.root}></Typography>
     },
     {
       name: 'Instellingen',
-      icon: <SettingsIcon/>,
+      icon: <SettingsIcon />,
       content: <Typography component="div" className={classes.root}>
         <List subheader={<ListSubheader>Thema</ListSubheader>}>
           <ListItem>
@@ -154,8 +155,8 @@ function AppReact(props) {
                 edge="end"
                 onChange={e => {
                   var darkState = !themeState.dark;
-                  setTheme({dark: darkState});
-                  localStorage.setItem('dark', (darkState) ? 'true':'false');
+                  setTheme({ dark: darkState });
+                  localStorage.setItem('dark', (darkState) ? 'true' : 'false');
                   location.reload();
                 }}
                 checked={themeState.dark}
@@ -217,7 +218,7 @@ function AppReact(props) {
     setDrawer(open);
   }
 
-  return(
+  return (
     <ThemeProvider theme={BedumerTheme}>
       {/* Header */}
       <AppBar position="static">
@@ -239,7 +240,7 @@ function AppReact(props) {
           onKeyDown={toggleDrawer(false)}
         >
           <List>
-            <img src={BedumerLogo} className={classes.logo}/>
+            <img src={BedumerLogo} className={classes.logo} />
             <Typography variant="h6" className={classes.drawerTitle}>Winterloop</Typography>
             <Typography variant="body2" className={classes.drawerSubTitle}>Administratie</Typography>
             <Divider />
@@ -270,77 +271,91 @@ function AppReact(props) {
       <Zoom
         in={pageValue === 0}
       >
-        <Fab color="secondary" className={classes.fab} onClick={e => setDialog({0: true})}>
-          <AddIcon/>
+        <Fab color="secondary" className={classes.fab} onClick={e => setDialog({ 0: true })}>
+          <AddIcon />
         </Fab>
       </Zoom>
       <Zoom
         in={pageValue === 1}
       >
         <Fab color="secondary" className={classes.fab}>
-          <SearchIcon/>
+          <SearchIcon />
         </Fab>
       </Zoom>
       {/* Dialogs */}
-      <Dialog fullScreen={fullScreenDialog} open={dialogState[0]} onClose={e => setDialog({0: false})} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Nieuwe wandelaar toevoegen</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Vul hieronder de gegevens in van de wandelaar.
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Naam"
-            type="text"
-            fullWidth
-          />
-          <TextField
-            margin="dense"
-            label="Huisnummer"
-            type="number"
-            fullWidth
-          />
-          <TextField
-            margin="dense"
-            label="Postcode"
-            type="text"
-            fullWidth
-          />
-          <TextField
-            margin="dense"
-            label="Telefoonnummer"
-            type="number"
-            fullWidth
-          />
-          <TextField
-            margin="dense"
-            label="Vast bedrag"
-            type="number"
-            fullWidth
-          />
-          <TextField
-            margin="dense"
-            label="Bedrag per ronde"
-            type="number"
-            fullWidth
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={e => setDialog({0: false})} color="primary">
-            Annuleren
-          </Button>
-          <Button onClick={e => setDialog({0: false})} color="primary">
-            Opslaan
-          </Button>
-        </DialogActions>
+      <Dialog fullScreen={fullScreenDialog} open={dialogState[0]} onClose={e => setDialog({ 0: false })} aria-labelledby="form-dialog-title">
+        <form id="addUserForm" action="http://localhost:4322/api/addUser/" method="POST">
+          <DialogTitle id="form-dialog-title">Nieuwe wandelaar toevoegen</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Vul hieronder de gegevens in van de wandelaar.
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Naam"
+              type="text"
+              name="naam"
+              fullWidth
+            />
+            <TextField
+              margin="dense"
+              label="Huisnummer"
+              type="number"
+              name="huisnummer"
+              fullWidth
+            />
+            <TextField
+              margin="dense"
+              label="Postcode"
+              type="text"
+              name="postcode"
+              fullWidth
+            />
+            <TextField
+              margin="dense"
+              label="Telefoonnummer"
+              type="number"
+              name="telefoonnummer"
+              fullWidth
+            />
+            <TextField
+              margin="dense"
+              label="Vast bedrag"
+              type="number"
+              name="vastBedrag"
+              fullWidth
+              InputProps={{
+                startAdornment: <InputAdornment position="start">€</InputAdornment>,
+              }}
+            />
+            <TextField
+              margin="dense"
+              label="Bedrag per ronde"
+              type="number"
+              name="rondeBedrag"
+              fullWidth
+              InputProps={{
+                startAdornment: <InputAdornment position="start">€</InputAdornment>,
+              }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={e => setDialog({ 0: false })} color="primary">
+              Annuleren
+            </Button>
+            <Button onClick={e => setDialog({ 0: false })} color="primary" type="submit">
+              Opslaan
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
     </ThemeProvider>
   )
 }
 
 ReactDOM.render(
-  <AppReact/>,
+  <AppReact />,
   $('div[data-type="main"]')[0]
 );
 
