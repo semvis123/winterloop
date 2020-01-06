@@ -38,7 +38,7 @@ import Switch from '@material-ui/core/Switch';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
-import PersonList from './list'; //test
+import { PersonList, CountingList } from './list';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -121,14 +121,18 @@ function AppReact(props) {
     {
       name: 'Registatie',
       icon: <CreateIcon />,
-      content: <Typography component="div" className={classes.root}>
+      content:
+      <Typography component="div" className={classes.root}>
         <PersonList />
       </Typography>
     },
     {
       name: 'Stempels',
       icon: <PollIcon />,
-      content: <Typography component="div" className={classes.root}></Typography>
+      content:
+      <Typography component="div" className={classes.root}>
+        <CountingList />
+      </Typography>
     },
     {
       name: 'Transacties',
