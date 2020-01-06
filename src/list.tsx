@@ -11,10 +11,11 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
-import { fullScreenDialog, useStyles } from './index';
 import BedumerTheme from './theme';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { ThemeProvider } from '@material-ui/core/styles';
+import { useMediaQuery } from '@material-ui/core';
+import theme from './theme';
 
 /*
   Dit is de lijst voor alle personen
@@ -63,8 +64,18 @@ const style = makeStyles((theme: Theme) =>
   }),
 );
 
+const fullScreenDialog = useMediaQuery(theme.breakpoints.down('sm'));
 
 class PersonList extends React.Component {
+  state: {
+    persons: {
+      [index: number]: any;
+      map: any;
+    };
+    dialog: boolean;
+    currentPerson: any;
+    listClickDisabled: boolean;
+  }
 
   constructor(props) {
     super(props);
@@ -77,6 +88,7 @@ class PersonList extends React.Component {
     };
 
   }
+  
   getData() {
     // Haal de data op van de database
     const that = this;
@@ -84,15 +96,21 @@ class PersonList extends React.Component {
       .then(response => { var a = response.json(); return a })
       .then(data => { that.setState({ persons: data }) })
       .catch(error => {
-        that.setState({ persons: [{ "id": 1, "naam": "Kan niet verbinden met database.", "huisnummer": "0", "postcode": "0000AA", "telefoonnummer": "0000000000", "vastBedrag": 0, "rondeBedrag": 0, "rondes": 0, "code": '00000', "create_time": "2019-12-27T15:16:48.000Z" }]], listClickDisabled: true })
+        that.setState({
+          persons: [
+            { "id": 1, "naam": "Kan niet verbinden met database.", "huisnummer": "0", "postcode": "0000AA", "telefoonnummer": "0000000000", "vastBedrag": 0, "rondeBedrag": 0, "rondes": 0, "code": '00000', "create_time": "2019-12-27T15:16:48.000Z" }
+          ],
+          listClickDisabled: true
+        })
       });
   }
+
   componentDidMount() {
     this.getData();
   }
 
   render() {
-    const { classes } = this.props;
+    const classes = style(BedumerTheme);
     const { persons } = this.state;
     return (
       <div>
@@ -121,7 +139,19 @@ class PersonList extends React.Component {
             <Button onClick={e => this.setState({ dialog: false })} color="primary">
               Annuleren
               </Button>
-            <Button onClick={e => { fetch('http://localhost:4322/api/removeUser/', { method: 'post', headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' }, body: "code=" + this.state.currentPerson.code }).then(async r => { await this.getData(); this.setState({ dialog: false }) }) }} color="secondary">
+            <Button onClick={e => {
+              fetch('http://localhost:4322/api/removeUser/', {
+                method: 'post',
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                  'Access-Control-Allow-Origin': '*'
+                },
+                body: "code=" + this.state.currentPerson.code })
+              .then(async () => {
+                await this.getData();
+                this.setState({ dialog: false });
+                })
+              }} color="secondary">
               Verwijderen
               </Button>
           </DialogActions>
