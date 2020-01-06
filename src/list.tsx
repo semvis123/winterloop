@@ -1,5 +1,6 @@
 import React = require('react');
-import { createStyles, makeStyles, Theme, withStyles, withTheme } from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme, withStyles, withTheme, useTheme } from '@material-ui/core/styles';
+import { fullScreenDialog, useStyles } from './index';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -11,11 +12,10 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
-import BedumerTheme from './theme';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { useMediaQuery } from '@material-ui/core';
-import theme from './theme';
+import BedumerTheme from './theme';
 
 /*
   Dit is de lijst voor alle personen
@@ -63,8 +63,6 @@ const style = makeStyles((theme: Theme) =>
     }
   }),
 );
-
-const fullScreenDialog = useMediaQuery(theme.breakpoints.down('sm'));
 
 /*
 Dit is de lijst voor alle personen
@@ -193,7 +191,7 @@ class CountingList extends React.Component {
     this._isMounted = false;
   }
   render() {
-    const classes = style(BedumerTheme);
+    const classes = this.props;
     const { persons } = this.state;
     return (
       <div>
