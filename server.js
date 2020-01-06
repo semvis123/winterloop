@@ -23,6 +23,7 @@ const query = util.promisify(con.query).bind(con);
 
 
 con.connect(function (err) {
+    (err) ? console.log("SERVER: Couldn't connect to SQL server") : null;
     if (err) throw err;
     console.log("SERVER: connected to mysql");
 });
