@@ -1,6 +1,5 @@
 import React = require('react');
 import { createStyles, makeStyles, Theme, withStyles, withTheme, useTheme } from '@material-ui/core/styles';
-import { fullScreenDialog, useStyles } from './index';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -44,17 +43,15 @@ export const PersonList = withStyles({
   // Global vars
   _isMounted = false;
 
-
   constructor(props) {
     super(props);
-    // const { index, style } = props;
+
     this.state = {
       persons: null,
       dialog: false,
       currentPerson: null,
       listClickDisabled: false
     };
-
   }
 
   getData() {
@@ -106,7 +103,7 @@ export const PersonList = withStyles({
 
           )}
         </List>) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
-        {this.state.dialog ? (<Dialog fullScreen={fullScreenDialog} open={this.state.dialog} onClose={() => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
+        {this.state.dialog ? (<Dialog fullScreen={useMediaQuery('@media (max-width:959.95px)')} open={this.state.dialog} onClose={() => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">{this.state.currentPerson.naam}</DialogTitle>
           <DialogContent>
             <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
@@ -170,7 +167,7 @@ export const CountingList = withStyles({
 
   constructor(props) {
     super(props);
-    // const { index, style } = props;
+
     this.state = {
       persons: [],
       dialog: false,
@@ -229,7 +226,7 @@ export const CountingList = withStyles({
 
           )}
         </List>) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
-        {this.state.dialog ? (<Dialog fullScreen={fullScreenDialog} open={this.state.dialog} onClose={() => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
+        {this.state.dialog ? (<Dialog fullScreen={useMediaQuery('@media (max-width:959.95px)')} open={this.state.dialog} onClose={() => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">{this.state.currentPerson.naam}</DialogTitle>
           <DialogContent>
             <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
