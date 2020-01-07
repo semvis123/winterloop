@@ -1,10 +1,11 @@
 const mysql = require('mysql');
-const express = require('express')
+const express = require('express');
 const util = require('util');
 const cors = require('cors');
 const app = express().use('*', cors());
 const bodyParser = require('body-parser');
-const port = 4322
+const port = 4322;
+
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({
     extended: true
@@ -84,7 +85,7 @@ app.post('/api/addUser/', async (req, res) => {
 app.post('/api/removeUser/', async (req, res) => {
     console.log(req);
     var par = req.body;
-    con.query("DELETE FROM winterloop.user WHERE code = ?", [par.code], (e, r, f) => {
+    con.query("DELETE FROM winterloop.user WHERE code = ?", [par.code], e => {
         if (e) {
             res.status(500).send(e.sqlMessage);
         } else {

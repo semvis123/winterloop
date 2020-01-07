@@ -250,7 +250,7 @@ function AppReact(props) {
             <Divider />
             {/* Menu list */}
             {pages.map((data, index) => (
-              <ListItem button key={index} onClick={e => {
+              <ListItem button key={index} onClick={() => {
                 setPage(index);
                 history.pushState(
                   { page: index },

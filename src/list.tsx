@@ -5,7 +5,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
-import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -84,7 +83,7 @@ class PersonListClass extends React.Component {
 
   constructor(props) {
     super(props);
-    const { index, style } = props;
+    // const { index, style } = props;
     this.state = {
       persons: null,
       dialog: false,
@@ -100,7 +99,7 @@ class PersonListClass extends React.Component {
     fetch(serverUrl + '/api/getUsers/') // change this to yourip:4322
       .then(response => { var a = response.json(); return a })
       .then(data => { this._isMounted ? that.setState({ persons: data, listClickDisabled: false }) : null })
-      .catch(error => {
+      .catch(() => {
         this._isMounted ? that.setState({
           persons: [
             {
@@ -136,13 +135,13 @@ class PersonListClass extends React.Component {
       <div>
         {this.state.persons ? (<List className={classes.root}>
           {persons.map((person, i) =>
-            <ListItem divider button key={i} onClick={e => !this.state.listClickDisabled ? this.setState({ dialog: true, currentPerson: persons[i] }) : null}>
+            <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialog: true, currentPerson: persons[i] }) : null}>
               <ListItemText id={person.id} primary={person.naam} secondary={person.code} />
             </ListItem>
 
           )}
         </List>) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
-        {this.state.dialog ? (<Dialog fullScreen={fullScreenDialog} open={this.state.dialog} onClose={e => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
+        {this.state.dialog ? (<Dialog fullScreen={fullScreenDialog} open={this.state.dialog} onClose={() => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">{this.state.currentPerson.naam}</DialogTitle>
           <DialogContent>
             <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
@@ -156,16 +155,16 @@ class PersonListClass extends React.Component {
             <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={e => this.setState({ dialog: false })} color="primary">
+            <Button onClick={() => this.setState({ dialog: false })} color="primary">
               Annuleren
               </Button>
-            <Button onClick={e => {
+            <Button onClick={() => {
               fetch(serverUrl + '/api/removeUser/', {
                 method: 'post',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' },
                 body: "code=" + this.state.currentPerson.code
               })
-                .then(async r => {
+                .then(async () => {
                   await this.getData();
                   this.setState({ dialog: false })
                 })
@@ -195,7 +194,7 @@ class CountingListClass extends React.Component {
   }
   constructor(props) {
     super(props);
-    const { index, style } = props;
+    // const { index, style } = props;
     this.state = {
       persons: null,
       dialog: false,
@@ -210,7 +209,7 @@ class CountingListClass extends React.Component {
     this._isMounted ? fetch(serverUrl + '/api/getUsers/')
       .then(response => { var a = response.json(); return a })
       .then(data => { that.setState({ persons: data, listClickDisabled: false })})
-      .catch(error => {
+      .catch(() => {
         this._isMounted ? that.setState(
           {
             persons: [
@@ -244,13 +243,13 @@ class CountingListClass extends React.Component {
       <div>
         {this.state.persons ? (<List className={classes.root}>
           {persons.map((person, i) =>
-            <ListItem divider button key={i} onClick={e => !this.state.listClickDisabled ? this.setState({ dialog: true, currentPerson: persons[i] }) : null}>
+            <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialog: true, currentPerson: persons[i] }) : null}>
               <ListItemText id={person.id} primary={person.naam} secondary={person.code} />
             </ListItem>
 
           )}
         </List>) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
-        {this.state.dialog ? (<Dialog fullScreen={fullScreenDialog} open={this.state.dialog} onClose={e => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
+        {this.state.dialog ? (<Dialog fullScreen={fullScreenDialog} open={this.state.dialog} onClose={() => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">{this.state.currentPerson.naam}</DialogTitle>
           <DialogContent>
             <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
@@ -264,10 +263,10 @@ class CountingListClass extends React.Component {
             <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={e => this.setState({ dialog: false })} color="primary">
+            <Button onClick={() => this.setState({ dialog: false })} color="primary">
               Annuleren
               </Button>
-            <Button onClick={e => {
+            <Button onClick={() => {
               fetch(serverUrl + '/api/removeUser/', {
                 method: 'post',
                 headers: {
