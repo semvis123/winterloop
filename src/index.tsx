@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme: Theme) =>
       boxSizing: 'content-box'
     },
     fab: {
-      position: 'absolute',
+      position: 'fixed',
       bottom: 16,
       right: 26,
     },
