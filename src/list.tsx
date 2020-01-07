@@ -1,6 +1,6 @@
 import React = require('react');
 import { createStyles, makeStyles, Theme, withStyles, withTheme, useTheme } from '@material-ui/core/styles';
-import { fullScreenDialog, useStyles } from './index';
+// import { fullScreenDialog, useStyles } from './index';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -68,7 +68,7 @@ const style = makeStyles((theme: Theme) =>
 Dit is de lijst voor alle personen
 */
 
-class PersonList extends React.Component {
+class PersonListClass extends React.Component {
   _isMounted = false;
   state: {
     persons: {
@@ -159,7 +159,7 @@ class PersonList extends React.Component {
 /*
   Dit is de lijst voor de stempels
 */
-class CountingList extends React.Component {
+class CountingListClass extends React.Component {
   _isMounted = false;
 
   constructor(props) {
@@ -241,5 +241,5 @@ class CountingList extends React.Component {
 
   }
 }
-export const PersonList = withStyles(style)(PersonList);
-export const CountingList = withStyles(style)(CountingList);
+export const PersonList = withStyles(style)(PersonListClass);
+export const CountingList = withStyles(style)(CountingListClass);
