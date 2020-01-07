@@ -1,9 +1,8 @@
 import React = require('react');
-import { createStyles, makeStyles, Theme, withStyles, withTheme, useTheme } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import Divider from '@material-ui/core/Divider';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -11,10 +10,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { ThemeProvider } from '@material-ui/core/styles';
 import { useMediaQuery } from '@material-ui/core';
-import BedumerTheme from './theme';
-import { Props } from 'react';
 
 const serverUrl = 'http://localhost:4322'; // Change this to your server url
 
@@ -23,7 +19,7 @@ Dit is de lijst voor alle personen
 */
 export const PersonList = withStyles({
 
-})(class extends React.Component {
+})(class PersonList extends React.Component {
   // Define interfaces
   // To keep TypeScript happy
   state: {
@@ -128,7 +124,7 @@ export const PersonList = withStyles({
                   body: "code=" + this.state.currentPerson.code
                 })
                   .then(async () => {
-                    await this.getData();
+                    this.getData();
                     this.setState({ dialog: false })
                   })
               }} color="secondary">
@@ -147,7 +143,7 @@ export const PersonList = withStyles({
 */
 export const CountingList = withStyles({
 
-})(class extends React.Component {
+})(class CountingList extends React.Component {
   // Define interfaces
   // To keep TypeScript happy
   state: {
@@ -218,6 +214,7 @@ export const CountingList = withStyles({
   render() {
     const { classes } = this.props;
     const { persons } = this.state;
+
     return (
       <div>
         {this.state.persons ? (
@@ -230,7 +227,7 @@ export const CountingList = withStyles({
           </List>
         ) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
         {this.state.dialog ? (
-          <Dialog fullScreen={useMediaQuery('@media (max-width:959.95px)')} open={this.state.dialog} onClose={() => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
+          <Dialog open={this.state.dialog} onClose={() => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">{this.state.currentPerson.naam}</DialogTitle>
             <DialogContent>
               <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
