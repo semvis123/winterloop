@@ -17,7 +17,8 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import { useMediaQuery } from '@material-ui/core';
 import BedumerTheme from './theme';
 
-const serverUrl = 'http://localhost:4322';
+const serverUrl = 'http://localhost:4322'; // Change this to your server url
+
 /*
   Dit is de lijst voor alle personen
 */
