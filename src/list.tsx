@@ -237,7 +237,7 @@ export const CountingList = withStyles({
     const that = this;
     this._isMounted ? fetch(serverUrl + '/api/getUsers/')
       .then(response => { var a = response.json(); return a })
-      .then(data => { that.setState({ persons: data, listClickDisabled: false })})
+      .then(data => { this._isMounted ? that.setState({ persons: data, listClickDisabled: false }): null})
       .catch(() => {
         this._isMounted ? that.setState(
           {
