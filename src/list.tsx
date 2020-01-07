@@ -20,60 +20,10 @@ import { Props } from 'react';
 const serverUrl = 'http://localhost:4322'; // Change this to your server url
 
 /*
-  Dit is de lijst voor alle personen
-*/
-const style = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      flexGrow: 1,
-      color: (localStorage.getItem('dark') == 'true') ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
-    },
-    menuButton: {
-      marginRight: theme.spacing(2),
-    },
-    title: {
-      flexGrow: 1,
-    },
-    list: {
-      width: 250,
-    },
-    drawerTitle: {
-      marginLeft: 16,
-      marginTop: 10
-    },
-    drawerSubTitle: {
-      marginLeft: 16,
-      marginBottom: 11
-    },
-    logo: {
-      margin: 16,
-      width: 218,
-      boxSizing: 'content-box'
-    },
-    fab: {
-      position: 'absolute',
-      bottom: 16,
-      right: 26,
-    },
-    settingsList: {
-      width: '100%',
-      maxWidth: 360,
-      backgroundColor: theme.palette.background.paper,
-    },
-    text: {
-      color: (localStorage.getItem('dark') == 'true') ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
-    }
-  }),
-);
-
-/*
 Dit is de lijst voor alle personen
 */
-
 export const PersonList = withStyles({
-  text: {
-    color: '#fff'
-  }
+
 })(class extends React.Component {
   // Define interfaces
   // To keep TypeScript happy
@@ -197,9 +147,7 @@ export const PersonList = withStyles({
   Dit is de lijst voor de stempels
 */
 export const CountingList = withStyles({
-  root: {
-    backgroundColor: '#107C10'
-  }
+
 })(class extends React.Component {
   // Define interfaces
   // To keep TypeScript happy
