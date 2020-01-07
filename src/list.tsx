@@ -16,6 +16,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { useMediaQuery } from '@material-ui/core';
 import BedumerTheme from './theme';
+import { Props } from 'react';
 
 
 /*
@@ -69,8 +70,13 @@ const style = makeStyles((theme: Theme) =>
 Dit is de lijst voor alle personen
 */
 
-class PersonListClass extends React.Component {
-  _isMounted = false;
+export const PersonList = withStyles({
+  text: {
+    color: '#fff'
+  }
+})(class extends React.Component {
+  // Define interfaces
+  // To keep TypeScript happy
   state: {
     persons: {
       [index: number]: any;
@@ -80,6 +86,14 @@ class PersonListClass extends React.Component {
     currentPerson: any;
     listClickDisabled: boolean;
   }
+
+  props: {
+    classes: any; // It works
+  }
+
+  // Global vars
+  _isMounted = false;
+
 
   constructor(props) {
     super(props);
@@ -124,6 +138,7 @@ class PersonListClass extends React.Component {
     this._isMounted = true;
     this.getData();
   }
+
   componentWillUnmount() {
     this._isMounted = false;
   }
@@ -176,13 +191,18 @@ class PersonListClass extends React.Component {
       </div>);
 
   }
-}
+});
 
 /*
   Dit is de lijst voor de stempels
 */
-class CountingListClass extends React.Component {
-  _isMounted = false;
+export const CountingList = withStyles({
+  root: {
+    backgroundColor: '#107C10'
+  }
+})(class extends React.Component {
+  // Define interfaces
+  // To keep TypeScript happy
   state: {
     persons: {
       [index: number]: any;
@@ -192,17 +212,26 @@ class CountingListClass extends React.Component {
     currentPerson: any;
     listClickDisabled: boolean;
   }
+
+  props: {
+    classes: any; // It works
+  }
+
+  // Global vars
+  _isMounted = false;
+
   constructor(props) {
     super(props);
     const { index, style } = props;
     this.state = {
-      persons: null,
+      persons: [],
       dialog: false,
       currentPerson: null,
       listClickDisabled: false
     };
 
   }
+
   getData() {
     // Haal de data op van de database
     const that = this;
@@ -229,13 +258,16 @@ class CountingListClass extends React.Component {
           }) : null
       });
   }
+
   componentDidMount() {
     this._isMounted = true;
     this.getData();
   }
+
   componentWillUnmount() {
     this._isMounted = false;
   }
+
   render() {
     const { classes } = this.props;
     const { persons } = this.state;
@@ -287,9 +319,4 @@ class CountingListClass extends React.Component {
       </div>);
 
   }
-}
-
-
-
-export const PersonList = withStyles(style)(PersonListClass);
-export const CountingList = withStyles(style)(CountingListClass);
+});
