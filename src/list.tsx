@@ -95,46 +95,48 @@ export const PersonList = withStyles({
     const { persons } = this.state;
     return (
       <div>
-        {this.state.persons ? (<List className={classes.root}>
+        {this.state.persons ? (
+        <List className={classes.root}>
           {persons.map((person, i) =>
             <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialog: true, currentPerson: persons[i] }) : null}>
               <ListItemText id={person.id} primary={person.naam} secondary={person.code} />
             </ListItem>
-
           )}
-        </List>) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
-        {this.state.dialog ? (<Dialog fullScreen={useMediaQuery('@media (max-width:959.95px)')} open={this.state.dialog} onClose={() => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
-          <DialogTitle id="form-dialog-title">{this.state.currentPerson.naam}</DialogTitle>
-          <DialogContent>
-            <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
-            <DialogContentText>huisnummer: {this.state.currentPerson.huisnummer}</DialogContentText>
-            <DialogContentText>postcode: {this.state.currentPerson.postcode}</DialogContentText>
-            <DialogContentText>telefoonnummer: {this.state.currentPerson.telefoonnummer}</DialogContentText>
-            <DialogContentText>vast bedrag: €{this.state.currentPerson.vastBedrag}</DialogContentText>
-            <DialogContentText>ronde bedrag: €{this.state.currentPerson.rondeBedrag}</DialogContentText>
-            <DialogContentText>aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
-            <DialogContentText>aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
-            <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => this.setState({ dialog: false })} color="primary">
-              Annuleren
-              </Button>
-            <Button onClick={() => {
-              fetch(serverUrl + '/api/removeUser/', {
-                method: 'post',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' },
-                body: "code=" + this.state.currentPerson.code
-              })
-                .then(async () => {
-                  await this.getData();
-                  this.setState({ dialog: false })
+        </List>) : <CircularProgress color="secondary" />} {/* Moet een skelleton worden */}
+        {this.state.dialog ? (
+          <Dialog fullScreen={useMediaQuery('@media (max-width:959.95px)')} open={this.state.dialog} onClose={() => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
+            <DialogTitle id="form-dialog-title">{this.state.currentPerson.naam}</DialogTitle>
+            <DialogContent>
+              <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
+              <DialogContentText>huisnummer: {this.state.currentPerson.huisnummer}</DialogContentText>
+              <DialogContentText>postcode: {this.state.currentPerson.postcode}</DialogContentText>
+              <DialogContentText>telefoonnummer: {this.state.currentPerson.telefoonnummer}</DialogContentText>
+              <DialogContentText>vast bedrag: €{this.state.currentPerson.vastBedrag}</DialogContentText>
+              <DialogContentText>ronde bedrag: €{this.state.currentPerson.rondeBedrag}</DialogContentText>
+              <DialogContentText>aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
+              <DialogContentText>aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
+              <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => this.setState({ dialog: false })} color="primary">
+                Annuleren
+                </Button>
+              <Button onClick={() => {
+                fetch(serverUrl + '/api/removeUser/', {
+                  method: 'post',
+                  headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' },
+                  body: "code=" + this.state.currentPerson.code
                 })
-            }} color="secondary">
-              Verwijderen
-              </Button>
-          </DialogActions>
-        </Dialog>) : null}
+                  .then(async () => {
+                    await this.getData();
+                    this.setState({ dialog: false })
+                  })
+              }} color="secondary">
+                Verwijderen
+                </Button>
+            </DialogActions>
+          </Dialog>
+        ) : null}
       </div>);
 
   }
@@ -218,49 +220,52 @@ export const CountingList = withStyles({
     const { persons } = this.state;
     return (
       <div>
-        {this.state.persons ? (<List className={classes.root}>
-          {persons.map((person, i) =>
-            <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialog: true, currentPerson: persons[i] }) : null}>
-              <ListItemText id={person.id} primary={person.naam} secondary={person.code} />
-            </ListItem>
-
-          )}
-        </List>) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
-        {this.state.dialog ? (<Dialog fullScreen={useMediaQuery('@media (max-width:959.95px)')} open={this.state.dialog} onClose={() => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
-          <DialogTitle id="form-dialog-title">{this.state.currentPerson.naam}</DialogTitle>
-          <DialogContent>
-            <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
-            <DialogContentText>huisnummer: {this.state.currentPerson.huisnummer}</DialogContentText>
-            <DialogContentText>postcode: {this.state.currentPerson.postcode}</DialogContentText>
-            <DialogContentText>telefoonnummer: {this.state.currentPerson.telefoonnummer}</DialogContentText>
-            <DialogContentText>vast bedrag: €{this.state.currentPerson.vastBedrag}</DialogContentText>
-            <DialogContentText>ronde bedrag: €{this.state.currentPerson.rondeBedrag}</DialogContentText>
-            <DialogContentText>aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
-            <DialogContentText>aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
-            <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => this.setState({ dialog: false })} color="primary">
-              Annuleren
-              </Button>
-            <Button onClick={() => {
-              fetch(serverUrl + '/api/removeUser/', {
-                method: 'post',
-                headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                  'Access-Control-Allow-Origin': '*'
-                },
-                body: "code=" + this.state.currentPerson.code
-              })
-                .then(async () => {
-                  await this.getData();
-                  this.setState({ dialog: false });
+        {this.state.persons ? (
+          <List className={classes.root}>
+            {persons.map((person, i) =>
+              <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialog: true, currentPerson: persons[i] }) : null}>
+                <ListItemText id={person.id} primary={person.naam} secondary={person.code} />
+              </ListItem>
+            )}
+          </List>
+        ) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
+        {this.state.dialog ? (
+          <Dialog fullScreen={useMediaQuery('@media (max-width:959.95px)')} open={this.state.dialog} onClose={() => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
+            <DialogTitle id="form-dialog-title">{this.state.currentPerson.naam}</DialogTitle>
+            <DialogContent>
+              <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
+              <DialogContentText>huisnummer: {this.state.currentPerson.huisnummer}</DialogContentText>
+              <DialogContentText>postcode: {this.state.currentPerson.postcode}</DialogContentText>
+              <DialogContentText>telefoonnummer: {this.state.currentPerson.telefoonnummer}</DialogContentText>
+              <DialogContentText>vast bedrag: €{this.state.currentPerson.vastBedrag}</DialogContentText>
+              <DialogContentText>ronde bedrag: €{this.state.currentPerson.rondeBedrag}</DialogContentText>
+              <DialogContentText>aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
+              <DialogContentText>aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
+              <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => this.setState({ dialog: false })} color="primary">
+                Annuleren
+                </Button>
+              <Button onClick={() => {
+                fetch(serverUrl + '/api/removeUser/', {
+                  method: 'post',
+                  headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                    'Access-Control-Allow-Origin': '*'
+                  },
+                  body: "code=" + this.state.currentPerson.code
                 })
-            }} color="secondary">
-              Verwijderen
-              </Button>
-          </DialogActions>
-        </Dialog>) : null}
+                  .then(async () => {
+                    await this.getData();
+                    this.setState({ dialog: false });
+                  })
+              }} color="secondary">
+                Verwijderen
+                </Button>
+            </DialogActions>
+          </Dialog>
+        ) : null}
       </div>);
 
   }
