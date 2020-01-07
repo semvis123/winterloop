@@ -98,7 +98,7 @@ interface pageObject {
   map: any;
 }
 
-export function AppReact(props) {
+function AppReact(props) {
   const theme = useTheme();
   const classes = useStyles(BedumerTheme);
 
