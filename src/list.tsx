@@ -1,6 +1,6 @@
 import React = require('react');
 import { createStyles, makeStyles, Theme, withStyles, withTheme, useTheme } from '@material-ui/core/styles';
-// import { fullScreenDialog, useStyles } from './index';
+import { fullScreenDialog, useStyles } from './index';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -16,6 +16,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { useMediaQuery } from '@material-ui/core';
 import BedumerTheme from './theme';
+
 
 /*
   Dit is de lijst voor alle personen
@@ -97,11 +98,22 @@ class PersonListClass extends React.Component {
     const that = this;
     fetch('http://localhost:4322' + '/api/getUsers/') // change this to yourip:4322
       .then(response => { var a = response.json(); return a })
-      .then(data => { this._isMounted? that.setState({ persons: data, listClickDisabled: false }) : null })
+      .then(data => { this._isMounted ? that.setState({ persons: data, listClickDisabled: false }) : null })
       .catch(error => {
-        this._isMounted? that.setState({
+        this._isMounted ? that.setState({
           persons: [
-            { "id": 1, "naam": "Kan niet verbinden met database.", "huisnummer": "0", "postcode": "0000AA", "telefoonnummer": "0000000000", "vastBedrag": 0, "rondeBedrag": 0, "rondes": 0, "code": '00000', "create_time": "2019-12-27T15:16:48.000Z" }
+            {
+              "id": 1,
+              "naam": "Kan niet verbinden met database.",
+              "huisnummer": "0",
+              "postcode": "0000AA",
+              "telefoonnummer": "0000000000",
+              "vastBedrag": 0,
+              "rondeBedrag": 0,
+              "rondes": 0,
+              "code": '00000',
+              "create_time": "2019-12-27T15:16:48.000Z"
+            }
           ],
           listClickDisabled: true
         }) : null;
@@ -123,7 +135,7 @@ class PersonListClass extends React.Component {
       <div>
         {this.state.persons ? (<List className={classes.root}>
           {persons.map((person, i) =>
-            <ListItem divider button key={i} onClick={e => !this.state.listClickDisabled? this.setState({ dialog: true, currentPerson: persons[i] }) : null}>
+            <ListItem divider button key={i} onClick={e => !this.state.listClickDisabled ? this.setState({ dialog: true, currentPerson: persons[i] }) : null}>
               <ListItemText id={person.id} primary={person.naam} secondary={person.code} />
             </ListItem>
 
@@ -132,21 +144,31 @@ class PersonListClass extends React.Component {
         {this.state.dialog ? (<Dialog fullScreen={fullScreenDialog} open={this.state.dialog} onClose={e => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">{this.state.currentPerson.naam}</DialogTitle>
           <DialogContent>
-              <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
-              <DialogContentText>huisnummer: {this.state.currentPerson.huisnummer}</DialogContentText>
-              <DialogContentText>postcode: {this.state.currentPerson.postcode}</DialogContentText>
-              <DialogContentText>telefoonnummer: {this.state.currentPerson.telefoonnummer}</DialogContentText>
-              <DialogContentText>vast bedrag: €{this.state.currentPerson.vastBedrag}</DialogContentText>
-              <DialogContentText>ronde bedrag: €{this.state.currentPerson.rondeBedrag}</DialogContentText>
-              <DialogContentText>aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
-              <DialogContentText>aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
-              <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
+            <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
+            <DialogContentText>huisnummer: {this.state.currentPerson.huisnummer}</DialogContentText>
+            <DialogContentText>postcode: {this.state.currentPerson.postcode}</DialogContentText>
+            <DialogContentText>telefoonnummer: {this.state.currentPerson.telefoonnummer}</DialogContentText>
+            <DialogContentText>vast bedrag: €{this.state.currentPerson.vastBedrag}</DialogContentText>
+            <DialogContentText>ronde bedrag: €{this.state.currentPerson.rondeBedrag}</DialogContentText>
+            <DialogContentText>aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
+            <DialogContentText>aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
+            <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button onClick={e => this.setState({ dialog: false })} color="primary">
               Annuleren
               </Button>
-            <Button onClick={e => { fetch('http://localhost:4322/api/removeUser/', { method: 'post', headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' }, body: "code=" + this.state.currentPerson.code }).then(async r => { await this.getData(); this.setState({ dialog: false }) }) }} color="secondary">
+            <Button onClick={e => {
+              fetch('http://localhost:4322/api/removeUser/', {
+                method: 'post',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' },
+                body: "code=" + this.state.currentPerson.code
+              })
+                .then(async r => {
+                  await this.getData();
+                  this.setState({ dialog: false })
+                })
+            }} color="secondary">
               Verwijderen
               </Button>
           </DialogActions>
@@ -161,7 +183,15 @@ class PersonListClass extends React.Component {
 */
 class CountingListClass extends React.Component {
   _isMounted = false;
-
+  state: {
+    persons: {
+      [index: number]: any;
+      map: any;
+    };
+    dialog: boolean;
+    currentPerson: any;
+    listClickDisabled: boolean;
+  }
   constructor(props) {
     super(props);
     const { index, style } = props;
@@ -178,9 +208,25 @@ class CountingListClass extends React.Component {
     const that = this;
     fetch('http://localhost:4322' + '/api/getUsers/') // change this to yourip:4322
       .then(response => { var a = response.json(); return a })
-      .then(data => { this._isMounted? that.setState({ persons: data, listClickDisabled: false }) : null});
+      .then(data => { this._isMounted ? that.setState({ persons: data, listClickDisabled: false }) : null })
       .catch(error => {
-        this._isMounted? that.setState({ persons: [{ "id": 1, "naam": "Kan niet verbinden met database.", "huisnummer": "0", "postcode": "0000AA", "telefoonnummer": "0000000000", "vastBedrag": 0, "rondeBedrag": 0, "rondes": 0, "code": '00000', "create_time": "2019-12-27T15:16:48.000Z" }]], listClickDisabled: true }) : null
+        this._isMounted ? that.setState(
+          {
+            persons: [
+              {
+                "id": 1,
+                "naam": "Kan niet verbinden met database.",
+                "huisnummer": "0",
+                "postcode": "0000AA",
+                "telefoonnummer": "0000000000",
+                "vastBedrag": 0,
+                "rondeBedrag": 0,
+                "rondes": 0,
+                "code": '00000',
+                "create_time": "2019-12-27T15:16:48.000Z"
+              }
+            ], listClickDisabled: true
+          }) : null
       });
   }
   componentDidMount() {
@@ -191,13 +237,13 @@ class CountingListClass extends React.Component {
     this._isMounted = false;
   }
   render() {
-    const classes = this.props;
+    const { classes } = this.props;
     const { persons } = this.state;
     return (
       <div>
         {this.state.persons ? (<List className={classes.root}>
           {persons.map((person, i) =>
-            <ListItem divider button key={i} onClick={e => !this.state.listClickDisabled? this.setState({ dialog: true, currentPerson: persons[i] }) : null}>
+            <ListItem divider button key={i} onClick={e => !this.state.listClickDisabled ? this.setState({ dialog: true, currentPerson: persons[i] }) : null}>
               <ListItemText id={person.id} primary={person.naam} secondary={person.code} />
             </ListItem>
 
@@ -206,15 +252,15 @@ class CountingListClass extends React.Component {
         {this.state.dialog ? (<Dialog fullScreen={fullScreenDialog} open={this.state.dialog} onClose={e => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
           <DialogTitle id="form-dialog-title">{this.state.currentPerson.naam}</DialogTitle>
           <DialogContent>
-              <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
-              <DialogContentText>huisnummer: {this.state.currentPerson.huisnummer}</DialogContentText>
-              <DialogContentText>postcode: {this.state.currentPerson.postcode}</DialogContentText>
-              <DialogContentText>telefoonnummer: {this.state.currentPerson.telefoonnummer}</DialogContentText>
-              <DialogContentText>vast bedrag: €{this.state.currentPerson.vastBedrag}</DialogContentText>
-              <DialogContentText>ronde bedrag: €{this.state.currentPerson.rondeBedrag}</DialogContentText>
-              <DialogContentText>aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
-              <DialogContentText>aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
-              <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
+            <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
+            <DialogContentText>huisnummer: {this.state.currentPerson.huisnummer}</DialogContentText>
+            <DialogContentText>postcode: {this.state.currentPerson.postcode}</DialogContentText>
+            <DialogContentText>telefoonnummer: {this.state.currentPerson.telefoonnummer}</DialogContentText>
+            <DialogContentText>vast bedrag: €{this.state.currentPerson.vastBedrag}</DialogContentText>
+            <DialogContentText>ronde bedrag: €{this.state.currentPerson.rondeBedrag}</DialogContentText>
+            <DialogContentText>aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
+            <DialogContentText>aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
+            <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button onClick={e => this.setState({ dialog: false })} color="primary">
@@ -227,12 +273,13 @@ class CountingListClass extends React.Component {
                   'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
                   'Access-Control-Allow-Origin': '*'
                 },
-                body: "code=" + this.state.currentPerson.code })
-              .then(async () => {
-                await this.getData();
-                this.setState({ dialog: false });
+                body: "code=" + this.state.currentPerson.code
+              })
+                .then(async () => {
+                  await this.getData();
+                  this.setState({ dialog: false });
                 })
-              }} color="secondary">
+            }} color="secondary">
               Verwijderen
               </Button>
           </DialogActions>
@@ -241,5 +288,8 @@ class CountingListClass extends React.Component {
 
   }
 }
+
+
+
 export const PersonList = withStyles(style)(PersonListClass);
 export const CountingList = withStyles(style)(CountingListClass);
