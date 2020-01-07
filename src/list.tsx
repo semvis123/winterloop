@@ -17,7 +17,7 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import { useMediaQuery } from '@material-ui/core';
 import BedumerTheme from './theme';
 
-
+const serverUrl = 'http://localhost:4322';
 /*
   Dit is de lijst voor alle personen
 */
@@ -96,7 +96,7 @@ class PersonListClass extends React.Component {
   getData() {
     // Haal de data op van de database
     const that = this;
-    fetch('http://localhost:4322' + '/api/getUsers/') // change this to yourip:4322
+    fetch(serverUrl + '/api/getUsers/') // change this to yourip:4322
       .then(response => { var a = response.json(); return a })
       .then(data => { this._isMounted ? that.setState({ persons: data, listClickDisabled: false }) : null })
       .catch(error => {
@@ -159,7 +159,7 @@ class PersonListClass extends React.Component {
               Annuleren
               </Button>
             <Button onClick={e => {
-              fetch('http://localhost:4322/api/removeUser/', {
+              fetch(serverUrl + '/api/removeUser/', {
                 method: 'post',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' },
                 body: "code=" + this.state.currentPerson.code
@@ -206,9 +206,9 @@ class CountingListClass extends React.Component {
   getData() {
     // Haal de data op van de database
     const that = this;
-    fetch('http://localhost:4322' + '/api/getUsers/') // change this to yourip:4322
+    this._isMounted ? fetch(serverUrl + '/api/getUsers/')
       .then(response => { var a = response.json(); return a })
-      .then(data => { this._isMounted ? that.setState({ persons: data, listClickDisabled: false }) : null })
+      .then(data => { that.setState({ persons: data, listClickDisabled: false })})
       .catch(error => {
         this._isMounted ? that.setState(
           {
@@ -227,7 +227,7 @@ class CountingListClass extends React.Component {
               }
             ], listClickDisabled: true
           }) : null
-      });
+      }) : null;
   }
   componentDidMount() {
     this._isMounted = true;
@@ -267,7 +267,7 @@ class CountingListClass extends React.Component {
               Annuleren
               </Button>
             <Button onClick={e => {
-              fetch('http://localhost:4322/api/removeUser/', {
+              fetch(serverUrl + '/api/removeUser/', {
                 method: 'post',
                 headers: {
                   'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
