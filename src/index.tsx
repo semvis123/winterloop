@@ -39,7 +39,8 @@ import Switch from '@material-ui/core/Switch';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
-import { PersonList, CountingList } from './list';
+import CountingList from './CountingList';
+import PersonList from './PersonList';
 import InputBase from '@material-ui/core/InputBase';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -47,6 +48,9 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       flexGrow: 1,
       color: (localStorage.getItem('dark') == 'true') ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
+    },
+    appbarTitle: {
+      flexGrow: 1,
     },
     menuButton: {
       marginRight: theme.spacing(2),
@@ -152,6 +156,7 @@ function AppReact() {
     dark: (localStorage.getItem('dark') == 'true') ? true : false
   })
   const [historyLoaded, setHistory] = React.useState(false);
+  const [searchValue, setSearchValue] = React.useState('');
 
   // Setup localstorage
   if (localStorage.getItem('dark') == undefined) { localStorage.setItem('dark', 'false') }
@@ -181,13 +186,14 @@ function AppReact() {
         }}
         onChange={(event: any) => {
           console.log(event.target.value);
+          setSearchValue(event.target.value);
         }}
         inputProps={{ 'aria-label': 'search' }}
       />
     </div>,
       content:
       <Typography component="div" className={classes.root}>
-        <CountingList />
+        <CountingList search={searchValue} />
       </Typography>
     },
     {
@@ -205,7 +211,12 @@ function AppReact() {
       icon: <SettingsIcon />,
       content: <Typography component="div" className={classes.root}>
         <List subheader={<ListSubheader>Thema</ListSubheader>}>
-          <ListItem>
+          <ListItem button onClick={() => {
+            var darkState = !themeState.dark;
+            setTheme({ dark: darkState });
+            localStorage.setItem('dark', (darkState) ? 'true' : 'false');
+            location.reload();
+          }}>
             <ListItemIcon>
               <Brightness4Icon />
             </ListItemIcon>
@@ -250,7 +261,7 @@ function AppReact() {
 
   // Other vars
   const fullScreenDialog = useMediaQuery(theme.breakpoints.down('sm'));
-
+  
   // Page object
   function Page(props: {
     value: number;
@@ -259,22 +270,22 @@ function AppReact() {
   }) {
     return (
       <Typography
-        component="div"
-        hidden={props.value !== props.index}
+      component="div"
+      hidden={props.value !== props.index}
       >
         {props.children}
       </Typography>
     )
   }
-
+  
   // Functions
   const toggleDrawer = (open: boolean) => (
     event: React.KeyboardEvent | React.MouseEvent
-  ) => {
-    if (event.type === "keydown" && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
-      return;
-    }
-
+    ) => {
+      if (event.type === "keydown" && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
+        return;
+      }
+      
     setDrawer(open);
   }
 
@@ -286,7 +297,7 @@ function AppReact() {
           <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" className={classes.root}>
+          <Typography variant="h6" className={classes.appbarTitle}>
             {pages[pageValue].name}
           </Typography>
           {pages[pageValue].appBar}

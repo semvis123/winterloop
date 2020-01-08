@@ -33,7 +33,6 @@ app.get('/', (req, res) => res.status(200).send('<h1>Server started successfully
 
 async function genCode() {
     let code = Math.floor(100000 + Math.random() * 900000);
-    let result = null;
     const r = await query("SELECT COUNT(1) FROM winterloop.user WHERE code = ?;", [code]);
     console.log(r[0]["COUNT(1)"]);
     // console.log(r[""])
@@ -50,7 +49,7 @@ app.get('/code/', async (req, res) => {
     res.status(200).send("success " + code);
 })
 app.get('/api/getUsers/', (req, res) => {
-    con.query('SELECT * FROM winterloop.user', (e, r, f) => { // Error, Result, Field
+    con.query('SELECT * FROM winterloop.user ORDER BY naam', (e, r) => { // Error, Result
         console.log(r);
         var arr = new Array;
         r.forEach(ele => {
@@ -74,7 +73,7 @@ app.post('/api/addUser/', async (req, res) => {
     var code = await genCode();
     var par = req.body; // get parameters from url
     con.query("INSERT INTO winterloop.user (`naam`,`huisnummer`,`postcode`,`telefoonnummer`,`vastBedrag`,`rondeBedrag`,`code`)" +
-      " VALUES (?,?,?,?,?,?,?)", [par.naam, par.huisnummer, par.postcode, par.telefoonnummer, par.vastBedrag, par.rondeBedrag, code], (e, r, f) => {
+      " VALUES (?,?,?,?,?,?,?)", [par.naam, par.huisnummer, par.postcode, par.telefoonnummer, par.vastBedrag, par.rondeBedrag, code], (e) => {
         if (e) {
             res.status(500).send(e.sqlMessage);
         } else {
