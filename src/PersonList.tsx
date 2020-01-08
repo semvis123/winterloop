@@ -11,7 +11,10 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-const serverUrl = 'http://localhost:4322'; // Change this to your server url
+import * as Config from '../configuration.json';
+
+// Grab server url from configuration file
+const serverUrl = Config.server.url + ':' + Config.server.port;
 
 // Define interfaces
 interface PersonListInterface {

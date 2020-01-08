@@ -42,6 +42,9 @@ import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import CountingList from './CountingList';
 import PersonList from './PersonList';
 import InputBase from '@material-ui/core/InputBase';
+import * as Config from '../configuration.json';
+
+const serverUrl = Config.server.url + ':' + Config.server.port;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -261,7 +264,7 @@ function AppReact() {
 
   // Other vars
   const fullScreenDialog = useMediaQuery(theme.breakpoints.down('sm'));
-  
+
   // Page object
   function Page(props: {
     value: number;
@@ -277,7 +280,7 @@ function AppReact() {
       </Typography>
     )
   }
-  
+
   // Functions
   const toggleDrawer = (open: boolean) => (
     event: React.KeyboardEvent | React.MouseEvent
@@ -285,7 +288,7 @@ function AppReact() {
       if (event.type === "keydown" && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
         return;
       }
-      
+
     setDrawer(open);
   }
 
@@ -351,7 +354,7 @@ function AppReact() {
       <Dialog fullScreen={fullScreenDialog} open={dialogState[0]} onClose={() => setDialog({ 0: false })} aria-labelledby="form-dialog-title">
         <form id="addUserForm" action="#" method="POST" onSubmit={e => {
           e.preventDefault(); // remove the redirect
-          fetch('http://localhost:4322/api/addUser/', {
+          fetch(serverUrl + '/api/addUser/', {
             method: 'post',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' },
             body: "naam=" + $("#addUserForm [name='naam']").val() +
@@ -361,7 +364,7 @@ function AppReact() {
               "&vastBedrag=" + $("#addUserForm [name='vastBedrag']").val() +
               "&rondeBedrag=" + $("#addUserForm [name='rondeBedrag']").val()
           }).then(() => setDialog({ 0: false }));
-        } //send the request and close dialog
+        } // send the request and close dialog
         }>
           <DialogTitle id="form-dialog-title">Nieuwe wandelaar toevoegen</DialogTitle>
           <DialogContent>

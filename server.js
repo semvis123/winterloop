@@ -4,20 +4,17 @@ const util = require('util');
 const cors = require('cors');
 const app = express().use('*', cors());
 const bodyParser = require('body-parser');
-const port = 4322;
+const Config = require('./configuration.json');
+const port = Config.server.port;
 
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({
     extended: true
 })); // support encoded bodies
 
-console.log('SERVER: starting');
+var con = mysql.createConnection(Config.mysql);
 
-var con = mysql.createConnection({
-    host: "localhost", //change this
-    user: "nodejs", //change this
-    password: "SQL123" //change this
-});
+console.log('SERVER: starting');
 
 // node native promisify
 const query = util.promisify(con.query).bind(con);

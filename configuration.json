@@ -1,0 +1,11 @@
+{
+  "server": {
+    "port": 4322,
+    "url": "http://localhost"
+  },
+  "mysql": {
+    "host": "localhost",
+    "user": "nodejs",
+    "password": "SQL123"
+  }
+}

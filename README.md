@@ -9,7 +9,8 @@ Local sponsored walk management
 **Setup your MYSQL server and import winterloop/sql-server/winterloop.sql**
 
 **Enter your user settings of the MYSQL in the winterloop/server.js**
-**Change the ip of server in the winterloop/list.tsx on line: 20**
+
+**Change the configuration file to your needs, winterloop/configuration.json**
 
 
 **Install Nodejs**
