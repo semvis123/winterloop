@@ -40,10 +40,7 @@
     "cssnano": "^4.1.10",
     "eslint": "^6.8.0",
     "eslint-plugin-react": "^7.17.0",
-<<<<<<< HEAD
-=======
     "eslint-plugin-react-hooks": "^2.3.0",
->>>>>>> 4bf17b4f87b4eac4a6571d53f6be9bab84084c23
     "node-sass": "^4.13.0",
     "postcss-modules": "^1.4.1",
     "postcss-uncss": "^0.17.0",

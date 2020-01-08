@@ -10,13 +10,10 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { useMediaQuery } from '@material-ui/core';
 
 const serverUrl = 'http://localhost:4322'; // Change this to your server url
 
-/*
-Dit is de lijst voor alle personen
-*/
+// Dit is de lijst voor alle personen
 export const PersonList = withStyles({
 
 })(class PersonList extends React.Component {
@@ -100,7 +97,7 @@ export const PersonList = withStyles({
           )}
         </List>) : <CircularProgress color="secondary" />} {/* Moet een skelleton worden */}
         {this.state.dialog ? (
-          <Dialog fullScreen={useMediaQuery('@media (max-width:959.95px)')} open={this.state.dialog} onClose={() => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
+          <Dialog open={this.state.dialog} onClose={() => this.setState({ dialog: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">{this.state.currentPerson.naam}</DialogTitle>
             <DialogContent>
               <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
@@ -138,9 +135,7 @@ export const PersonList = withStyles({
   }
 });
 
-/*
-  Dit is de lijst voor de stempels
-*/
+// Dit is de lijst voor de stempels
 export const CountingList = withStyles({
 
 })(class CountingList extends React.Component {

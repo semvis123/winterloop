@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React = require('react');
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
@@ -5,7 +6,7 @@ import './style.scss';
 import CreateIcon from '@material-ui/icons/Create';
 import PollIcon from '@material-ui/icons/Poll';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
-import { createStyles, makeStyles, Theme, ThemeProvider, useTheme } from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme, ThemeProvider, useTheme, fade } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import BedumerTheme from './theme';
 import AppBar from '@material-ui/core/AppBar';
@@ -39,6 +40,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import { PersonList, CountingList } from './list';
+import InputBase from '@material-ui/core/InputBase';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -80,7 +82,44 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     text: {
       color: (localStorage.getItem('dark') == 'true') ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
-    }
+    },
+    search: {
+      position: 'relative',
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: fade(theme.palette.common.white, 0.15),
+      '&:hover': {
+        backgroundColor: fade(theme.palette.common.white, 0.25),
+      },
+      marginLeft: 0,
+      width: '100%',
+      [theme.breakpoints.up('sm')]: {
+        marginLeft: theme.spacing(1),
+        width: 'auto',
+      },
+    },
+    searchIcon: {
+      width: theme.spacing(7),
+      height: '100%',
+      position: 'absolute',
+      pointerEvents: 'none',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    inputRoot: {
+      color: 'inherit',
+    },
+    inputInput: {
+      padding: theme.spacing(1, 1, 1, 7),
+      transition: theme.transitions.create('width'),
+      width: '100%',
+      [theme.breakpoints.up('sm')]: {
+        width: 120,
+        '&:focus': {
+          width: 200,
+        },
+      },
+    },
   }),
 );
 
@@ -89,6 +128,7 @@ interface pageObject {
     name: string;
     icon: React.ReactNode;
     content: React.ReactNode;
+    appBar?: React.ReactNode;
     fab?: {
       name: string;
       icon: React.ReactNode;
@@ -98,7 +138,7 @@ interface pageObject {
   map: any;
 }
 
-function AppReact(props) {
+function AppReact() {
   const theme = useTheme();
   const classes = useStyles(BedumerTheme);
 
@@ -129,6 +169,22 @@ function AppReact(props) {
     {
       name: 'Stempels',
       icon: <PollIcon />,
+      appBar: <div className={classes.search}>
+      <div className={classes.searchIcon}>
+        <SearchIcon />
+      </div>
+      <InputBase
+        placeholder="Search…"
+        classes={{
+          root: classes.inputRoot,
+          input: classes.inputInput,
+        }}
+        onChange={(event: any) => {
+          console.log(event.target.value);
+        }}
+        inputProps={{ 'aria-label': 'search' }}
+      />
+    </div>,
       content:
       <Typography component="div" className={classes.root}>
         <CountingList />
@@ -157,7 +213,7 @@ function AppReact(props) {
             <ListItemSecondaryAction>
               <Switch
                 edge="end"
-                onChange={e => {
+                onChange={() => {
                   var darkState = !themeState.dark;
                   setTheme({ dark: darkState });
                   localStorage.setItem('dark', (darkState) ? 'true' : 'false');
@@ -230,9 +286,10 @@ function AppReact(props) {
           <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6">
+          <Typography variant="h6" className={classes.root}>
             {pages[pageValue].name}
           </Typography>
+          {pages[pageValue].appBar}
         </Toolbar>
       </AppBar>
       {/* Menu */}
@@ -275,19 +332,12 @@ function AppReact(props) {
       <Zoom
         in={pageValue === 0}
       >
-        <Fab color="secondary" className={classes.fab} onClick={e => setDialog({ 0: true })}>
+        <Fab color="secondary" className={classes.fab} onClick={() => setDialog({ 0: true })}>
           <AddIcon />
         </Fab>
       </Zoom>
-      <Zoom
-        in={pageValue === 1}
-      >
-        <Fab color="secondary" className={classes.fab}>
-          <SearchIcon />
-        </Fab>
-      </Zoom>
       {/* Dialogs */}
-      <Dialog fullScreen={fullScreenDialog} open={dialogState[0]} onClose={e => setDialog({ 0: false })} aria-labelledby="form-dialog-title">
+      <Dialog fullScreen={fullScreenDialog} open={dialogState[0]} onClose={() => setDialog({ 0: false })} aria-labelledby="form-dialog-title">
         <form id="addUserForm" action="#" method="POST" onSubmit={e => {
           e.preventDefault(); // remove the redirect
           fetch('http://localhost:4322/api/addUser/', {
@@ -299,7 +349,7 @@ function AppReact(props) {
               "&telefoonnummer=" + $("#addUserForm [name='telefoonnummer']").val() +
               "&vastBedrag=" + $("#addUserForm [name='vastBedrag']").val() +
               "&rondeBedrag=" + $("#addUserForm [name='rondeBedrag']").val()
-          }).then(r => setDialog({ 0: false }));
+          }).then(() => setDialog({ 0: false }));
         } //send the request and close dialog
         }>
           <DialogTitle id="form-dialog-title">Nieuwe wandelaar toevoegen</DialogTitle>
@@ -358,10 +408,10 @@ function AppReact(props) {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={e => setDialog({ 0: false })} color="primary">
+            <Button onClick={() => setDialog({ 0: false })} color="primary">
               Annuleren
             </Button>
-            <Button onClick={e => setDialog({ 0: false })} color="primary" type="submit">
+            <Button onClick={() => setDialog({ 0: false })} color="primary" type="submit">
               Opslaan
             </Button>
           </DialogActions>
