@@ -11,6 +11,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import * as Config from '../configuration.json';
+import { ListItemSecondaryAction, IconButton, Typography } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
 
 // Grab server url from configuration file
 const serverUrl = Config.server.url + ':' + Config.server.port;
@@ -39,6 +41,7 @@ interface CountingListStateInterface {
     map: any;
     filter: any;
     length: number;
+    indexOf: any;
   }
 
   dialogOpen: boolean;
@@ -116,16 +119,39 @@ export default withStyles({
   render() {
     const { classes } = this.props;
     const that = this;
-    const persons = this.state.persons.filter(function (person) {
-      return ((person.naam.toLocaleLowerCase().indexOf(that.props.search.toLocaleLowerCase()) !== -1)||(String(person.code).indexOf(that.props.search) !== -1)); });
+    const persons = this.state.persons.filter(function (person:PersonObjectInterface) {
+      return ((person.naam.toLocaleLowerCase().indexOf(that.props.search.toLocaleLowerCase()) !== -1)||(String(person.code).indexOf(that.props.search) !== -1));
+    });
 
     return (
       <div>
         {persons ? (
           <List className={classes.root}>
-            {persons.map((person, i) =>
+            {persons.map((person:PersonObjectInterface, i:number) =>
               <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
-                <ListItemText id={person.id} primary={person.naam} secondary={person.code} />
+                <ListItemText primary={person.naam} secondary={person.code} />
+                <ListItemText primary={
+                  <Typography align="right" className={classes.root}>{person.rondes}</Typography>
+                }/>
+                <ListItemSecondaryAction>
+                  <IconButton edge="end" aria-label="add" onClick={() => {
+                    const that = this;
+                    persons[i].rondes++;
+                    fetch(serverUrl + '/api/addRound/', {
+                      method: 'post',
+                      headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' },
+                      body: "code=" + persons[i].code }).then((e) => {
+                        if (e.status !== 200){
+                           console.log(e);
+                         }
+                        else{
+                          that.setState({ persons: that.state.persons });
+                        }
+                      });
+                  }}>
+                      <AddIcon />
+                    </IconButton>
+                </ListItemSecondaryAction>
               </ListItem>
             )}
           </List>
@@ -149,7 +175,8 @@ export default withStyles({
                 Annuleren
                 </Button>
               <Button onClick={() => {
-                fetch(serverUrl + '/api/removeUser/', {
+                this.state.persons[this.state.persons.indexOf(this.state.currentPerson)].rondes--;
+                fetch(serverUrl + '/api/removeRound/', {
                   method: 'post',
                   headers: {
                     'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
@@ -157,12 +184,17 @@ export default withStyles({
                   },
                   body: "code=" + this.state.currentPerson.code
                 })
-                  .then(async () => {
-                    await this.getData();
-                    this.setState({ dialogOpen: false });
-                  })
+                  .then((e)=>{
+                    if (e.status !== 200){
+                       console.log(e);
+                     }
+                    else{
+                      this.setState({ persons: this.state.persons });
+                      this.setState({ dialogOpen: false});
+                    }}
+                  )
               }} color="secondary">
-                Verwijderen
+                Verwijder ronde
                 </Button>
             </DialogActions>
           </Dialog>

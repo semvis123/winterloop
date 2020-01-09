@@ -78,6 +78,26 @@ app.post('/api/addUser/', async (req, res) => {
         }
     });
 });
+app.post('/api/addRound/', async (req, res) => {
+    var par = req.body; // get parameters from url
+    con.query("UPDATE winterloop.user SET rondes = rondes + 1 WHERE code = ?", [par.code], (e) => {
+        if (e) {
+            res.status(500).send(e.sqlMessage);
+        } else {
+            res.status(200).send("success");
+        }
+    });
+});
+app.post('/api/removeRound/', async (req, res) => {
+    var par = req.body; // get parameters from url
+    con.query("UPDATE winterloop.user SET rondes = rondes - 1 WHERE code = ?", [par.code], (e) => {
+        if (e) {
+            res.status(500).send(e.sqlMessage);
+        } else {
+            res.status(200).send("success");
+        }
+    });
+});
 app.post('/api/removeUser/', async (req, res) => {
     console.log(req);
     var par = req.body;

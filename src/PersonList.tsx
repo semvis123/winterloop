@@ -114,9 +114,9 @@ export default withStyles({
       <div>
         {this.state.persons ? (
         <List className={classes.root}>
-          {persons.map((person, i) =>
+          {persons.map((person: PersonObjectInterface, i: number) =>
             <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
-              <ListItemText id={person.id} primary={person.naam} secondary={person.code} />
+              <ListItemText id={person.id.toString()} primary={person.naam} secondary={person.code} />
             </ListItem>
           )}
         </List>) : <CircularProgress color="secondary" />} {/* Moet een skelleton worden */}
