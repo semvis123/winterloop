@@ -109,5 +109,16 @@ app.post('/api/removeUser/', async (req, res) => {
         }
     });
 });
+app.post('/api/emptyDB/', async (req, res) => {
+    console.log(req);
+    var par = req.body;
+    con.query("DELETE FROM winterloop.user", e => {
+        if (e) {
+            res.status(500).send(e.sqlMessage);
+        } else {
+            res.status(200).send("success");
+        }
+    });
+});
 
 app.listen(port, () => console.log(`Server started, listening on port ${port}!`))

@@ -42,6 +42,7 @@ import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import StorageIcon from '@material-ui/icons/Storage';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import * as XLSX from 'xlsx';
 import CountingList from './CountingList';
 import PersonList from './PersonList';
 import InputBase from '@material-ui/core/InputBase';
@@ -132,6 +133,20 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+
+interface PersonObjectInterface {
+  id: number;
+  naam: string;
+  huisnummer: string;
+  postcode: string;
+  telefoonnummer: string;
+  vastBedrag: number;
+  rondeBedrag: number;
+  rondes: number;
+  create_time: string;
+  code: string;
+}
+
 interface pageObject {
   [index: number]: {
     name: string;
@@ -172,34 +187,34 @@ function AppReact() {
       name: 'Registatie',
       icon: <CreateIcon />,
       content:
-      <Typography component="div" className={classes.root}>
-        <PersonList />
-      </Typography>
+        <Typography component="div" className={classes.root}>
+          <PersonList />
+        </Typography>
     },
     {
       name: 'Stempels',
       icon: <PollIcon />,
       appBar: <div className={classes.search}>
-      <div className={classes.searchIcon}>
-        <SearchIcon />
-      </div>
-      <InputBase
-        placeholder="Search…"
-        classes={{
-          root: classes.inputRoot,
-          input: classes.inputInput,
-        }}
-        onChange={(event: any) => {
-          console.log(event.target.value);
-          setSearchValue(event.target.value);
-        }}
-        inputProps={{ 'aria-label': 'search' }}
-      />
-    </div>,
+        <div className={classes.searchIcon}>
+          <SearchIcon />
+        </div>
+        <InputBase
+          placeholder="Search…"
+          classes={{
+            root: classes.inputRoot,
+            input: classes.inputInput,
+          }}
+          onChange={(event: any) => {
+            console.log(event.target.value);
+            setSearchValue(event.target.value);
+          }}
+          inputProps={{ 'aria-label': 'search' }}
+        />
+      </div>,
       content:
-      <Typography component="div" className={classes.root}>
-        <CountingList search={searchValue} />
-      </Typography>
+        <Typography component="div" className={classes.root}>
+          <CountingList search={searchValue} />
+        </Typography>
     },
     {
       name: 'Transacties',
@@ -242,38 +257,104 @@ function AppReact() {
           </ListItem>
         </List>
 
-        {/* <List subheader={<ListSubheader>Database</ListSubheader>}>
+        <List subheader={<ListSubheader>Database</ListSubheader>}>
           <ListItem button onClick={() => {
-
+            fetch(serverUrl + '/api/getUsers/') // change this to yourip:4322
+              .then(response => { var a = response.json(); return a })
+              .then(data => {
+                let persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "code"]];
+                data.forEach((person: PersonObjectInterface) => {
+                  let userArray = [
+                    person.id.toString(),
+                    person.naam,
+                    person.huisnummer,
+                    person.postcode,
+                    person.telefoonnummer,
+                    person.vastBedrag.toString(),
+                    person.rondeBedrag.toString(),
+                    person.rondes.toString(),
+                    person.create_time,
+                    person.code];
+                  persons.push(userArray);
+                })
+                const wb = XLSX.utils.book_new();
+                const wsAll = XLSX.utils.aoa_to_sheet(persons);
+                XLSX.utils.book_append_sheet(wb, wsAll, "Personen");
+                XLSX.writeFile(wb, "export.xlsx");
+              });
           }}>
             <ListItemIcon>
-              <StorageIcon  />
+              <StorageIcon />
             </ListItemIcon>
             <ListItemText id="switch-list-label-dark" primary="Database Exporteren naar Excel" />
             <ListItemSecondaryAction>
               <IconButton edge="end" aria-label="download" onClick={() => {
-
+                fetch(serverUrl + '/api/getUsers/')
+                  .then(response => { var a = response.json(); return a })
+                  .then(data => {
+                    let persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "code"]];
+                    data.forEach((person: PersonObjectInterface) => {
+                      let userArray = [
+                        person.id.toString(),
+                        person.naam,
+                        person.huisnummer,
+                        person.postcode,
+                        person.telefoonnummer,
+                        person.vastBedrag.toString(),
+                        person.rondeBedrag.toString(),
+                        person.rondes.toString(),
+                        person.create_time,
+                        person.code];
+                      persons.push(userArray);
+                    })
+                    const wb = XLSX.utils.book_new();
+                    const wsAll = XLSX.utils.aoa_to_sheet(persons);
+                    XLSX.utils.book_append_sheet(wb, wsAll, "Personen");
+                    XLSX.writeFile(wb, "export.xlsx");
+                  });
               }}>
-                  <GetAppIcon />
-                </IconButton>
+                <GetAppIcon />
+              </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
           <ListItem button onClick={() => {
-
+            fetch(serverUrl + '/api/emptyDB/', {
+              method: 'post',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' }
+              }).then((e) => {
+                if (e.status !== 200){
+                   console.log(e);
+                 }
+                else{
+                  alert("database successvol geleegd.");
+                  //success
+                }
+              });
           }}>
             <ListItemIcon>
-              <StorageIcon  />
+              <StorageIcon />
             </ListItemIcon>
             <ListItemText id="switch-list-label-dark" primary="Database legen" />
             <ListItemSecondaryAction>
               <IconButton edge="end" aria-label="delete" onClick={() => {
-
+                fetch(serverUrl + '/api/emptyDB/', {
+                  method: 'post',
+                  headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' }
+                  }).then((e) => {
+                    if (e.status !== 200){
+                       console.log(e);
+                     }
+                    else{
+                      alert("database successvol geleegd.");
+                      //success
+                    }
+                  });
               }}>
-                  <DeleteForeverIcon />
-                </IconButton>
+                <DeleteForeverIcon />
+              </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
-        </List> */}
+        </List>
       </Typography>
     },
   ]
@@ -308,8 +389,8 @@ function AppReact() {
   }) {
     return (
       <Typography
-      component="div"
-      hidden={props.value !== props.index}
+        component="div"
+        hidden={props.value !== props.index}
       >
         {props.children}
       </Typography>
@@ -319,10 +400,10 @@ function AppReact() {
   // Functions
   const toggleDrawer = (open: boolean) => (
     event: React.KeyboardEvent | React.MouseEvent
-    ) => {
-      if (event.type === "keydown" && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
-        return;
-      }
+  ) => {
+    if (event.type === "keydown" && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
+      return;
+    }
 
     setDrawer(open);
   }
