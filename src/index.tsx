@@ -39,11 +39,13 @@ import Switch from '@material-ui/core/Switch';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
+import StorageIcon from '@material-ui/icons/Storage';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import CountingList from './CountingList';
 import PersonList from './PersonList';
 import InputBase from '@material-ui/core/InputBase';
 import * as Config from '../configuration.json';
-
 const serverUrl = Config.server.url + ':' + Config.server.port;
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -239,6 +241,39 @@ function AppReact() {
             </ListItemSecondaryAction>
           </ListItem>
         </List>
+
+        {/* <List subheader={<ListSubheader>Database</ListSubheader>}>
+          <ListItem button onClick={() => {
+
+          }}>
+            <ListItemIcon>
+              <StorageIcon  />
+            </ListItemIcon>
+            <ListItemText id="switch-list-label-dark" primary="Database Exporteren naar Excel" />
+            <ListItemSecondaryAction>
+              <IconButton edge="end" aria-label="download" onClick={() => {
+
+              }}>
+                  <GetAppIcon />
+                </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
+          <ListItem button onClick={() => {
+
+          }}>
+            <ListItemIcon>
+              <StorageIcon  />
+            </ListItemIcon>
+            <ListItemText id="switch-list-label-dark" primary="Database legen" />
+            <ListItemSecondaryAction>
+              <IconButton edge="end" aria-label="delete" onClick={() => {
+
+              }}>
+                  <DeleteForeverIcon />
+                </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
+        </List> */}
       </Typography>
     },
   ]
