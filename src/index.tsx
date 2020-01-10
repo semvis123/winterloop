@@ -47,6 +47,7 @@ import CountingList from './CountingList';
 import PersonList from './PersonList';
 import InputBase from '@material-ui/core/InputBase';
 import * as Config from '../configuration.json';
+import Status from './Status';
 const serverUrl = Config.server.url + ':' + Config.server.port;
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -224,7 +225,7 @@ function AppReact() {
     {
       name: 'Status',
       icon: <MonetizationOnIcon />,
-      content: <Typography component="div" className={classes.root}></Typography>
+      content: <Status/>
     },
     {
       name: 'Instellingen',

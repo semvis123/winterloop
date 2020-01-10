@@ -8,8 +8,6 @@ Local sponsored walk management
 
 **Setup your MYSQL server and import winterloop/sql-server/winterloop.sql**
 
-**Enter your user settings of the MYSQL in the winterloop/server.js**
-
 **Change the configuration file to your needs, winterloop/configuration.json**
 
 
