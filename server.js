@@ -98,6 +98,16 @@ app.post('/api/removeRound/', async (req, res) => {
         }
     });
 });
+app.post('/api/setRound/', async (req, res) => {
+    var par = req.body; // get parameters from url
+    con.query("UPDATE winterloop.user SET rondes = ? WHERE code = ?", [par.rondes, par.code], (e) => {
+        if (e) {
+            res.status(500).send(e.sqlMessage);
+        } else {
+            res.status(200).send("success");
+        }
+    });
+});
 app.post('/api/removeUser/', async (req, res) => {
     console.log(req);
     var par = req.body;
