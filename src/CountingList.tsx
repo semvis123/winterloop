@@ -74,7 +74,6 @@ export default withStyles({
       currentPerson: null,
       listClickDisabled: false
     };
-
   }
 
   getData() {
@@ -108,10 +107,12 @@ export default withStyles({
     this._isMounted = true;
     (this.state.persons.length == 0 || this.state.persons[0].code == '000000')? this.getData() : null;
   }
+
   UNSAFE_componentWillReceiveProps(newProps){
     this.props = newProps;
     (this.state.persons.length == 0 || this.state.persons[0].code == '000000')? this.getData() : null;
   }
+
   componentWillUnmount() {
     this._isMounted = false;
   }
@@ -175,7 +176,9 @@ export default withStyles({
                 Annuleren
                 </Button>
               <Button onClick={() => {
-                this.state.persons[this.state.persons.indexOf(this.state.currentPerson)].rondes--;
+                persons[this.state.persons.indexOf(this.state.currentPerson)].rondes--;
+                this.setState({persons: persons});
+
                 fetch(serverUrl + '/api/removeRound/', {
                   method: 'post',
                   headers: {
@@ -186,9 +189,8 @@ export default withStyles({
                 })
                   .then((e)=>{
                     if (e.status !== 200){
-                       console.log(e);
-                     }
-                    else{
+                      console.log(e);
+                    } else{
                       this.setState({ persons: this.state.persons });
                       this.setState({ dialogOpen: false});
                     }}
