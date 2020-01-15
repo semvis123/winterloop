@@ -59,7 +59,7 @@ interface CountingListStateInterface {
     [index: number]: number;
   }
   currentNameSetRound: string;
-  setRoundButtonDisable: boolean;
+  setRoundButtonDisabled: boolean;
 }
 
 // Dit is de lijst voor de stempels
