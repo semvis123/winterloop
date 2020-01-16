@@ -125,11 +125,15 @@ export default withStyles({
             <DialogTitle id="form-dialog-title">{this.state.currentPerson.naam}</DialogTitle>
             <DialogContent>
               <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
-              <DialogContentText>huisnummer: {this.state.currentPerson.huisnummer}</DialogContentText>
               <DialogContentText>postcode: {this.state.currentPerson.postcode}</DialogContentText>
+              <DialogContentText>huisnummer: {this.state.currentPerson.huisnummer}</DialogContentText>
               <DialogContentText>telefoonnummer: {this.state.currentPerson.telefoonnummer}</DialogContentText>
-              <DialogContentText>vast bedrag: €{this.state.currentPerson.vastBedrag}</DialogContentText>
-              <DialogContentText>ronde bedrag: €{this.state.currentPerson.rondeBedrag}</DialogContentText>
+              <DialogContentText>vast bedrag: €{
+                this.state.currentPerson.vastBedrag.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}
+                </DialogContentText>
+              <DialogContentText>ronde bedrag: €{
+                this.state.currentPerson.rondeBedrag.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}
+              </DialogContentText>
               <DialogContentText>aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
               <DialogContentText>aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
               <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>

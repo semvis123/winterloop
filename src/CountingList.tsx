@@ -15,6 +15,8 @@ import * as Config from '../configuration.json';
 import { ListItemSecondaryAction, IconButton, Typography, Fab, Zoom, TextField } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import PersonIcon from '@material-ui/icons/Person';
+import EditIcon from '@material-ui/icons/Edit';
+import theme from './theme';
 
 // Grab server url from configuration file
 const serverUrl = Config.server.url + ':' + Config.server.port;
@@ -60,15 +62,22 @@ interface CountingListStateInterface {
   }
   currentNameSetRound: string;
   setRoundButtonDisabled: boolean;
+  personEdit: string;
 }
 
 // Dit is de lijst voor de stempels
 export default withStyles({
-fab: {
-  position: 'fixed',
-  bottom: 16,
-  right: 26,
-},
+  fab: {
+    position: 'fixed',
+    bottom: 16,
+    right: 26,
+  },
+  editButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
 })(class CountingList extends React.Component<CountingListInterface> {
   // Define interfaces
   // To keep TypeScript happy
@@ -94,7 +103,8 @@ fab: {
       codeError: false,
       codes: [],
       currentNameSetRound: "",
-      setRoundButtonDisabled: true
+      setRoundButtonDisabled: true,
+      personEdit: ""
     };
   }
 
@@ -103,7 +113,7 @@ fab: {
     const that = this;
     this._isMounted ? fetch(serverUrl + '/api/getUsers/')
       .then(response => { var a = response.json(); return a })
-      .then(data => { this._isMounted ? that.setState({ persons: data, listClickDisabled: false }): null})
+      .then(data => { this._isMounted ? that.setState({ persons: data, listClickDisabled: false }) : null })
       .catch(() => {
         this._isMounted ? that.setState(
           {
@@ -127,12 +137,12 @@ fab: {
 
   componentDidMount() {
     this._isMounted = true;
-    (this.state.persons.length == 0 || this.state.persons[0].code == '000000')? this.getData() : null;
+    (this.state.persons.length == 0 || this.state.persons[0].code == '000000') ? this.getData() : null;
   }
 
-  UNSAFE_componentWillReceiveProps(newProps){
+  UNSAFE_componentWillReceiveProps(newProps) {
     this.props = newProps;
-    (this.state.persons.length == 0 || this.state.persons[0].code == '000000')? this.getData() : null;
+    (this.state.persons.length == 0 || this.state.persons[0].code == '000000') ? this.getData() : null;
   }
 
   componentWillUnmount() {
@@ -142,8 +152,8 @@ fab: {
   render() {
     const { classes } = this.props;
     const that = this;
-    const persons = this.state.persons.filter(function (person:PersonObjectInterface) {
-      return ((person.naam.toLocaleLowerCase().indexOf(that.props.search.toLocaleLowerCase()) !== -1)||(String(person.code).indexOf(that.props.search) !== -1));
+    const persons = this.state.persons.filter(function(person: PersonObjectInterface) {
+      return ((person.naam.toLocaleLowerCase().indexOf(that.props.search.toLocaleLowerCase()) !== -1) || (String(person.code).indexOf(that.props.search) !== -1));
     });
 
     return (
@@ -154,22 +164,22 @@ fab: {
           <Fab color="secondary" className={classes.fab} onClick={() => {
             this.setState({ changeRoundOpen: true });
             let codes = new Array();
-            this.state.persons.forEach((person: PersonObjectInterface)=> {
+            this.state.persons.forEach((person: PersonObjectInterface) => {
               codes.push(person.code);
             });
-            this.setState({codes:codes});
+            this.setState({ codes: codes });
           }}>
             <PersonIcon />
           </Fab>
         </Zoom>
         {persons ? (
           <List className={classes.root}>
-            {persons.map((person:PersonObjectInterface, i:number) =>
+            {persons.map((person: PersonObjectInterface, i: number) =>
               <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
                 <ListItemText primary={person.naam} secondary={person.code} />
                 <ListItemText primary={
                   <Typography align="right" className={classes.root}>{person.rondes}</Typography>
-                }/>
+                } />
                 <ListItemSecondaryAction>
                   <IconButton edge="end" aria-label="add" onClick={() => {
                     const that = this;
@@ -177,17 +187,18 @@ fab: {
                     fetch(serverUrl + '/api/addRound/', {
                       method: 'post',
                       headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' },
-                      body: "code=" + persons[i].code }).then((e) => {
-                        if (e.status !== 200){
-                           console.log(e);
-                         }
-                        else{
-                          that.setState({ persons: that.state.persons });
-                        }
-                      });
+                      body: "code=" + persons[i].code
+                    }).then((e) => {
+                      if (e.status !== 200) {
+                        console.log(e);
+                      }
+                      else {
+                        that.setState({ persons: that.state.persons });
+                      }
+                    });
                   }}>
-                      <AddIcon />
-                    </IconButton>
+                    <AddIcon />
+                  </IconButton>
                 </ListItemSecondaryAction>
               </ListItem>
             )}
@@ -195,12 +206,34 @@ fab: {
         ) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
         {this.state.dialogOpen ? (
           <Dialog open={this.state.dialogOpen} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">{this.state.currentPerson.naam}</DialogTitle>
+            <DialogTitle id="form-dialog-title">
+              <IconButton aria-label="edit" className={classes.editButton} onClick={() => {
+                this.setState({
+                  personEdit: this.state.currentPerson.code,
+                  changeRoundOpen: true,
+                  codeError: false,
+                  currentNameSetRound: this.state.currentPerson.naam,
+                  setRoundButtonDisabled: false
+                });
+              }}>
+                <EditIcon />
+              </IconButton>
+              {this.state.currentPerson.naam}
+            </DialogTitle>
             <DialogContent>
-              <DialogContentText>Vast bedrag: €{this.state.currentPerson.vastBedrag}</DialogContentText>
-              <DialogContentText>Ronde bedrag: €{this.state.currentPerson.rondeBedrag}</DialogContentText>
+              <DialogContentText>Vast bedrag: €{
+                this.state.currentPerson.vastBedrag.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}
+              </DialogContentText>
+              <DialogContentText>Ronde bedrag: €{
+                this.state.currentPerson.rondeBedrag.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}
+                </DialogContentText>
               <DialogContentText>Aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
-              <DialogContentText>Opbrengst: €{this.state.currentPerson.vastBedrag + (this.state.currentPerson.rondeBedrag * this.state.currentPerson.rondes)}</DialogContentText>
+              <DialogContentText>Opbrengst: €{
+                (this.state.currentPerson.vastBedrag + (this.state.currentPerson.rondeBedrag * this.state.currentPerson.rondes))
+                .toFixed(2)
+                .replace('.', ',')
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+              }</DialogContentText>
               <DialogContentText>Code: {this.state.currentPerson.code}</DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -209,7 +242,7 @@ fab: {
                 </Button>
               <Button onClick={() => {
                 persons[this.state.persons.indexOf(this.state.currentPerson)].rondes--;
-                this.setState({persons: persons});
+                this.setState({ persons: persons });
 
                 fetch(serverUrl + '/api/removeRound/', {
                   method: 'post',
@@ -219,13 +252,14 @@ fab: {
                   },
                   body: "code=" + this.state.currentPerson.code
                 })
-                  .then((e)=>{
-                    if (e.status !== 200){
+                  .then((e) => {
+                    if (e.status !== 200) {
                       console.log(e);
-                    } else{
+                    } else {
                       this.setState({ persons: this.state.persons });
-                      this.setState({ dialogOpen: false});
-                    }}
+                      this.setState({ dialogOpen: false });
+                    }
+                  }
                   )
               }} color="secondary">
                 Verwijder ronde
@@ -235,85 +269,90 @@ fab: {
         ) : null}
 
         {this.state.changeRoundOpen ? (
-          <Dialog open={this.state.changeRoundOpen} onClose={() => this.setState({ changeRoundOpen: false })} aria-labelledby="form-dialog-title">
+          <Dialog open={this.state.changeRoundOpen} onClose={() => this.setState({ changeRoundOpen: false, currentNameSetRound: '', personEdit: '' })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Rondes invullen</DialogTitle>
             <form autoComplete="off" id="setRoundForm" action="#" method="POST" onSubmit={e => {
               e.preventDefault(); // remove the redirect
               fetch(serverUrl + '/api/setRound/', {
-              method: 'post',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                'Access-Control-Allow-Origin': '*'
-              },
-              body: "code=" + $("#setRoundForm [name='code']").val() +
-              "&rondes=" +$("#setRoundForm [name='rondes']").val()
-            }).then((e)=>{
-              if (e.status !== 200){
-                console.log(e);
-              } else{
+                method: 'post',
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                  'Access-Control-Allow-Origin': '*'
+                },
+                body: "code=" + $("#setRoundForm [name='code']").val() +
+                  "&rondes=" + $("#setRoundForm [name='rondes']").val()
+              }).then((e) => {
+                if (e.status !== 200) {
+                  console.log(e);
+                } else {
 
-                // update the list values
-                let persons = this.state.persons;
-                var index = persons.findIndex((person:PersonObjectInterface) =>{
-                  return person.code == $("#setRoundForm [name='code']").val();
-                });
-                persons[index].rondes = $("#setRoundForm [name='rondes']").val();
+                  // update the list values
+                  let persons = this.state.persons;
+                  var index = persons.findIndex((person: PersonObjectInterface) => {
+                    return person.code == $("#setRoundForm [name='code']").val();
+                  });
+                  persons[index].rondes = $("#setRoundForm [name='rondes']").val();
 
-                // remove error and name
-                this.setState({persons: persons, codeError: false, currentNameSetRound: name});
+                  // remove error and name
+                  this.setState({ persons: persons, codeError: false, currentNameSetRound: name });
 
-                // set focus back and empty fields
-                $("#setRoundForm [name='code']").focus();
-                $("#setRoundForm [name='code']").val("");
-                $("#setRoundForm [name='rondes']").val("");
-              }}
-            )
-          }}>
-            <DialogContent>
-              <DialogContentText>Hier kunt u de rondes invullen.</DialogContentText>
-              <TextField
-                autoFocus
-                error={this.state.codeError}
-                margin="dense"
-                label="Code"
-                type="text"
-                name="code"
-                helperText={this.state.codeError?"Loper niet gevonden.":this.state.currentNameSetRound}
-                onChange={(e)=>{
-                  if(this.state.persons.some((person:PersonObjectInterface)=>person.code==e.target.value)){
-                    // grab name of user to display it
-                    let name: string = this.state.persons.find(
-                      (person:PersonObjectInterface) => {
-                        return person.code == e.target.value
-                      }).naam;
-                    // remove error and enable button
-                    this.setState({codeError: false, currentNameSetRound: name, setRoundButtonDisabled: false});
+                  // set focus back and empty fields
+                  $("#setRoundForm [name='code']").focus();
+                  $("#setRoundForm [name='code']").val("");
+                  $("#setRoundForm [name='rondes']").val("");
+                  this.state.personEdit != '' ? this.setState({ changeRoundOpen: false, currentNameSetRound: '', personEdit: '' }) : null;
+                }
+              }
+              )
+            }}>
+              <DialogContent>
+                <DialogContentText>Hier kunt u de rondes invullen.</DialogContentText>
+                <TextField
+                  autoFocus={this.state.personEdit ? true : false}
+                  error={this.state.codeError}
+                  margin="dense"
+                  label="Code"
+                  type="text"
+                  name="code"
+                  defaultValue={this.state.personEdit}
+                  helperText={this.state.codeError ? "Loper niet gevonden." : this.state.currentNameSetRound}
+                  onChange={(e) => {
+                    if (this.state.persons.some((person: PersonObjectInterface) => person.code == e.target.value)) {
+                      // grab name of user to display it
+                      let name: string = this.state.persons.find(
+                        (person: PersonObjectInterface) => {
+                          return person.code == e.target.value
+                        }).naam;
+                      // remove error and enable button
+                      this.setState({ codeError: false, currentNameSetRound: name, setRoundButtonDisabled: false });
 
-                  }else{
-                    // set the field to error state
-                    this.setState({codeError: true, setRoundButtonDisabled: true});
-                  }
-                }}
-                fullWidth
-              />
-              <TextField
-                margin="dense"
-                label="Rondes"
-                type="number"
-                name="rondes"
-                fullWidth
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => this.setState({ changeRoundOpen: false })} color="primary">
-                Annuleren
+                    } else {
+                      // set the field to error state
+                      this.setState({ codeError: true, setRoundButtonDisabled: true });
+                    }
+                  }}
+                  fullWidth
+                />
+                <TextField
+                  autoFocus={this.state.personEdit == '' ? false : true}
+                  margin="dense"
+                  label="Rondes"
+                  type="number"
+                  name="rondes"
+                  fullWidth
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => this.setState({ changeRoundOpen: false, currentNameSetRound: '', personEdit: '' })} color="primary">
+                  Annuleren
                 </Button>
-              <Button type="submit" color="secondary" disabled={this.state.setRoundButtonDisabled}>
-                Verander rondes
+                <Button type="submit" color="secondary" disabled={this.state.setRoundButtonDisabled}>
+                  Verander rondes
                 </Button>
-            </DialogActions>
-          </form>
+              </DialogActions>
+            </form>
           </Dialog>
+
         ) : null}
 
       </div>);
