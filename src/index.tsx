@@ -498,16 +498,16 @@ function AppReact() {
             />
             <TextField
               margin="dense"
-              label="Huisnummer"
-              type="number"
-              name="huisnummer"
+              label="Postcode"
+              type="text"
+              name="postcode"
               fullWidth
             />
             <TextField
               margin="dense"
-              label="Postcode"
-              type="text"
-              name="postcode"
+              label="Huisnummer"
+              type="number"
+              name="huisnummer"
               fullWidth
             />
             <TextField
