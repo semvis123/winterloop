@@ -110,7 +110,7 @@ export default withStyles({
           fixedValue: fixedValue,
           avgFixedValue: avgFixedValue,
           persons: persons
-        }): null;
+        }) : null;
       })
       .catch(() => {
         this._isMounted ? that.setState(
@@ -146,12 +146,53 @@ export default withStyles({
       <Card className={classes.card} raised={true}>
         <CardContent>
           <Typography className={classes.title} gutterBottom variant="h5"><b>Opbrengsten</b></Typography>
-          <Typography className={classes.text} gutterBottom><b>Totale opbrengst</b> <span className={classes.value}>€ {this.state.totalValue}</span></Typography>
-          <Typography className={classes.text} gutterBottom><b>Totale opbrengst van rondes</b> <span className={classes.value}>€ {this.state.roundValue}</span></Typography>
-          <Typography className={classes.text} gutterBottom><b>Totale opbrengst van vaste bedragen</b> <span className={classes.value}>€ {this.state.fixedValue}</span></Typography>
-          <Typography className={classes.text} gutterBottom><b>Gemiddelde opbrengst</b> <span className={classes.value}>€ {this.state.avgTotalValue}</span></Typography>
-          <Typography className={classes.text} gutterBottom><b>Gemiddelde opbrengst van rondes</b> <span className={classes.value}>€ {this.state.avgRoundValue}</span></Typography>
-          <Typography className={classes.text} gutterBottom><b>Gemiddelde opbrengst van vaste bedragen</b> <span className={classes.value}>€ {this.state.avgFixedValue}</span></Typography>
+          <Typography className={classes.text} gutterBottom><b>Totale opbrengst</b>
+            <span className={classes.value}>€ {
+              this.state.totalValue.toFixed(2) // always two decimal digits
+                .replace('.', ',') // replace decimal point character with ,
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')// use . as a separator
+              }</span>
+          </Typography>
+          <Typography className={classes.text} gutterBottom><b>Totale opbrengst van rondes</b>
+          <span className={classes.value}>€ {
+            this.state.roundValue.toFixed(2)
+            .replace('.', ',')
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+          }
+            </span>
+          </Typography>
+          <Typography className={classes.text} gutterBottom><b>Totale opbrengst van vaste bedragen</b>
+          <span className={classes.value}>€ {
+            this.state.fixedValue.toFixed(2)
+            .replace('.', ',')
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+          }
+          </span>
+          </Typography>
+          <Typography className={classes.text} gutterBottom><b>Gemiddelde opbrengst</b>
+          <span className={classes.value}>€ {
+            this.state.avgTotalValue.toFixed(2)
+            .replace('.', ',')
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+          }
+          </span>
+          </Typography>
+          <Typography className={classes.text} gutterBottom><b>Gemiddelde opbrengst van rondes</b>
+          <span className={classes.value}>€ {
+            this.state.avgRoundValue.toFixed(2)
+            .replace('.', ',')
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+          }
+          </span>
+          </Typography>
+          <Typography className={classes.text} gutterBottom><b>Gemiddelde opbrengst van vaste bedragen</b>
+          <span className={classes.value}>€ {
+            this.state.avgFixedValue.toFixed(2)
+            .replace('.', ',')
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+          }
+          </span>
+          </Typography>
         </CardContent>
       </Card>
     </div>);
