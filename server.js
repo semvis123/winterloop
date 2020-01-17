@@ -75,7 +75,7 @@ app.post('/api/addUser/', async (req, res) => {
         if (e) {
             res.status(500).send(e.sqlMessage);
         } else {
-            res.status(200).send(code);
+            res.status(200).send(String(code));
         }
     });
 });
