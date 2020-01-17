@@ -48,7 +48,7 @@ app.get('/code/', async (req, res) => {
 app.get('/api/getUsers/', (req, res) => {
     con.query('SELECT * FROM winterloop.user ORDER BY naam', (e, r) => { // Error, Result
         console.log(r);
-        var arr = new Array;
+        var arr = new Array();
         r.forEach(ele => {
             arr.push({
                 'id': ele.id,
@@ -60,7 +60,8 @@ app.get('/api/getUsers/', (req, res) => {
                 'rondeBedrag': ele.rondeBedrag,
                 'rondes': ele.rondes,
                 'code': ele.code,
-                'create_time': ele.create_time
+                'create_time': ele.create_time,
+                'betaald': ele.betaald
             });
         });
         res.status(200).send(JSON.stringify(arr));
@@ -74,7 +75,7 @@ app.post('/api/addUser/', async (req, res) => {
         if (e) {
             res.status(500).send(e.sqlMessage);
         } else {
-            res.status(200).send("success");
+            res.status(200).send(code);
         }
     });
 });
@@ -88,6 +89,17 @@ app.post('/api/addRound/', async (req, res) => {
         }
     });
 });
+app.post('/api/setPayed/', async (req, res) => {
+    var par = req.body; // get parameters from url
+    con.query("UPDATE winterloop.user SET betaald = ? WHERE code = ?", [par.payed, par.code], (e) => {
+        if (e) {
+            res.status(500).send(e.sqlMessage);
+        } else {
+            res.status(200).send("success");
+        }
+    });
+});
+
 app.post('/api/removeRound/', async (req, res) => {
     var par = req.body; // get parameters from url
     con.query("UPDATE winterloop.user SET rondes = rondes - 1 WHERE code = ?", [par.code], (e) => {

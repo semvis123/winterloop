@@ -45,6 +45,7 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import * as XLSX from 'xlsx';
 import CountingList from './CountingList';
 import PersonList from './PersonList';
+import PaymentList from './PaymentList';
 import InputBase from '@material-ui/core/InputBase';
 import * as Config from '../configuration.json';
 import Status from './Status';
@@ -220,7 +221,26 @@ function AppReact() {
     {
       name: 'Transacties',
       icon: <AccountBalanceWalletIcon />,
-      content: <Typography component="div" className={classes.root}></Typography>
+      appBar: <div className={classes.search}>
+        <div className={classes.searchIcon}>
+          <SearchIcon />
+        </div>
+        <InputBase
+          placeholder="Search…"
+          classes={{
+            root: classes.inputRoot,
+            input: classes.inputInput,
+          }}
+          onChange={(event: any) => {
+            console.log(event.target.value);
+            setSearchValue(event.target.value);
+          }}
+          inputProps={{ 'aria-label': 'search' }}
+        />
+      </div>,
+      content: <Typography component="div" className={classes.root}>
+      <PaymentList search={searchValue} />
+      </Typography>
     },
     {
       name: 'Status',

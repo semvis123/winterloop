@@ -32,6 +32,7 @@ interface PersonObjectInterface {
   rondes: number;
   create_time: string;
   code: string;
+  betaald: boolean;
 }
 
 interface PersonListStateInterface {
@@ -136,6 +137,7 @@ export default withStyles({
               </DialogContentText>
               <DialogContentText>aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
               <DialogContentText>aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
+              <DialogContentText>betaald: {this.state.currentPerson.betaald? 'ja': 'nee'}</DialogContentText>
               <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
             </DialogContent>
             <DialogActions>
