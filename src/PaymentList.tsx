@@ -215,8 +215,13 @@ export default withStyles({
         {this.state.changeRoundOpen ? (
           <Dialog open={this.state.changeRoundOpen} onClose={() => this.setState({ changeRoundOpen: false, currentNameSetRound: '', personEdit: '' })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Betalen</DialogTitle>
-            <form autoComplete="off" id="setRoundForm" action="#" method="POST" onSubmit={e => {
+            <form autoComplete="off" id="payForm" action="#" method="POST" onSubmit={e => {
               e.preventDefault(); // remove the redirect
+
+
+              $("#payForm [name='email']").val();
+
+
               fetch(serverUrl + '/api/setPayed/', {
                 method: 'post',
                 headers: {
