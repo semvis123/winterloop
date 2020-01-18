@@ -17,6 +17,7 @@ import AddIcon from '@material-ui/icons/Add';
 import PersonIcon from '@material-ui/icons/Person';
 import EditIcon from '@material-ui/icons/Edit';
 import theme from './theme';
+import { withSnackbar } from 'notistack';
 
 // Grab server url from configuration file
 const serverUrl = Config.server.url + ':' + Config.server.port;
@@ -37,7 +38,7 @@ interface PersonObjectInterface {
   rondes: number;
   create_time: string;
   code: string;
-  betaald: boolean;
+  betaald: number;
 }
 
 interface PaymentListStateInterface {
@@ -78,7 +79,7 @@ export default withStyles({
     top: theme.spacing(1),
     color: theme.palette.grey[500],
   },
-})(class PaymentList extends React.Component<PaymentListInterface> {
+})(withSnackbar(class PaymentList extends React.Component<PaymentListInterface> {
   // Define interfaces
   // To keep TypeScript happy
   state: PaymentListStateInterface;
@@ -129,7 +130,7 @@ export default withStyles({
                 "rondes": 0,
                 "code": '000000',
                 "create_time": "2019-12-27T15:16:48.000Z",
-                "betaald": 0
+                "betaald": -1
               }
             ], listClickDisabled: true
           }) : null
@@ -165,7 +166,7 @@ export default withStyles({
               <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
                 <ListItemText primary={person.naam} secondary={person.code} />
                 <ListItemText primary={
-                  <Typography align="center" className={classes.betaald}>{person.betaald? 'BETAALD': ''}</Typography>
+                  <Typography align="center" className={classes.betaald}>{(person.betaald!==-1)? 'BETAALD': ''}</Typography>
                 } />
                 <ListItemText primary={
                   <Typography align="right" className={classes.root}>€ {
@@ -197,7 +198,7 @@ export default withStyles({
                 .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
               }</DialogContentText>
               <DialogContentText>Code: {this.state.currentPerson.code}</DialogContentText>
-              <DialogContentText>Betaald: {this.state.currentPerson.betaald? 'ja': 'nee'}</DialogContentText>
+              <DialogContentText>Betaald: {(this.state.currentPerson.betaald!==-1)? 'ja': 'nee'}</DialogContentText>
             </DialogContent>
             <DialogActions>
               <Button onClick={() => this.setState({ dialogOpen: false })} color="primary">
@@ -205,7 +206,7 @@ export default withStyles({
                 </Button>
               <Button onClick={() => {
                 this.setState({ changeRoundOpen: true, currentNameSetRound: '', personEdit: '' })
-              }} color="secondary" disabled={Boolean(this.state.currentPerson.betaald)}>
+              }} color="secondary" disabled={this.state.currentPerson.betaald!==-1}>
                 Betalen
                 </Button>
             </DialogActions>
@@ -270,4 +271,4 @@ export default withStyles({
       </div>);
 
   }
-});
+}));

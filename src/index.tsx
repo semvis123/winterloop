@@ -19,36 +19,27 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import BedumerLogo from './logo.js';
-import AddIcon from '@material-ui/icons/Add';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
-import Zoom from '@material-ui/core/Zoom';
-import Fab from '@material-ui/core/Fab';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Button from '@material-ui/core/Button';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Switch from '@material-ui/core/Switch';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import Brightness4Icon from '@material-ui/icons/Brightness4';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import StorageIcon from '@material-ui/icons/Storage';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import InputBase from '@material-ui/core/InputBase';
 import * as XLSX from 'xlsx';
+import { SnackbarProvider } from 'notistack';
 import CountingList from './CountingList';
 import PersonList from './PersonList';
 import PaymentList from './PaymentList';
-import InputBase from '@material-ui/core/InputBase';
 import * as Config from '../configuration.json';
 import Status from './Status';
+
 const serverUrl = Config.server.url + ':' + Config.server.port;
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -132,6 +123,10 @@ const useStyles = makeStyles((theme: Theme) =>
         },
       },
     },
+    success: { color: 'white' },
+    error: { color: 'white' },
+    warning: { color: 'white' },
+    info: { color: 'white' },
   }),
 );
 
@@ -239,13 +234,13 @@ function AppReact() {
         />
       </div>,
       content: <Typography component="div" className={classes.root}>
-      <PaymentList search={searchValue} />
+        <PaymentList search={searchValue} />
       </Typography>
     },
     {
       name: 'Status',
       icon: <MonetizationOnIcon />,
-      content: <Status/>
+      content: <Status />
     },
     {
       name: 'Instellingen',
@@ -342,15 +337,15 @@ function AppReact() {
             fetch(serverUrl + '/api/emptyDB/', {
               method: 'post',
               headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' }
-              }).then((e) => {
-                if (e.status !== 200){
-                   console.log(e);
-                 }
-                else{
-                  alert("database successvol geleegd.");
-                  //success
-                }
-              });
+            }).then((e) => {
+              if (e.status !== 200) {
+                console.log(e);
+              }
+              else {
+                alert("database successvol geleegd.");
+                //success
+              }
+            });
           }}>
             <ListItemIcon>
               <StorageIcon />
@@ -361,15 +356,15 @@ function AppReact() {
                 fetch(serverUrl + '/api/emptyDB/', {
                   method: 'post',
                   headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' }
-                  }).then((e) => {
-                    if (e.status !== 200){
-                       console.log(e);
-                     }
-                    else{
-                      alert("database successvol geleegd.");
-                      //success
-                    }
-                  });
+                }).then((e) => {
+                  if (e.status !== 200) {
+                    console.log(e);
+                  }
+                  else {
+                    alert("database successvol geleegd.");
+                    //success
+                  }
+                });
               }}>
                 <DeleteForeverIcon />
               </IconButton>
@@ -431,6 +426,12 @@ function AppReact() {
 
   return (
     <ThemeProvider theme={BedumerTheme}>
+      <SnackbarProvider maxSnack={3} classes={{
+        variantSuccess: classes.success,
+        variantError: classes.error,
+        variantWarning: classes.warning,
+        variantInfo: classes.info,
+    }}>
       {/* Header */}
       <AppBar position="static">
         <Toolbar>
@@ -479,101 +480,13 @@ function AppReact() {
           {data.content}
         </Page>
       ))}
-      {/* FAB */}
-      <Zoom
-        in={pageValue === 0}
-      >
-        <Fab color="secondary" className={classes.fab} onClick={() => setDialog({ 0: true })}>
-          <AddIcon />
-        </Fab>
-      </Zoom>
-      {/* Dialogs */}
-      <Dialog fullScreen={fullScreenDialog} open={dialogState[0]} onClose={() => setDialog({ 0: false })} aria-labelledby="form-dialog-title">
-        <form id="addUserForm" action="#" method="POST" onSubmit={e => {
-          e.preventDefault(); // remove the redirect
-          fetch(serverUrl + '/api/addUser/', {
-            method: 'post',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' },
-            body: "naam=" + $("#addUserForm [name='naam']").val() +
-              "&huisnummer=" + $("#addUserForm [name='huisnummer']").val() +
-              "&postcode=" + $("#addUserForm [name='postcode']").val() +
-              "&telefoonnummer=" + $("#addUserForm [name='telefoonnummer']").val() +
-              "&vastBedrag=" + $("#addUserForm [name='vastBedrag']").val() +
-              "&rondeBedrag=" + $("#addUserForm [name='rondeBedrag']").val()
-          }).then(() => setDialog({ 0: false }));
-        } // send the request and close dialog
-        }>
-          <DialogTitle id="form-dialog-title">Nieuwe wandelaar toevoegen</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Vul hieronder de gegevens in van de wandelaar.
-            </DialogContentText>
-            <TextField
-              autoFocus
-              margin="dense"
-              label="Naam"
-              type="text"
-              name="naam"
-              fullWidth
-            />
-            <TextField
-              margin="dense"
-              label="Postcode"
-              type="text"
-              name="postcode"
-              fullWidth
-            />
-            <TextField
-              margin="dense"
-              label="Huisnummer"
-              type="number"
-              name="huisnummer"
-              fullWidth
-            />
-            <TextField
-              margin="dense"
-              label="Telefoonnummer"
-              type="number"
-              name="telefoonnummer"
-              fullWidth
-            />
-            <TextField
-              margin="dense"
-              label="Vast bedrag"
-              type="number"
-              name="vastBedrag"
-              fullWidth
-              InputProps={{
-                startAdornment: <InputAdornment position="start">€</InputAdornment>,
-              }}
-            />
-            <TextField
-              margin="dense"
-              label="Bedrag per ronde"
-              type="number"
-              name="rondeBedrag"
-              fullWidth
-              InputProps={{
-                startAdornment: <InputAdornment position="start">€</InputAdornment>,
-              }}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setDialog({ 0: false })} color="primary">
-              Annuleren
-            </Button>
-            <Button onClick={() => setDialog({ 0: false })} color="primary" type="submit">
-              Opslaan
-            </Button>
-          </DialogActions>
-        </form>
-      </Dialog>
+    </SnackbarProvider>
     </ThemeProvider>
   )
 }
 
 ReactDOM.render(
-  <AppReact />,
+    <AppReact />,
   $('div[data-type="main"]')[0]
 );
 

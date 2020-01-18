@@ -17,6 +17,7 @@ import AddIcon from '@material-ui/icons/Add';
 import PersonIcon from '@material-ui/icons/Person';
 import EditIcon from '@material-ui/icons/Edit';
 import theme from './theme';
+import { withSnackbar } from 'notistack';
 
 // Grab server url from configuration file
 const serverUrl = Config.server.url + ':' + Config.server.port;
@@ -37,7 +38,7 @@ interface PersonObjectInterface {
   rondes: number;
   create_time: string;
   code: string;
-  betaald: boolean;
+  betaald: number;
 }
 
 interface CountingListStateInterface {
@@ -79,7 +80,7 @@ export default withStyles({
     top: theme.spacing(1),
     color: theme.palette.grey[500],
   },
-})(class CountingList extends React.Component<CountingListInterface> {
+})(withSnackbar(class CountingList extends React.Component<CountingListInterface> {
   // Define interfaces
   // To keep TypeScript happy
   state: CountingListStateInterface;
@@ -87,6 +88,7 @@ export default withStyles({
   props: {
     classes: any; // It works
     search: string;
+    enqueueSnackbar: any;
   }
 
   // Global vars
@@ -130,7 +132,7 @@ export default withStyles({
                 "rondes": 0,
                 "code": '000000',
                 "create_time": "2019-12-27T15:16:48.000Z",
-                "betaald": 0
+                "betaald": -1
               }
             ], listClickDisabled: true
           }) : null
@@ -294,7 +296,10 @@ export default withStyles({
                     return person.code == $("#setRoundForm [name='code']").val();
                   });
                   persons[index].rondes = $("#setRoundForm [name='rondes']").val();
-
+                  this.props.enqueueSnackbar('Rondes toegevoegd', {
+                    variant: 'success',
+                    autoHideDuration: 5000,
+                  });
                   // remove error and name
                   this.setState({ persons: persons, codeError: false, currentNameSetRound: name });
 
@@ -305,7 +310,12 @@ export default withStyles({
                   this.state.personEdit != '' ? this.setState({ changeRoundOpen: false, currentNameSetRound: '', personEdit: '' }) : null;
                 }
               }
-              )
+            ).catch(()=>{
+              this.props.enqueueSnackbar('Rondes toevoegen mislukt', {
+                variant: 'error',
+                autoHideDuration: 5000,
+              });
+            })
             }}>
               <DialogContent>
                 <DialogContentText>Hier kunt u de rondes invullen.</DialogContentText>
@@ -360,4 +370,4 @@ export default withStyles({
       </div>);
 
   }
-});
+}));

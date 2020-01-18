@@ -10,6 +10,12 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import $ from 'jquery';
+import { withSnackbar, useSnackbar } from 'notistack';
+import AddIcon from '@material-ui/icons/Add';
+import TextField from '@material-ui/core/TextField';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import { Zoom, Fab } from '@material-ui/core';
 
 import * as Config from '../configuration.json';
 
@@ -17,9 +23,6 @@ import * as Config from '../configuration.json';
 const serverUrl = Config.server.url + ':' + Config.server.port;
 
 // Define interfaces
-interface PersonListInterface {
-
-}
 
 interface PersonObjectInterface {
   id: number;
@@ -32,7 +35,7 @@ interface PersonObjectInterface {
   rondes: number;
   create_time: string;
   code: string;
-  betaald: boolean;
+  betaald: number;
 }
 
 interface PersonListStateInterface {
@@ -44,18 +47,24 @@ interface PersonListStateInterface {
   dialogOpen: boolean;
   currentPerson: PersonObjectInterface;
   listClickDisabled: boolean;
+  addDialogOpen: boolean;
 }
 
 // Dit is de lijst voor alle personen
 export default withStyles({
-
-})(class PersonList extends React.Component<PersonListInterface> {
+  fab: {
+    position: 'fixed',
+    bottom: 16,
+    right: 26,
+  },
+})(withSnackbar(class PersonList extends React.Component {
   // Define interfaces
   // To keep TypeScript happy
   state: PersonListStateInterface;
 
   props: {
-    classes: any; // It works
+    classes: any;
+    enqueueSnackbar: any;
   }
 
   // Global vars
@@ -63,12 +72,12 @@ export default withStyles({
 
   constructor(props) {
     super(props);
-
     this.state = {
       persons: null,
       dialogOpen: false,
       currentPerson: null,
-      listClickDisabled: false
+      listClickDisabled: false,
+      addDialogOpen: false
     };
   }
 
@@ -79,6 +88,10 @@ export default withStyles({
       .then(response => { var a = response.json(); return a })
       .then(data => { this._isMounted ? that.setState({ persons: data, listClickDisabled: false }) : null })
       .catch(() => {
+        this.props.enqueueSnackbar('Kan niet verbinden met database', {
+          variant: 'error',
+          autoHideDuration: 5000,
+        });
         this._isMounted ? that.setState({
           persons: [
             {
@@ -111,18 +124,25 @@ export default withStyles({
   render() {
     const { classes } = this.props;
     const { persons } = this.state;
+
     return (
       <div>
+        <Zoom in={true}>
+          <Fab color="secondary" className={classes.fab} onClick={() => this.setState({ addDialogOpen: true })}>
+            <AddIcon />
+          </Fab>
+        </Zoom>
+
         {this.state.persons ? (
-        <List className={classes.root}>
-          {persons.map((person: PersonObjectInterface, i: number) =>
-            <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
-              <ListItemText id={person.id.toString()} primary={person.naam} secondary={person.code} />
-            </ListItem>
-          )}
-        </List>) : <CircularProgress color="secondary" />} {/* Moet een skelleton worden */}
+          <List className={classes.root}>
+            {persons.map((person: PersonObjectInterface, i: number) =>
+              <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
+                <ListItemText id={person.id.toString()} primary={person.naam} secondary={person.code} />
+              </ListItem>
+            )}
+          </List>) : <CircularProgress color="secondary" />} {/* Moet een skelleton worden */}
         {this.state.dialogOpen ? (
-          <Dialog open={this.state.dialogOpen} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
+          <Dialog open={this.state.dialogOpen} className={classes.root} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">{this.state.currentPerson.naam}</DialogTitle>
             <DialogContent>
               <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
@@ -131,13 +151,13 @@ export default withStyles({
               <DialogContentText>telefoonnummer: {this.state.currentPerson.telefoonnummer}</DialogContentText>
               <DialogContentText>vast bedrag: €{
                 this.state.currentPerson.vastBedrag.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}
-                </DialogContentText>
+              </DialogContentText>
               <DialogContentText>ronde bedrag: €{
                 this.state.currentPerson.rondeBedrag.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}
               </DialogContentText>
               <DialogContentText>aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
               <DialogContentText>aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
-              <DialogContentText>betaald: {this.state.currentPerson.betaald? 'ja': 'nee'}</DialogContentText>
+              <DialogContentText>betaald: {(this.state.currentPerson.betaald !== -1 )? 'ja' : 'nee'}</DialogContentText>
               <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -151,16 +171,126 @@ export default withStyles({
                   body: "code=" + this.state.currentPerson.code
                 })
                   .then(async () => {
+                    this.props.enqueueSnackbar('Persoon successvol verwijderd', {
+                      variant: 'success',
+                      autoHideDuration: 5000,
+                    });
                     this.getData();
                     this.setState({ dialogOpen: false })
                   })
+                  .catch(() => {
+                    this.props.enqueueSnackbar('Persoon verwijderen mislukt', {
+                      variant: 'error',
+                      autoHideDuration: 5000,
+                    });
+                    this.getData();
+                    this.setState({ dialogOpen: false });
+                  });
               }} color="secondary">
                 Verwijderen
                 </Button>
             </DialogActions>
           </Dialog>
         ) : null}
+
+        {/* add user dialog */}
+        <Dialog className={classes.root} open={this.state.addDialogOpen} onClose={() => this.setState({ addDialogOpen: false })} aria-labelledby="form-dialog-title">
+          <form id="addUserForm" action="#" method="POST" onSubmit={e => {
+            e.preventDefault(); // remove the redirect
+            fetch(serverUrl + '/api/addUser/', {
+              method: 'post',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' },
+              body: "naam=" + $("#addUserForm [name='naam']").val() +
+                "&huisnummer=" + $("#addUserForm [name='huisnummer']").val() +
+                "&postcode=" + $("#addUserForm [name='postcode']").val() +
+                "&telefoonnummer=" + $("#addUserForm [name='telefoonnummer']").val() +
+                "&vastBedrag=" + $("#addUserForm [name='vastBedrag']").val() +
+                "&rondeBedrag=" + $("#addUserForm [name='rondeBedrag']").val()
+            })
+            .then(response => { var a = response.json(); return a })
+            .then((a) => {
+              this.setState({ addDialogOpen: false });
+              this.props.enqueueSnackbar('Persoon toegevoegd met code: ' + a.code, {
+                variant: 'success',
+                autoHideDuration: 5000,
+              });
+              this.getData();
+            })
+            .catch(() => {
+              this.setState({ addDialogOpen: false });
+              this.props.enqueueSnackbar('Persoon toevoegen mislukt', {
+                variant: 'error',
+                autoHideDuration: 5000,
+              });
+            });
+          } // send the request and close dialog
+          }>
+            <DialogTitle id="form-dialog-title">Nieuwe wandelaar toevoegen</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Vul hieronder de gegevens in van de wandelaar.
+              </DialogContentText>
+              <TextField
+                autoFocus
+                margin="dense"
+                label="Naam"
+                type="text"
+                name="naam"
+                fullWidth
+              />
+              <TextField
+                margin="dense"
+                label="Postcode"
+                type="text"
+                name="postcode"
+                fullWidth
+              />
+              <TextField
+                margin="dense"
+                label="Huisnummer"
+                type="text"
+                name="huisnummer"
+                fullWidth
+              />
+              <TextField
+                margin="dense"
+                label="Telefoonnummer"
+                type="text"
+                name="telefoonnummer"
+                fullWidth
+              />
+              <TextField
+                margin="dense"
+                label="Vast bedrag"
+                type="number"
+                name="vastBedrag"
+                fullWidth
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                }}
+              />
+              <TextField
+                margin="dense"
+                label="Bedrag per ronde"
+                type="number"
+                name="rondeBedrag"
+                fullWidth
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                }}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => this.setState({ addDialogOpen: false })} color="primary">
+                Annuleren
+              </Button>
+              <Button onClick={() => this.setState({ addDialogOpen: false })} color="primary" type="submit">
+                Opslaan
+              </Button>
+            </DialogActions>
+          </form>
+        </Dialog>
       </div>);
 
   }
-});
+}));

@@ -61,7 +61,7 @@ app.get('/api/getUsers/', (req, res) => {
                 'rondes': ele.rondes,
                 'code': ele.code,
                 'create_time': ele.create_time,
-                'betaald': ele.betaald
+                'betaald': ele.betalingID
             });
         });
         res.status(200).send(JSON.stringify(arr));
@@ -75,7 +75,7 @@ app.post('/api/addUser/', async (req, res) => {
         if (e) {
             res.status(500).send(e.sqlMessage);
         } else {
-            res.status(200).send(String(code));
+            res.status(200).send('{"code": ' + String(code) + '}');
         }
     });
 });
@@ -91,7 +91,7 @@ app.post('/api/addRound/', async (req, res) => {
 });
 app.post('/api/setPayed/', async (req, res) => {
     var par = req.body; // get parameters from url
-    con.query("UPDATE winterloop.user SET betaald = ? WHERE code = ?", [par.payed, par.code], (e) => {
+    con.query("UPDATE winterloop.user SET betalingID = ? WHERE code = ?", [par.payed, par.code], (e) => {
         if (e) {
             res.status(500).send(e.sqlMessage);
         } else {
