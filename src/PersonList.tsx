@@ -85,7 +85,13 @@ export default withStyles({
     // Haal de data op van de database
     const that = this;
     fetch(serverUrl + '/api/getUsers/') // change this to yourip:4322
-      .then(response => { var a = response.json(); return a })
+      .then(response => {
+        if (response.status !== 200) {
+          throw "error server code: " +  response.status;
+        }
+         var a = response.json();
+          return a ;
+        })
       .then(data => { this._isMounted ? that.setState({ persons: data, listClickDisabled: false }) : null })
       .catch(() => {
         this.props.enqueueSnackbar('Kan niet verbinden met database', {
@@ -170,7 +176,10 @@ export default withStyles({
                   headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' },
                   body: "code=" + this.state.currentPerson.code
                 })
-                  .then(async () => {
+                  .then(async (e) => {
+                    if (e.status !== 200) {
+                      throw "error server code: " +  e.status;
+                    }
                     this.props.enqueueSnackbar('Persoon successvol verwijderd', {
                       variant: 'success',
                       autoHideDuration: 5000,
@@ -207,7 +216,13 @@ export default withStyles({
                 "&vastBedrag=" + $("#addUserForm [name='vastBedrag']").val() +
                 "&rondeBedrag=" + $("#addUserForm [name='rondeBedrag']").val()
             })
-            .then(response => { var a = response.json(); return a })
+            .then(response => {
+              if (response.status !== 200) {
+                throw "error server code: " +  response.status;
+              }
+                var a = response.json();
+               return a
+             })
             .then((a) => {
               this.setState({ addDialogOpen: false });
               this.props.enqueueSnackbar('Persoon toegevoegd met code: ' + a.code, {

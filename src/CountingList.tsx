@@ -118,6 +118,10 @@ export default withStyles({
       .then(response => { var a = response.json(); return a })
       .then(data => { this._isMounted ? that.setState({ persons: data, listClickDisabled: false }) : null })
       .catch(() => {
+        this.props.enqueueSnackbar('Kan niet verbinden met database', {
+          variant: 'error',
+          autoHideDuration: 5000,
+        });
         this._isMounted ? that.setState(
           {
             persons: [
@@ -194,12 +198,18 @@ export default withStyles({
                       body: "code=" + persons[i].code
                     }).then((e) => {
                       if (e.status !== 200) {
-                        console.log(e);
+                        throw e.status
                       }
                       else {
                         that.setState({ persons: that.state.persons });
                       }
-                    });
+                    }).catch(()=>{
+                      this.props.enqueueSnackbar('Rondes toevoegen mislukt', {
+                        variant: 'error',
+                        autoHideDuration: 5000,
+                      });
+                    }
+                  );
                   }}>
                     <AddIcon />
                   </IconButton>
@@ -258,13 +268,19 @@ export default withStyles({
                 })
                   .then((e) => {
                     if (e.status !== 200) {
-                      console.log(e);
-                    } else {
+                      throw "error server code: " +  e.status;
+                    }else {
                       this.setState({ persons: this.state.persons });
                       this.setState({ dialogOpen: false });
                     }
                   }
-                  )
+                ).catch(()=>{
+                  this.props.enqueueSnackbar('Rondes verwijderen mislukt', {
+                    variant: 'error',
+                    autoHideDuration: 5000,
+                  });
+                }
+              )
               }} color="secondary">
                 Verwijder ronde
                 </Button>
@@ -289,7 +305,9 @@ export default withStyles({
                 if (e.status !== 200) {
                   console.log(e);
                 } else {
-
+                  if (e.status !== 200) {
+                    throw "error server code: " +  e.status;
+                  }
                   // update the list values
                   let persons = this.state.persons;
                   var index = persons.findIndex((person: PersonObjectInterface) => {

@@ -87,6 +87,7 @@ export default withStyles({
   props: {
     classes: any; // It works
     search: string;
+    enqueueSnackbar: any;
   }
 
   // Global vars
@@ -116,6 +117,10 @@ export default withStyles({
       .then(response => { var a = response.json(); return a })
       .then(data => { this._isMounted ? that.setState({ persons: data, listClickDisabled: false }) : null })
       .catch(() => {
+        this.props.enqueueSnackbar('Kan niet verbinden met database', {
+          variant: 'error',
+          autoHideDuration: 5000,
+        });
         this._isMounted ? that.setState(
           {
             persons: [
@@ -232,7 +237,7 @@ export default withStyles({
                 body: "code=" +this.state.currentPerson.code + "&payed=1"
               }).then((e) => {
                 if (e.status !== 200) {
-                  console.log(e);
+                  throw e.status;
                 } else {
 
                   persons[persons.indexOf(this.state.currentPerson)].betaald = true;
@@ -242,7 +247,12 @@ export default withStyles({
                   this.state.personEdit != '' ? this.setState({ changeRoundOpen: false, currentNameSetRound: '', personEdit: '' }) : null;
                 }
               }
-              )
+            ).catch(()=>{
+              this.props.enqueueSnackbar('Betalen mislukt', {
+                variant: 'error',
+                autoHideDuration: 5000,
+              });
+            })
             }}>
               <DialogContent>
                 <DialogContentText>Hier kunt u eventueel een email-adres invullen.</DialogContentText>
