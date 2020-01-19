@@ -246,12 +246,6 @@ export default withStyles({
                 this.state.currentPerson.rondeBedrag.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}
               </DialogContentText>
               <DialogContentText>Aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
-              <DialogContentText>Opbrengst: €{
-                (this.state.currentPerson.vastBedrag + (this.state.currentPerson.rondeBedrag * this.state.currentPerson.rondes))
-                  .toFixed(2)
-                  .replace('.', ',')
-                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-              }</DialogContentText>
               <DialogContentText>Code: {this.state.currentPerson.code}</DialogContentText>
             </DialogContent>
             <DialogActions>
