@@ -278,8 +278,9 @@ function AppReact() {
             fetch(serverUrl + '/api/getUsers/') // change this to yourip:4322
               .then(response => { var a = response.json(); return a })
               .then(data => {
-                let persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "code"]];
+                let persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "code", "Totaalbedrag"]];
                 data.forEach((person: PersonObjectInterface) => {
+                  let amount = (person.rondeBedrag * person.rondes + person.vastBedrag ).toFixed(2);
                   let userArray = [
                     person.id.toString(),
                     person.naam,
@@ -290,7 +291,9 @@ function AppReact() {
                     person.rondeBedrag.toString(),
                     person.rondes.toString(),
                     person.create_time,
-                    person.code];
+                    person.code,
+                    amount
+                  ];
                   persons.push(userArray);
                 })
                 const wb = XLSX.utils.book_new();
@@ -308,8 +311,9 @@ function AppReact() {
                 fetch(serverUrl + '/api/getUsers/')
                   .then(response => { var a = response.json(); return a })
                   .then(data => {
-                    let persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "code"]];
+                    let persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "code", "Totaalbedrag"]];
                     data.forEach((person: PersonObjectInterface) => {
+                      let amount = (person.rondeBedrag * person.rondes + person.vastBedrag ).toFixed(2);
                       let userArray = [
                         person.id.toString(),
                         person.naam,
@@ -320,7 +324,9 @@ function AppReact() {
                         person.rondeBedrag.toString(),
                         person.rondes.toString(),
                         person.create_time,
-                        person.code];
+                        person.code,
+                        amount
+                      ];
                       persons.push(userArray);
                     })
                     const wb = XLSX.utils.book_new();
