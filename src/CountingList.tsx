@@ -90,6 +90,7 @@ export default withStyles({
     classes: any; // It works
     search: string;
     enqueueSnackbar: any;
+    closeSnackbar: any;
   }
 
   // Global vars
@@ -388,76 +389,105 @@ export default withStyles({
         {this.state.paymentDialogOpen ? (
           <Dialog open={this.state.paymentDialogOpen} onClose={() => this.setState({ paymentDialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Afrekenen</DialogTitle>
-              <DialogContent>
-                <DialogContentText>Wilt u direct afrekenen?</DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={() => this.setState({ paymentDialogOpen: false})} color="primary">
-                  Annuleren
+            <DialogContent>
+              <DialogContentText>Wilt u direct afrekenen?</DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => this.setState({ paymentDialogOpen: false })} color="primary">
+                Annuleren
                 </Button>
-                <Button onClick={()=> {
-                  fetch(serverUrl + '/api/setPayed/', {
-                    method: 'post',
-                    headers: {
-                      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                      'Access-Control-Allow-Origin': '*'
-                    },
-                    body: "code=" + this.state.currentPerson.code + "&payed=1"
-                  }).then((e) => {
-                    if (e.status !== 200) {
-                      throw e.status;
-                    } else {
-                      persons[persons.indexOf(this.state.currentPerson)].betaald = true;
-                      this.setState({ paymentDialogOpen: false });
-                    }
-                    this.props.enqueueSnackbar('Betalen gelukt', {
-                      variant: 'success',
-                      autoHideDuration: 5000,
-                    });
-                  }
-                  ).catch(() => {
-                    this.props.enqueueSnackbar('Betalen mislukt', {
-                      variant: 'error',
-                      autoHideDuration: 5000,
-                    });
-                  });
-                }} color="secondary">
-                  Contant
+              <Button onClick={() => {
+
+                const action = key => (
+                  <React.Fragment>
+                    <Button onClick={() => {
+                      this.props.closeSnackbar(key);
+                      this.props.enqueueSnackbar('Betalen mislukt', {
+                        variant: 'error',
+                        autoHideDuration: 5000,
+                      });
+                    }}>
+                      Annuleren
+                                            </Button>
+                    <Button onClick={() => {
+                      fetch(serverUrl + '/api/setPayed/', {
+                        method: 'post',
+                        headers: {
+                          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                          'Access-Control-Allow-Origin': '*'
+                        },
+                        body: "code=" + this.state.currentPerson.code + "&payed=1"
+                      }).then((e) => {
+                        if (e.status !== 200) {
+                          throw e.status;
+                        } else {
+                          persons[persons.indexOf(this.state.currentPerson)].betaald = true;
+                          this.setState({ paymentDialogOpen: false });
+                        }
+                        this.props.enqueueSnackbar('Betalen gelukt', {
+                          variant: 'success',
+                          autoHideDuration: 5000,
+                        });
+                      }
+                      ).catch(() => {
+                        this.props.enqueueSnackbar('Betaal status zetten mislukt', {
+                          variant: 'error',
+                          autoHideDuration: 5000,
+                        });
+                      });
+                      this.props.closeSnackbar(key);
+                    }}>
+                      Gelukt
+                                            </Button>
+                  </React.Fragment>
+                );
+                let person = this.state.currentPerson;
+                let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2)
+                  .replace('.', ',')
+                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+
+                this.props.enqueueSnackbar('Te betalen: € ' + amount, {
+                  variant: 'info',
+                  persist: true,
+                  action,
+                });
+              }} color="secondary">
+                Contant
                 </Button>
-                <Button onClick={()=> {
-                  fetch(serverUrl + '/api/setPayed/', {
-                    method: 'post',
-                    headers: {
-                      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                      'Access-Control-Allow-Origin': '*'
-                    },
-                    body: "code=" + this.state.currentPerson.code + "&payed=1"
-                  }).then((e) => {
-                    if (e.status !== 200) {
-                      throw e.status;
-                    } else {
-                      persons[persons.indexOf(this.state.currentPerson)].betaald = true;
-                      this.setState({ paymentDialogOpen: false });
-                    }
+              <Button onClick={() => {
+                fetch(serverUrl + '/api/setPayed/', {
+                  method: 'post',
+                  headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                    'Access-Control-Allow-Origin': '*'
+                  },
+                  body: "code=" + this.state.currentPerson.code + "&payed=1"
+                }).then((e) => {
+                  if (e.status !== 200) {
+                    throw e.status;
+                  } else {
+                    persons[persons.indexOf(this.state.currentPerson)].betaald = true;
+                    this.setState({ paymentDialogOpen: false });
                   }
-                  ).catch(() => {
-                    this.props.enqueueSnackbar('Betalen mislukt', {
-                      variant: 'error',
-                      autoHideDuration: 5000,
-                    });
-                  });
-                  let person = this.state.currentPerson;
-                  let amount = (person.rondeBedrag * person.rondes + person.vastBedrag ).toFixed(2);
-                  window.location.href = 'sumupmerchant://pay/1.0?amount=' + amount
-                  + '&affiliate-key=' + Config.sumup.affiliateKey + 'currency='+ Config.sumup.currency +'&title=' + Config.sumup.title;
-                  this.props.enqueueSnackbar('Betalen gelukt', {
-                    variant: 'success',
+                }
+                ).catch(() => {
+                  this.props.enqueueSnackbar('Betalen mislukt', {
+                    variant: 'error',
                     autoHideDuration: 5000,
                   });
-                }} color="secondary">
-                  Sumup
+                });
+                let person = this.state.currentPerson;
+                let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
+                window.location.href = 'sumupmerchant://pay/1.0?amount=' + amount
+                  + '&affiliate-key=' + Config.sumup.affiliateKey + 'currency=' + Config.sumup.currency + '&title=' + Config.sumup.title;
+                this.props.enqueueSnackbar('Betalen gelukt', {
+                  variant: 'success',
+                  autoHideDuration: 5000,
+                });
+              }} color="secondary">
+                Sumup
                 </Button>
-              </DialogActions>
+            </DialogActions>
           </Dialog>
 
         ) : null}
