@@ -489,7 +489,6 @@ export default withStyles({
                 </Button>
             </DialogActions>
           </Dialog>
-
         ) : null}
       </div>);
 
