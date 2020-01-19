@@ -65,6 +65,7 @@ interface CountingListStateInterface {
   currentNameSetRound: string;
   setRoundButtonDisabled: boolean;
   personEdit: string;
+  paymentDialogOpen: any;
 }
 
 // Dit is de lijst voor de rondes
@@ -107,7 +108,8 @@ export default withStyles({
       codes: [],
       currentNameSetRound: "",
       setRoundButtonDisabled: true,
-      personEdit: ""
+      personEdit: "",
+      paymentDialogOpen: false
     };
   }
 
@@ -328,7 +330,7 @@ export default withStyles({
                   $("#setRoundForm [name='code']").focus();
                   $("#setRoundForm [name='code']").val("");
                   $("#setRoundForm [name='rondes']").val("");
-                  this.state.personEdit != '' ? this.setState({ changeRoundOpen: false, currentNameSetRound: '', personEdit: '' }) : null;
+                  this.state.personEdit != '' ? this.setState({ paymentDialogOpen: true, changeRoundOpen: false, currentNameSetRound: '', personEdit: '' }) : null;
                 }
               }
               ).catch(() => {
@@ -388,6 +390,83 @@ export default withStyles({
 
         ) : null}
 
+        {/* dialog for round edits */}
+        {this.state.paymentDialogOpen ? (
+          <Dialog open={this.state.paymentDialogOpen} onClose={() => this.setState({ paymentDialogOpen: false })} aria-labelledby="form-dialog-title">
+            <DialogTitle id="form-dialog-title">Afrekenen</DialogTitle>
+              <DialogContent>
+                <DialogContentText>Wilt u direct afrekenen?</DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => this.setState({ paymentDialogOpen: false})} color="primary">
+                  Annuleren
+                </Button>
+                <Button onClick={()=> {
+                  fetch(serverUrl + '/api/setPayed/', {
+                    method: 'post',
+                    headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                      'Access-Control-Allow-Origin': '*'
+                    },
+                    body: "code=" + this.state.currentPerson.code + "&payed=1"
+                  }).then((e) => {
+                    if (e.status !== 200) {
+                      throw e.status;
+                    } else {
+                      persons[persons.indexOf(this.state.currentPerson)].betaald = true;
+                      this.setState({ paymentDialogOpen: false });
+                    }
+                    this.props.enqueueSnackbar('Betalen gelukt', {
+                      variant: 'success',
+                      autoHideDuration: 5000,
+                    });
+                  }
+                  ).catch(() => {
+                    this.props.enqueueSnackbar('Betalen mislukt', {
+                      variant: 'error',
+                      autoHideDuration: 5000,
+                    });
+                  });
+                }} color="secondary">
+                  Contant
+                </Button>
+                <Button onClick={()=> {
+                  fetch(serverUrl + '/api/setPayed/', {
+                    method: 'post',
+                    headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                      'Access-Control-Allow-Origin': '*'
+                    },
+                    body: "code=" + this.state.currentPerson.code + "&payed=1"
+                  }).then((e) => {
+                    if (e.status !== 200) {
+                      throw e.status;
+                    } else {
+                      persons[persons.indexOf(this.state.currentPerson)].betaald = true;
+                      this.setState({ paymentDialogOpen: false });
+                    }
+                  }
+                  ).catch(() => {
+                    this.props.enqueueSnackbar('Betalen mislukt', {
+                      variant: 'error',
+                      autoHideDuration: 5000,
+                    });
+                  });
+                  let person = this.state.currentPerson;
+                  let amount = (person.rondeBedrag * person.rondes + person.vastBedrag ).toFixed(2);
+                  window.location.href = 'sumupmerchant://pay/1.0?amount=' + amount
+                  + '&affiliate-key=' + Config.sumup.affiliateKey + 'currency='+ Config.sumup.currency +'&title=' + Config.sumup.title;
+                  this.props.enqueueSnackbar('Betalen gelukt', {
+                    variant: 'success',
+                    autoHideDuration: 5000,
+                  });
+                }} color="secondary">
+                  Sumup
+                </Button>
+              </DialogActions>
+          </Dialog>
+
+        ) : null}
       </div>);
 
   }

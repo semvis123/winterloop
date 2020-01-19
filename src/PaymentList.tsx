@@ -198,7 +198,7 @@ export default withStyles({
                 this.state.currentPerson.rondeBedrag.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}
               </DialogContentText>
               <DialogContentText>Aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
-              <DialogContentText>Opbrengst: €{
+              <DialogContentText>Te betalen: €{
                 (this.state.currentPerson.vastBedrag + (this.state.currentPerson.rondeBedrag * this.state.currentPerson.rondes))
                   .toFixed(2)
                   .replace('.', ',')
@@ -224,59 +224,76 @@ export default withStyles({
         {this.state.paymentDialogOpen ? (
           <Dialog open={this.state.paymentDialogOpen} onClose={() => this.setState({ paymentDialogOpen: false, currentNameSetRound: '', personEdit: '' })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Betalen</DialogTitle>
-            <form autoComplete="off" id="payForm" action="#" method="POST" onSubmit={e => {
-              e.preventDefault(); // remove the redirect
-
-
-              $("#payForm [name='email']").val();
-
-
-              fetch(serverUrl + '/api/setPayed/', {
-                method: 'post',
-                headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                  'Access-Control-Allow-Origin': '*'
-                },
-                body: "code=" + this.state.currentPerson.code + "&payed=1"
-              }).then((e) => {
-                if (e.status !== 200) {
-                  throw e.status;
-                } else {
-
-                  persons[persons.indexOf(this.state.currentPerson)].betaald = true;
-                  // remove error and name
-                  this.setState({ persons: persons, codeError: false, currentNameSetRound: name });
-
-                  this.state.personEdit != '' ? this.setState({ paymentDialogOpen: false, currentNameSetRound: '', personEdit: '' }) : null;
-                }
-              }
-              ).catch(() => {
-                this.props.enqueueSnackbar('Betalen mislukt', {
-                  variant: 'error',
-                  autoHideDuration: 5000,
-                });
-              })
-            }}>
               <DialogContent>
-                <DialogContentText>Hier kunt u eventueel een email-adres invullen.</DialogContentText>
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  label="email"
-                  type="text"
-                  name="email"
-                  fullWidth
-                />
+                <DialogContentText>Wilt u contant of met Sumup betalen?</DialogContentText>
               </DialogContent>
               <DialogActions>
                 <Button onClick={() => this.setState({ paymentDialogOpen: false, currentNameSetRound: '', personEdit: '' })} color="primary">
                   Annuleren
                 </Button>
-                <Button type="submit" color="secondary">
-                  Betalen
+                <Button onClick={()=> {
+                  fetch(serverUrl + '/api/setPayed/', {
+                    method: 'post',
+                    headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                      'Access-Control-Allow-Origin': '*'
+                    },
+                    body: "code=" + this.state.currentPerson.code + "&payed=1"
+                  }).then((e) => {
+                    if (e.status !== 200) {
+                      throw e.status;
+                    } else {
+                      persons[persons.indexOf(this.state.currentPerson)].betaald = true;
+                      this.setState({ paymentDialogOpen: false });
+                    }
+                    this.props.enqueueSnackbar('Betalen gelukt', {
+                      variant: 'success',
+                      autoHideDuration: 5000,
+                    });
+                  }
+                  ).catch(() => {
+                    this.props.enqueueSnackbar('Betalen mislukt', {
+                      variant: 'error',
+                      autoHideDuration: 5000,
+                    });
+                  });
+                }} color="secondary">
+                  Contant
+                </Button>
+                <Button onClick={()=> {
+                  fetch(serverUrl + '/api/setPayed/', {
+                    method: 'post',
+                    headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                      'Access-Control-Allow-Origin': '*'
+                    },
+                    body: "code=" + this.state.currentPerson.code + "&payed=1"
+                  }).then((e) => {
+                    if (e.status !== 200) {
+                      throw e.status;
+                    } else {
+                      persons[persons.indexOf(this.state.currentPerson)].betaald = true;
+                      this.setState({ paymentDialogOpen: false });
+                    }
+                  }
+                  ).catch(() => {
+                    this.props.enqueueSnackbar('Betalen mislukt', {
+                      variant: 'error',
+                      autoHideDuration: 5000,
+                    });
+                  });
+                  let person = this.state.currentPerson;
+                  let amount = (person.rondeBedrag * person.rondes + person.vastBedrag ).toFixed(2);
+                  window.location.href = 'sumupmerchant://pay/1.0?amount=' + amount
+                  + '&affiliate-key=' + Config.sumup.affiliateKey + 'currency='+ Config.sumup.currency +'&title=' + Config.sumup.title;
+                  this.props.enqueueSnackbar('Betalen gelukt', {
+                    variant: 'success',
+                    autoHideDuration: 5000,
+                  });
+                }} color="secondary">
+                  Sumup
                 </Button>
               </DialogActions>
-            </form>
           </Dialog>
 
         ) : null}
