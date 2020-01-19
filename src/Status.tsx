@@ -151,47 +151,47 @@ export default withStyles({
               this.state.totalValue.toFixed(2) // always two decimal digits
                 .replace('.', ',') // replace decimal point character with ,
                 .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')// use . as a separator
-              }</span>
+            }</span>
           </Typography>
           <Typography className={classes.text} gutterBottom><b>Totale opbrengst van rondes</b>
-          <span className={classes.value}>€ {
-            this.state.roundValue.toFixed(2)
-            .replace('.', ',')
-            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-          }
+            <span className={classes.value}>€ {
+              this.state.roundValue.toFixed(2)
+                .replace('.', ',')
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+            }
             </span>
           </Typography>
           <Typography className={classes.text} gutterBottom><b>Totale opbrengst van vaste bedragen</b>
-          <span className={classes.value}>€ {
-            this.state.fixedValue.toFixed(2)
-            .replace('.', ',')
-            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-          }
-          </span>
+            <span className={classes.value}>€ {
+              this.state.fixedValue.toFixed(2)
+                .replace('.', ',')
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+            }
+            </span>
           </Typography>
           <Typography className={classes.text} gutterBottom><b>Gemiddelde opbrengst</b>
-          <span className={classes.value}>€ {
-            this.state.avgTotalValue.toFixed(2)
-            .replace('.', ',')
-            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-          }
-          </span>
+            <span className={classes.value}>€ {
+              this.state.avgTotalValue.toFixed(2)
+                .replace('.', ',')
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+            }
+            </span>
           </Typography>
           <Typography className={classes.text} gutterBottom><b>Gemiddelde opbrengst van rondes</b>
-          <span className={classes.value}>€ {
-            this.state.avgRoundValue.toFixed(2)
-            .replace('.', ',')
-            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-          }
-          </span>
+            <span className={classes.value}>€ {
+              this.state.avgRoundValue.toFixed(2)
+                .replace('.', ',')
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+            }
+            </span>
           </Typography>
           <Typography className={classes.text} gutterBottom><b>Gemiddelde opbrengst van vaste bedragen</b>
-          <span className={classes.value}>€ {
-            this.state.avgFixedValue.toFixed(2)
-            .replace('.', ',')
-            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-          }
-          </span>
+            <span className={classes.value}>€ {
+              this.state.avgFixedValue.toFixed(2)
+                .replace('.', ',')
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+            }
+            </span>
           </Typography>
         </CardContent>
       </Card>

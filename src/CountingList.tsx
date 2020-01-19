@@ -67,7 +67,7 @@ interface CountingListStateInterface {
   personEdit: string;
 }
 
-// Dit is de lijst voor de stempels
+// Dit is de lijst voor de rondes
 export default withStyles({
   fab: {
     position: 'fixed',
@@ -203,13 +203,13 @@ export default withStyles({
                       else {
                         that.setState({ persons: that.state.persons });
                       }
-                    }).catch(()=>{
+                    }).catch(() => {
                       this.props.enqueueSnackbar('Rondes toevoegen mislukt', {
                         variant: 'error',
                         autoHideDuration: 5000,
                       });
                     }
-                  );
+                    );
                   }}>
                     <AddIcon />
                   </IconButton>
@@ -218,6 +218,8 @@ export default withStyles({
             )}
           </List>
         ) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
+
+        {/* dialog for person information */}
         {this.state.dialogOpen ? (
           <Dialog open={this.state.dialogOpen} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">
@@ -240,13 +242,13 @@ export default withStyles({
               </DialogContentText>
               <DialogContentText>Ronde bedrag: €{
                 this.state.currentPerson.rondeBedrag.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}
-                </DialogContentText>
+              </DialogContentText>
               <DialogContentText>Aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
               <DialogContentText>Opbrengst: €{
                 (this.state.currentPerson.vastBedrag + (this.state.currentPerson.rondeBedrag * this.state.currentPerson.rondes))
-                .toFixed(2)
-                .replace('.', ',')
-                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+                  .toFixed(2)
+                  .replace('.', ',')
+                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
               }</DialogContentText>
               <DialogContentText>Code: {this.state.currentPerson.code}</DialogContentText>
             </DialogContent>
@@ -268,19 +270,19 @@ export default withStyles({
                 })
                   .then((e) => {
                     if (e.status !== 200) {
-                      throw "error server code: " +  e.status;
-                    }else {
+                      throw "error server code: " + e.status;
+                    } else {
                       this.setState({ persons: this.state.persons });
                       this.setState({ dialogOpen: false });
                     }
                   }
-                ).catch(()=>{
-                  this.props.enqueueSnackbar('Rondes verwijderen mislukt', {
-                    variant: 'error',
-                    autoHideDuration: 5000,
-                  });
-                }
-              )
+                  ).catch(() => {
+                    this.props.enqueueSnackbar('Rondes verwijderen mislukt', {
+                      variant: 'error',
+                      autoHideDuration: 5000,
+                    });
+                  }
+                  )
               }} color="secondary">
                 Verwijder ronde
                 </Button>
@@ -288,6 +290,7 @@ export default withStyles({
           </Dialog>
         ) : null}
 
+        {/* dialog for round edits */}
         {this.state.changeRoundOpen ? (
           <Dialog open={this.state.changeRoundOpen} onClose={() => this.setState({ changeRoundOpen: false, currentNameSetRound: '', personEdit: '' })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Rondes invullen</DialogTitle>
@@ -306,7 +309,7 @@ export default withStyles({
                   console.log(e);
                 } else {
                   if (e.status !== 200) {
-                    throw "error server code: " +  e.status;
+                    throw "error server code: " + e.status;
                   }
                   // update the list values
                   let persons = this.state.persons;
@@ -328,12 +331,12 @@ export default withStyles({
                   this.state.personEdit != '' ? this.setState({ changeRoundOpen: false, currentNameSetRound: '', personEdit: '' }) : null;
                 }
               }
-            ).catch(()=>{
-              this.props.enqueueSnackbar('Rondes toevoegen mislukt', {
-                variant: 'error',
-                autoHideDuration: 5000,
-              });
-            })
+              ).catch(() => {
+                this.props.enqueueSnackbar('Rondes toevoegen mislukt', {
+                  variant: 'error',
+                  autoHideDuration: 5000,
+                });
+              })
             }}>
               <DialogContent>
                 <DialogContentText>Hier kunt u de rondes invullen.</DialogContentText>

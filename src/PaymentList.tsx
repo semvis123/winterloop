@@ -58,7 +58,7 @@ interface PaymentListStateInterface {
   dialogOpen: boolean;
   currentPerson: PersonObjectInterface;
   listClickDisabled: boolean;
-  changeRoundOpen: boolean;
+  paymentDialogOpen: boolean;
   codes: {
     [index: number]: number;
   }
@@ -67,7 +67,7 @@ interface PaymentListStateInterface {
   personEdit: string;
 }
 
-// Dit is de lijst voor de stempels
+// Dit is de lijst voor de rondes
 export default withStyles({
   betaald: {
     color: '#4CAF50',
@@ -101,7 +101,7 @@ export default withStyles({
       dialogOpen: false,
       currentPerson: null,
       listClickDisabled: false,
-      changeRoundOpen: false,
+      paymentDialogOpen: false,
       codeError: false,
       codes: [],
       currentNameSetRound: "",
@@ -171,20 +171,22 @@ export default withStyles({
               <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
                 <ListItemText primary={person.naam} secondary={person.code} />
                 <ListItemText primary={
-                  <Typography align="center" className={classes.betaald}>{(person.betaald!==-1)? 'BETAALD': ''}</Typography>
+                  <Typography align="center" className={classes.betaald}>{(person.betaald !== -1) ? 'BETAALD' : ''}</Typography>
                 } />
                 <ListItemText primary={
                   <Typography align="right" className={classes.root}>€ {
-                    (person.rondes*person.rondeBedrag + person.vastBedrag)
-                    .toFixed(2)
-                    .replace('.', ',')
-                    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+                    (person.rondes * person.rondeBedrag + person.vastBedrag)
+                      .toFixed(2)
+                      .replace('.', ',')
+                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
                   }</Typography>
                 } />
               </ListItem>
             )}
           </List>
         ) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
+
+        {/* dialog for person information */}
         {this.state.dialogOpen ? (
           <Dialog open={this.state.dialogOpen} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">{this.state.currentPerson.naam}</DialogTitle>
@@ -194,32 +196,33 @@ export default withStyles({
               </DialogContentText>
               <DialogContentText>Ronde bedrag: €{
                 this.state.currentPerson.rondeBedrag.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}
-                </DialogContentText>
+              </DialogContentText>
               <DialogContentText>Aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
               <DialogContentText>Opbrengst: €{
                 (this.state.currentPerson.vastBedrag + (this.state.currentPerson.rondeBedrag * this.state.currentPerson.rondes))
-                .toFixed(2)
-                .replace('.', ',')
-                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+                  .toFixed(2)
+                  .replace('.', ',')
+                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
               }</DialogContentText>
               <DialogContentText>Code: {this.state.currentPerson.code}</DialogContentText>
-              <DialogContentText>Betaald: {(this.state.currentPerson.betaald!==-1)? 'ja': 'nee'}</DialogContentText>
+              <DialogContentText>Betaald: {(this.state.currentPerson.betaald !== -1) ? 'ja' : 'nee'}</DialogContentText>
             </DialogContent>
             <DialogActions>
               <Button onClick={() => this.setState({ dialogOpen: false })} color="primary">
                 Annuleren
                 </Button>
               <Button onClick={() => {
-                this.setState({ changeRoundOpen: true, currentNameSetRound: '', personEdit: '' })
-              }} color="secondary" disabled={this.state.currentPerson.betaald!==-1}>
+                this.setState({ paymentDialogOpen: true, currentNameSetRound: '', personEdit: '' })
+              }} color="secondary" disabled={this.state.currentPerson.betaald !== -1}>
                 Betalen
                 </Button>
             </DialogActions>
           </Dialog>
         ) : null}
 
-        {this.state.changeRoundOpen ? (
-          <Dialog open={this.state.changeRoundOpen} onClose={() => this.setState({ changeRoundOpen: false, currentNameSetRound: '', personEdit: '' })} aria-labelledby="form-dialog-title">
+
+        {this.state.paymentDialogOpen ? (
+          <Dialog open={this.state.paymentDialogOpen} onClose={() => this.setState({ paymentDialogOpen: false, currentNameSetRound: '', personEdit: '' })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Betalen</DialogTitle>
             <form autoComplete="off" id="payForm" action="#" method="POST" onSubmit={e => {
               e.preventDefault(); // remove the redirect
@@ -234,7 +237,7 @@ export default withStyles({
                   'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
                   'Access-Control-Allow-Origin': '*'
                 },
-                body: "code=" +this.state.currentPerson.code + "&payed=1"
+                body: "code=" + this.state.currentPerson.code + "&payed=1"
               }).then((e) => {
                 if (e.status !== 200) {
                   throw e.status;
@@ -244,15 +247,15 @@ export default withStyles({
                   // remove error and name
                   this.setState({ persons: persons, codeError: false, currentNameSetRound: name });
 
-                  this.state.personEdit != '' ? this.setState({ changeRoundOpen: false, currentNameSetRound: '', personEdit: '' }) : null;
+                  this.state.personEdit != '' ? this.setState({ paymentDialogOpen: false, currentNameSetRound: '', personEdit: '' }) : null;
                 }
               }
-            ).catch(()=>{
-              this.props.enqueueSnackbar('Betalen mislukt', {
-                variant: 'error',
-                autoHideDuration: 5000,
-              });
-            })
+              ).catch(() => {
+                this.props.enqueueSnackbar('Betalen mislukt', {
+                  variant: 'error',
+                  autoHideDuration: 5000,
+                });
+              })
             }}>
               <DialogContent>
                 <DialogContentText>Hier kunt u eventueel een email-adres invullen.</DialogContentText>
@@ -266,7 +269,7 @@ export default withStyles({
                 />
               </DialogContent>
               <DialogActions>
-                <Button onClick={() => this.setState({ changeRoundOpen: false, currentNameSetRound: '', personEdit: '' })} color="primary">
+                <Button onClick={() => this.setState({ paymentDialogOpen: false, currentNameSetRound: '', personEdit: '' })} color="primary">
                   Annuleren
                 </Button>
                 <Button type="submit" color="secondary">

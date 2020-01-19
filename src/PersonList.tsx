@@ -97,11 +97,11 @@ export default withStyles({
     fetch(serverUrl + '/api/getUsers/') // change this to yourip:4322
       .then(response => {
         if (response.status !== 200) {
-          throw "error server code: " +  response.status;
+          throw "error server code: " + response.status;
         }
-         var a = response.json();
-          return a ;
-        })
+        var a = response.json();
+        return a;
+      })
       .then(data => { this._isMounted ? that.setState({ persons: data, listClickDisabled: false }) : null })
       .catch(() => {
         this.props.enqueueSnackbar('Kan niet verbinden met database', {
@@ -182,7 +182,7 @@ export default withStyles({
               </DialogContentText>
               <DialogContentText>aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
               <DialogContentText>aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
-              <DialogContentText>betaald: {(this.state.currentPerson.betaald !== -1 )? 'ja' : 'nee'}</DialogContentText>
+              <DialogContentText>betaald: {(this.state.currentPerson.betaald !== -1) ? 'ja' : 'nee'}</DialogContentText>
               <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -197,7 +197,7 @@ export default withStyles({
                 })
                   .then(async (e) => {
                     if (e.status !== 200) {
-                      throw "error server code: " +  e.status;
+                      throw "error server code: " + e.status;
                     }
                     this.props.enqueueSnackbar('Persoon successvol verwijderd', {
                       variant: 'success',
@@ -235,28 +235,28 @@ export default withStyles({
                 "&vastBedrag=" + $("#addUserForm [name='vastBedrag']").val() +
                 "&rondeBedrag=" + $("#addUserForm [name='rondeBedrag']").val()
             })
-            .then(response => {
-              if (response.status !== 200) {
-                throw "error server code: " +  response.status;
-              }
+              .then(response => {
+                if (response.status !== 200) {
+                  throw "error server code: " + response.status;
+                }
                 var a = response.json();
-               return a
-             })
-            .then((a) => {
-              this.setState({ addDialogOpen: false });
-              this.props.enqueueSnackbar('Persoon toegevoegd met code: ' + a.code, {
-                variant: 'success',
-                autoHideDuration: 5000,
+                return a
+              })
+              .then((a) => {
+                this.setState({ addDialogOpen: false });
+                this.props.enqueueSnackbar('Persoon toegevoegd met code: ' + a.code, {
+                  variant: 'success',
+                  autoHideDuration: 5000,
+                });
+                this.getData();
+              })
+              .catch(() => {
+                this.setState({ addDialogOpen: false });
+                this.props.enqueueSnackbar('Persoon toevoegen mislukt', {
+                  variant: 'error',
+                  autoHideDuration: 5000,
+                });
               });
-              this.getData();
-            })
-            .catch(() => {
-              this.setState({ addDialogOpen: false });
-              this.props.enqueueSnackbar('Persoon toevoegen mislukt', {
-                variant: 'error',
-                autoHideDuration: 5000,
-              });
-            });
           } // send the request and close dialog
           }>
             <DialogTitle id="form-dialog-title">Nieuwe wandelaar toevoegen</DialogTitle>
@@ -327,7 +327,7 @@ export default withStyles({
 
 
         {/* edit user dialog */}
-        {this.state.editDialogOpen? <Dialog className={classes.root} open={this.state.editDialogOpen} onClose={() => this.setState({ editDialogOpen: false })} aria-labelledby="form-dialog-title">
+        {this.state.editDialogOpen ? <Dialog className={classes.root} open={this.state.editDialogOpen} onClose={() => this.setState({ editDialogOpen: false })} aria-labelledby="form-dialog-title">
           <form id="editUserForm" action="#" method="POST" onSubmit={e => {
             e.preventDefault(); // remove the redirect
             fetch(serverUrl + '/api/editUser/', {
@@ -341,27 +341,27 @@ export default withStyles({
                 "&rondeBedrag=" + $("#editUserForm [name='rondeBedrag']").val() +
                 "&id=" + this.state.currentPerson.id
             })
-            .then(response => {
-              if (response.status !== 200) {
-                throw "error server code: " +  response.status;
-              }
-              this.getData();
-              this.setState({ editDialogOpen: false, dialogOpen: false});
-              this.props.enqueueSnackbar('Persoon successvol bijgewerkt', {
-                variant: 'success',
-                autoHideDuration: 5000,
+              .then(response => {
+                if (response.status !== 200) {
+                  throw "error server code: " + response.status;
+                }
+                this.getData();
+                this.setState({ editDialogOpen: false, dialogOpen: false });
+                this.props.enqueueSnackbar('Persoon successvol bijgewerkt', {
+                  variant: 'success',
+                  autoHideDuration: 5000,
+                });
+                this.getData();
+              })
+              .catch((e) => {
+                console.log(e);
+                this.getData();
+                this.setState({ editDialogOpen: false, dialogOpen: false });
+                this.props.enqueueSnackbar('Persoon bijwerken mislukt', {
+                  variant: 'error',
+                  autoHideDuration: 5000,
+                });
               });
-              this.getData();
-            })
-            .catch((e) => {
-              console.log(e);
-              this.getData();
-              this.setState({ editDialogOpen: false, dialogOpen: false});
-              this.props.enqueueSnackbar('Persoon bijwerken mislukt', {
-                variant: 'error',
-                autoHideDuration: 5000,
-              });
-            });
           } // send the request and close dialog
           }>
             <DialogTitle id="form-dialog-title">Gegevens bijwerken</DialogTitle>
@@ -434,7 +434,7 @@ export default withStyles({
               </Button>
             </DialogActions>
           </form>
-        </Dialog>: null}
+        </Dialog> : null}
       </div>);
 
   }

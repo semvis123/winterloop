@@ -189,7 +189,7 @@ function AppReact() {
         </Typography>
     },
     {
-      name: 'Stempels',
+      name: 'Rondes',
       icon: <PollIcon />,
       appBar: <div className={classes.search}>
         <div className={classes.searchIcon}>
