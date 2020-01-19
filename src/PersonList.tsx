@@ -15,9 +15,11 @@ import { withSnackbar, useSnackbar } from 'notistack';
 import AddIcon from '@material-ui/icons/Add';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import { Zoom, Fab } from '@material-ui/core';
+import { Zoom, Fab, IconButton } from '@material-ui/core';
+import EditIcon from '@material-ui/icons/Edit';
 
 import * as Config from '../configuration.json';
+import theme from './theme';
 
 // Grab server url from configuration file
 const serverUrl = Config.server.url + ':' + Config.server.port;
@@ -48,6 +50,7 @@ interface PersonListStateInterface {
   currentPerson: PersonObjectInterface;
   listClickDisabled: boolean;
   addDialogOpen: boolean;
+  editDialogOpen: any;
 }
 
 // Dit is de lijst voor alle personen
@@ -56,6 +59,12 @@ export default withStyles({
     position: 'fixed',
     bottom: 16,
     right: 26,
+  },
+  editButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
   },
 })(withSnackbar(class PersonList extends React.Component {
   // Define interfaces
@@ -77,7 +86,8 @@ export default withStyles({
       dialogOpen: false,
       currentPerson: null,
       listClickDisabled: false,
-      addDialogOpen: false
+      addDialogOpen: false,
+      editDialogOpen: false
     };
   }
 
@@ -149,7 +159,16 @@ export default withStyles({
           </List>) : <CircularProgress color="secondary" />} {/* Moet een skelleton worden */}
         {this.state.dialogOpen ? (
           <Dialog open={this.state.dialogOpen} className={classes.root} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">{this.state.currentPerson.naam}</DialogTitle>
+            <DialogTitle id="form-dialog-title">
+              <IconButton aria-label="edit" className={classes.editButton} onClick={() => {
+                this.setState({
+                  editDialogOpen: true
+                });
+              }}>
+                <EditIcon />
+              </IconButton>
+              {this.state.currentPerson.naam}
+            </DialogTitle>
             <DialogContent>
               <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
               <DialogContentText>postcode: {this.state.currentPerson.postcode}</DialogContentText>
@@ -305,6 +324,117 @@ export default withStyles({
             </DialogActions>
           </form>
         </Dialog>
+
+
+        {/* edit user dialog */}
+        {this.state.editDialogOpen? <Dialog className={classes.root} open={this.state.editDialogOpen} onClose={() => this.setState({ editDialogOpen: false })} aria-labelledby="form-dialog-title">
+          <form id="editUserForm" action="#" method="POST" onSubmit={e => {
+            e.preventDefault(); // remove the redirect
+            fetch(serverUrl + '/api/editUser/', {
+              method: 'post',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' },
+              body: "naam=" + $("#editUserForm [name='naam']").val() +
+                "&huisnummer=" + $("#editUserForm [name='huisnummer']").val() +
+                "&postcode=" + $("#editUserForm [name='postcode']").val() +
+                "&telefoonnummer=" + $("#editUserForm [name='telefoonnummer']").val() +
+                "&vastBedrag=" + $("#editUserForm [name='vastBedrag']").val() +
+                "&rondeBedrag=" + $("#editUserForm [name='rondeBedrag']").val() +
+                "&id=" + this.state.currentPerson.id
+            })
+            .then(response => {
+              if (response.status !== 200) {
+                throw "error server code: " +  response.status;
+              }
+              this.getData();
+              this.setState({ editDialogOpen: false, dialogOpen: false});
+              this.props.enqueueSnackbar('Persoon successvol bijgewerkt', {
+                variant: 'success',
+                autoHideDuration: 5000,
+              });
+              this.getData();
+            })
+            .catch((e) => {
+              console.log(e);
+              this.getData();
+              this.setState({ editDialogOpen: false, dialogOpen: false});
+              this.props.enqueueSnackbar('Persoon bijwerken mislukt', {
+                variant: 'error',
+                autoHideDuration: 5000,
+              });
+            });
+          } // send the request and close dialog
+          }>
+            <DialogTitle id="form-dialog-title">Gegevens bijwerken</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Vul hieronder de gegevens in van de wandelaar.
+              </DialogContentText>
+              <TextField
+                autoFocus
+                margin="dense"
+                label="Naam"
+                type="text"
+                name="naam"
+                defaultValue={this.state.currentPerson.naam}
+                fullWidth
+              />
+              <TextField
+                margin="dense"
+                label="Postcode"
+                type="text"
+                name="postcode"
+                defaultValue={this.state.currentPerson.postcode}
+                fullWidth
+              />
+              <TextField
+                margin="dense"
+                label="Huisnummer"
+                type="text"
+                name="huisnummer"
+                defaultValue={this.state.currentPerson.huisnummer}
+                fullWidth
+              />
+              <TextField
+                margin="dense"
+                label="Telefoonnummer"
+                type="text"
+                name="telefoonnummer"
+                defaultValue={this.state.currentPerson.telefoonnummer}
+                fullWidth
+              />
+              <TextField
+                margin="dense"
+                label="Vast bedrag"
+                type="number"
+                name="vastBedrag"
+                defaultValue={this.state.currentPerson.vastBedrag}
+                fullWidth
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                }}
+              />
+              <TextField
+                margin="dense"
+                label="Bedrag per ronde"
+                type="number"
+                name="rondeBedrag"
+                defaultValue={this.state.currentPerson.rondeBedrag}
+                fullWidth
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                }}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => this.setState({ editDialogOpen: false })} color="primary">
+                Annuleren
+              </Button>
+              <Button color="primary" type="submit">
+                Opslaan
+              </Button>
+            </DialogActions>
+          </form>
+        </Dialog>: null}
       </div>);
 
   }

@@ -79,6 +79,17 @@ app.post('/api/addUser/', async (req, res) => {
         }
     });
 });
+app.post('/api/editUser/', async (req, res) => {
+    var par = req.body; // get parameters from url
+    con.query("UPDATE winterloop.user SET naam = ?, huisnummer = ?,postcode = ?,telefoonnummer = ?,vastBedrag = ?, rondeBedrag = ? WHERE id=?",
+     [par.naam, par.huisnummer, par.postcode, par.telefoonnummer, par.vastBedrag, par.rondeBedrag, par.id], (e) => {
+        if (e) {
+            res.status(500).send(e.sqlMessage);
+        } else {
+            res.status(200).send('success');
+        }
+    });
+});
 app.post('/api/addRound/', async (req, res) => {
     var par = req.body; // get parameters from url
     con.query("UPDATE winterloop.user SET rondes = rondes + 1 WHERE code = ?", [par.code], (e) => {
