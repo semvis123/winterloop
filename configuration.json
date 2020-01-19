@@ -1,7 +1,7 @@
 {
   "server": {
     "port": 4322,
-    "url": "http://192.168.2.37"
+    "url": "http://localhost"
   },
   "mysql": {
     "host": "localhost",
