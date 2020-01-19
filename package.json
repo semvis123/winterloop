@@ -46,6 +46,6 @@
     "node-sass": "^4.13.0",
     "postcss-modules": "^1.4.1",
     "postcss-uncss": "^0.17.0",
-    "typescript": "^3.7.4"
+    "typescript": "^3.7.5"
   }
 }
