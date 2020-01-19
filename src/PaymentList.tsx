@@ -88,6 +88,7 @@ export default withStyles({
     classes: any; // It works
     search: string;
     enqueueSnackbar: any;
+    closeSnackbar: any;
   }
 
   // Global vars
@@ -232,30 +233,59 @@ export default withStyles({
                   Annuleren
                 </Button>
                 <Button onClick={()=> {
-                  fetch(serverUrl + '/api/setPayed/', {
-                    method: 'post',
-                    headers: {
-                      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                      'Access-Control-Allow-Origin': '*'
-                    },
-                    body: "code=" + this.state.currentPerson.code + "&payed=1"
-                  }).then((e) => {
-                    if (e.status !== 200) {
-                      throw e.status;
-                    } else {
-                      persons[persons.indexOf(this.state.currentPerson)].betaald = true;
-                      this.setState({ paymentDialogOpen: false });
-                    }
-                    this.props.enqueueSnackbar('Betalen gelukt', {
-                      variant: 'success',
-                      autoHideDuration: 5000,
-                    });
-                  }
-                  ).catch(() => {
-                    this.props.enqueueSnackbar('Betalen mislukt', {
-                      variant: 'error',
-                      autoHideDuration: 5000,
-                    });
+
+                  const action = key => (
+                      <React.Fragment>
+                          <Button onClick={() => {
+                             this.props.closeSnackbar(key);
+                             this.props.enqueueSnackbar('Betalen mislukt', {
+                               variant: 'error',
+                               autoHideDuration: 5000,
+                             });
+                           }}>
+                          Annuleren
+                          </Button>
+                          <Button onClick={() => {
+                            fetch(serverUrl + '/api/setPayed/', {
+                              method: 'post',
+                              headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                                'Access-Control-Allow-Origin': '*'
+                              },
+                              body: "code=" + this.state.currentPerson.code + "&payed=1"
+                            }).then((e) => {
+                              if (e.status !== 200) {
+                                throw e.status;
+                              } else {
+                                persons[persons.indexOf(this.state.currentPerson)].betaald = true;
+                                this.setState({ paymentDialogOpen: false });
+                              }
+                              this.props.enqueueSnackbar('Betalen gelukt', {
+                                variant: 'success',
+                                autoHideDuration: 5000,
+                              });
+                            }
+                            ).catch(() => {
+                              this.props.enqueueSnackbar('Betaal status zetten mislukt', {
+                                variant: 'error',
+                                autoHideDuration: 5000,
+                              });
+                            });
+                             this.props.closeSnackbar(key);
+                           }}>
+                          Gelukt
+                          </Button>
+                      </React.Fragment>
+                  );
+                  let person = this.state.currentPerson;
+                  let amount = (person.rondeBedrag * person.rondes + person.vastBedrag ).toFixed(2)
+                  .replace('.', ',')
+                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+
+                  this.props.enqueueSnackbar('Te betalen: € '+ amount, {
+                      variant: 'info',
+                      persist: true,
+                      action,
                   });
                 }} color="secondary">
                   Contant
