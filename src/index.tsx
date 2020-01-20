@@ -32,7 +32,6 @@ import StorageIcon from '@material-ui/icons/Storage';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import InputBase from '@material-ui/core/InputBase';
-import { withSnackbar, useSnackbar } from 'notistack';
 import * as XLSX from 'xlsx';
 import { SnackbarProvider } from 'notistack';
 import CountingList from './CountingList';
@@ -40,6 +39,7 @@ import PersonList from './PersonList';
 import PaymentList from './PaymentList';
 import * as Config from '../configuration.json';
 import Status from './Status';
+
 const serverUrl = Config.server.url + ':' + Config.server.port;
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -174,9 +174,6 @@ function AppReact() {
   })
   const [historyLoaded, setHistory] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState('');
-
-  //snackbar inside this function
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   // Setup localstorage
   if (localStorage.getItem('dark') == undefined) { localStorage.setItem('dark', 'false') }
@@ -351,16 +348,9 @@ function AppReact() {
             }).then((e) => {
               if (e.status !== 200) {
                 console.log(e);
-                enqueueSnackbar("Database legen mislukt", {
-                    variant: 'error',
-                    autoHideDuration: 5000
-                });
               }
               else {
-                enqueueSnackbar("Database succesvol geleegd", {
-                    variant: 'success',
-                    autoHideDuration: 5000
-                });
+                alert("database successvol geleegd.");
                 //success
               }
             });
@@ -377,16 +367,9 @@ function AppReact() {
                 }).then((e) => {
                   if (e.status !== 200) {
                     console.log(e);
-                    enqueueSnackbar("Database legen mislukt", {
-                        variant: 'error',
-                        autoHideDuration: 5000
-                    });
                   }
                   else {
-                    enqueueSnackbar("Database succesvol geleegd", {
-                        variant: 'success',
-                        autoHideDuration: 5000
-                    });
+                    alert("database successvol geleegd.");
                     //success
                   }
                 });
