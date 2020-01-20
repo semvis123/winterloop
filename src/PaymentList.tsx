@@ -38,7 +38,7 @@ interface PersonObjectInterface {
   rondes: number;
   create_time: string;
   code: string;
-  betaald: number;
+  betaald: boolean;
 }
 
 interface PaymentListStateInterface {
@@ -136,7 +136,7 @@ export default withStyles({
                 "rondes": 0,
                 "code": '000000',
                 "create_time": "2019-12-27T15:16:48.000Z",
-                "betaald": -1
+                "betaald": 0
               }
             ], listClickDisabled: true
           }) : null
@@ -172,7 +172,7 @@ export default withStyles({
               <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
                 <ListItemText primary={person.naam} secondary={person.code} />
                 <ListItemText primary={
-                  <Typography align="center" className={classes.betaald}>{(person.betaald !== -1) ? 'BETAALD' : ''}</Typography>
+                  <Typography align="center" className={classes.betaald}>{Boolean(person.betaald) ? 'BETAALD' : ''}</Typography>
                 } />
                 <ListItemText primary={
                   <Typography align="right" className={classes.root}>€ {
@@ -206,7 +206,7 @@ export default withStyles({
                   .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
               }</DialogContentText>
               <DialogContentText>Code: {this.state.currentPerson.code}</DialogContentText>
-              <DialogContentText>Betaald: {(this.state.currentPerson.betaald !== -1) ? 'ja' : 'nee'}</DialogContentText>
+              <DialogContentText>Betaald: {Boolean(this.state.currentPerson.betaald) ? 'ja' : 'nee'}</DialogContentText>
             </DialogContent>
             <DialogActions>
               <Button onClick={() => this.setState({ dialogOpen: false })} color="primary">
@@ -214,7 +214,7 @@ export default withStyles({
                 </Button>
               <Button onClick={() => {
                 this.setState({ paymentDialogOpen: true, currentNameSetRound: '', personEdit: '' })
-              }} color="secondary" disabled={this.state.currentPerson.betaald !== -1}>
+              }} color="secondary" disabled={Boolean(this.state.currentPerson.betaald)}>
                 Betalen
                 </Button>
             </DialogActions>

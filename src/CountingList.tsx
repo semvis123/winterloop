@@ -38,7 +38,7 @@ interface PersonObjectInterface {
   rondes: number;
   create_time: string;
   code: string;
-  betaald: number;
+  betaald: boolean;
 }
 
 interface CountingListStateInterface {
@@ -139,7 +139,7 @@ export default withStyles({
                 "rondes": 0,
                 "code": '000000',
                 "create_time": "2019-12-27T15:16:48.000Z",
-                "betaald": -1
+                "betaald": 0
               }
             ], listClickDisabled: true
           }) : null
@@ -192,7 +192,7 @@ export default withStyles({
                   <Typography align="right" className={classes.root}>{person.rondes}</Typography>
                 } />
                 <ListItemSecondaryAction>
-                  <IconButton edge="end" aria-label="add" onClick={() => {
+                  <IconButton disabled={Boolean(person.betaald)} edge="end" aria-label="add" onClick={() => {
                     const that = this;
                     persons[i].rondes++;
                     fetch(serverUrl + '/api/addRound/', {
@@ -226,7 +226,7 @@ export default withStyles({
         {this.state.dialogOpen ? (
           <Dialog open={this.state.dialogOpen} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">
-              <IconButton aria-label="edit" className={classes.editButton} disabled={this.state.currentPerson.betaald!==-1} onClick={() => {
+              <IconButton aria-label="edit" className={classes.editButton} disabled={Boolean(this.state.currentPerson.betaald)} onClick={() => {
                 this.setState({
                   personEdit: this.state.currentPerson.code,
                   changeRoundOpen: true,
@@ -280,7 +280,7 @@ export default withStyles({
                     });
                   }
                   )
-              }} color="secondary">
+              }} disabled={Boolean(this.state.currentPerson.betaald)} color="secondary">
                 Verwijder ronde
                 </Button>
             </DialogActions>

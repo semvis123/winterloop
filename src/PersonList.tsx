@@ -37,7 +37,7 @@ interface PersonObjectInterface {
   rondes: number;
   create_time: string;
   code: string;
-  betaald: number;
+  betaald: boolean;
 }
 
 interface PersonListStateInterface {
@@ -156,7 +156,7 @@ export default withStyles({
                 <ListItemText id={person.id.toString()} primary={person.naam} secondary={person.code} />
               </ListItem>
             )}
-          </List>) : <CircularProgress color="secondary" />} {/* Moet een skelleton worden */}
+          </List>) : <CircularProgress color="secondary" />} {/* Moet een skeleton worden */}
         {this.state.dialogOpen ? (
           <Dialog open={this.state.dialogOpen} className={classes.root} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">
@@ -182,7 +182,7 @@ export default withStyles({
               </DialogContentText>
               <DialogContentText>aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
               <DialogContentText>aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
-              <DialogContentText>betaald: {(this.state.currentPerson.betaald !== -1) ? 'ja' : 'nee'}</DialogContentText>
+              <DialogContentText>betaald: {Boolean(this.state.currentPerson.betaald) ? 'ja' : 'nee'}</DialogContentText>
               <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
             </DialogContent>
             <DialogActions>

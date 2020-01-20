@@ -32,6 +32,7 @@ import StorageIcon from '@material-ui/icons/Storage';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import InputBase from '@material-ui/core/InputBase';
+import { withSnackbar, useSnackbar } from 'notistack';
 import * as XLSX from 'xlsx';
 import { SnackbarProvider } from 'notistack';
 import CountingList from './CountingList';
@@ -39,7 +40,6 @@ import PersonList from './PersonList';
 import PaymentList from './PaymentList';
 import * as Config from '../configuration.json';
 import Status from './Status';
-
 const serverUrl = Config.server.url + ':' + Config.server.port;
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -132,7 +132,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 
 interface PersonObjectInterface {
-  betaald: any;
+  betaald: boolean;
   id: number;
   naam: string;
   huisnummer: string;
@@ -163,7 +163,6 @@ interface pageObject {
 function AppReact() {
   const theme = useTheme();
   const classes = useStyles(BedumerTheme);
-
   // States
   const [drawerState, setDrawer] = React.useState(false);
   const [pageValue, setPage] = React.useState(0);
@@ -175,6 +174,9 @@ function AppReact() {
   })
   const [historyLoaded, setHistory] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState('');
+
+  //snackbar inside this function
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   // Setup localstorage
   if (localStorage.getItem('dark') == undefined) { localStorage.setItem('dark', 'false') }
@@ -294,7 +296,7 @@ function AppReact() {
                     person.create_time,
                     person.code,
                     amount,
-                    person.betaald
+                    String(Boolean(person.betaald)? 1: 0)
                   ];
                   persons.push(userArray);
                 })
@@ -328,7 +330,7 @@ function AppReact() {
                         person.create_time,
                         person.code,
                         amount,
-                        person.betaald
+                        String(Boolean(person.betaald)? 1: 0)
                       ];
                       persons.push(userArray);
                     })
@@ -349,9 +351,16 @@ function AppReact() {
             }).then((e) => {
               if (e.status !== 200) {
                 console.log(e);
+                enqueueSnackbar("Database legen mislukt", {
+                    variant: 'error',
+                    autoHideDuration: 5000
+                });
               }
               else {
-                alert("database successvol geleegd.");
+                enqueueSnackbar("Database succesvol geleegd", {
+                    variant: 'success',
+                    autoHideDuration: 5000
+                });
                 //success
               }
             });
@@ -368,9 +377,16 @@ function AppReact() {
                 }).then((e) => {
                   if (e.status !== 200) {
                     console.log(e);
+                    enqueueSnackbar("Database legen mislukt", {
+                        variant: 'error',
+                        autoHideDuration: 5000
+                    });
                   }
                   else {
-                    alert("database successvol geleegd.");
+                    enqueueSnackbar("Database succesvol geleegd", {
+                        variant: 'success',
+                        autoHideDuration: 5000
+                    });
                     //success
                   }
                 });
