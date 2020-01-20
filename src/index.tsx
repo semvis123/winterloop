@@ -132,6 +132,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 
 interface PersonObjectInterface {
+  betaald: any;
   id: number;
   naam: string;
   huisnummer: string;
@@ -278,7 +279,7 @@ function AppReact() {
             fetch(serverUrl + '/api/getUsers/') // change this to yourip:4322
               .then(response => { var a = response.json(); return a })
               .then(data => {
-                let persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "code", "Totaalbedrag"]];
+                let persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "Code", "Totaalbedrag", "Betaald"]];
                 data.forEach((person: PersonObjectInterface) => {
                   let amount = (person.rondeBedrag * person.rondes + person.vastBedrag ).toFixed(2);
                   let userArray = [
@@ -292,7 +293,8 @@ function AppReact() {
                     person.rondes.toString(),
                     person.create_time,
                     person.code,
-                    amount
+                    amount,
+                    person.betaald
                   ];
                   persons.push(userArray);
                 })
@@ -311,7 +313,7 @@ function AppReact() {
                 fetch(serverUrl + '/api/getUsers/')
                   .then(response => { var a = response.json(); return a })
                   .then(data => {
-                    let persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "code", "Totaalbedrag"]];
+                    let persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "Code", "Totaalbedrag", "Betaald"]];
                     data.forEach((person: PersonObjectInterface) => {
                       let amount = (person.rondeBedrag * person.rondes + person.vastBedrag ).toFixed(2);
                       let userArray = [
@@ -325,7 +327,8 @@ function AppReact() {
                         person.rondes.toString(),
                         person.create_time,
                         person.code,
-                        amount
+                        amount,
+                        person.betaald
                       ];
                       persons.push(userArray);
                     })
