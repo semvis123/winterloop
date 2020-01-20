@@ -226,7 +226,7 @@ export default withStyles({
         {this.state.dialogOpen ? (
           <Dialog open={this.state.dialogOpen} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">
-              <IconButton aria-label="edit" className={classes.editButton} onClick={() => {
+              <IconButton aria-label="edit" className={classes.editButton} disabled={this.state.currentPerson.betaald!==-1} onClick={() => {
                 this.setState({
                   personEdit: this.state.currentPerson.code,
                   changeRoundOpen: true,
