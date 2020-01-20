@@ -171,6 +171,7 @@ export default withStyles({
           </Typography>
           <Typography className={classes.text} gutterBottom><b>Gemiddelde opbrengst</b>
             <span className={classes.value}>€ {
+              (this.state.avgTotalValue.toFixed(2)=="NaN")?'0,00' :
               this.state.avgTotalValue.toFixed(2)
                 .replace('.', ',')
                 .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
@@ -179,6 +180,7 @@ export default withStyles({
           </Typography>
           <Typography className={classes.text} gutterBottom><b>Gemiddelde opbrengst van rondes</b>
             <span className={classes.value}>€ {
+              (this.state.avgRoundValue.toFixed(2)=="NaN")?'0,00' :
               this.state.avgRoundValue.toFixed(2)
                 .replace('.', ',')
                 .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
@@ -187,11 +189,16 @@ export default withStyles({
           </Typography>
           <Typography className={classes.text} gutterBottom><b>Gemiddelde opbrengst van vaste bedragen</b>
             <span className={classes.value}>€ {
+              (this.state.avgFixedValue.toFixed(2)=="NaN")?'0,00' :
               this.state.avgFixedValue.toFixed(2)
                 .replace('.', ',')
                 .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+
             }
             </span>
+          </Typography>
+          <Typography className={classes.text} gutterBottom><b>Aantal lopers</b>
+            <span className={classes.value}>{this.state.persons}</span>
           </Typography>
         </CardContent>
       </Card>
