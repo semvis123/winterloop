@@ -1,0 +1,3 @@
+Notitie
+- bij stempels een vakje dat je rondes kan invullen
+- Transacties intergreren bij stempels
