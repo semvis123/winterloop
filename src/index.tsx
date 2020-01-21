@@ -293,7 +293,7 @@ function AppReact() {
                     person.create_time,
                     person.code,
                     amount,
-                    String(Boolean(person.betaald)? 1: 0)
+                    String((person.betaald)? 1: 0)
                   ];
                   persons.push(userArray);
                 })
@@ -327,7 +327,7 @@ function AppReact() {
                         person.create_time,
                         person.code,
                         amount,
-                        String(Boolean(person.betaald)? 1: 0)
+                        String((person.betaald)? 1: 0)
                       ];
                       persons.push(userArray);
                     })
@@ -400,6 +400,7 @@ function AppReact() {
   // Add function for history change
   $(window).on('popstate', function() {
     setPage(history.state.page);
+    window.scrollTo(0, 0);
   });
 
   // Other vars
@@ -474,6 +475,7 @@ function AppReact() {
                   data.name,
                   "#" + data.name
                 );
+                window.scrollTo(0, 0);
               }}>
                 <ListItemIcon>{data.icon}</ListItemIcon>
                 <ListItemText>{data.name}</ListItemText>
