@@ -6,6 +6,7 @@ const app = express().use('*', cors());
 const bodyParser = require('body-parser');
 const Config = require('./configuration.json');
 const port = Config.server.port;
+var faker = require('faker/locale/nl');
 
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({
@@ -152,6 +153,24 @@ app.post('/api/emptyDB/', async (req, res) => {
             res.status(200).send("success");
         }
     });
+});
+
+app.post('/api/fillDB/', async (req, res) => {
+    // randomly fills database
+    var par = req.body;
+    console.log(req);
+    for (i = 0; i < par.count; i++) {
+        var code = await genCode();
+        pers = faker.helpers.userCard(); // generates random user
+        console.log(pers)
+        con.query("INSERT INTO winterloop.user (`naam`,`huisnummer`,`postcode`,`telefoonnummer`,`vastBedrag`,`rondeBedrag`,`code`)" +
+        " VALUES (?,?,?,?,?,?,?)", [pers.name, pers.address.suite.replace("[a-zA-Z]", ""), pers.address.zipcode.replace(" ", ""), pers.phone,(Math.random() * 1000.00).toFixed(2),(Math.random() * 1000.00).toFixed(2), code], (e) => {
+            if (e) {
+                res.status(500).send(e.sqlMessage);
+            }
+        });
+    }
+    res.status(200).send('success');
 });
 
 app.listen(port, () => console.log(`Server started, listening on port ${port}!`))
