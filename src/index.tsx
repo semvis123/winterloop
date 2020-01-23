@@ -181,7 +181,7 @@ function AppReact() {
   // Page list
   const pages: pageObject = [
     {
-      name: 'Registatie',
+      name: 'Registratie',
       icon: <CreateIcon />,
       content:
         <Typography component="div" className={classes.root}>

@@ -59,6 +59,7 @@ export default withStyles({
     position: 'fixed',
     bottom: 16,
     right: 26,
+    zIndex: 100,
   },
   editButton: {
     position: 'absolute',
