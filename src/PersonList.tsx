@@ -260,10 +260,10 @@ export default withStyles({
               });
           } // send the request and close dialog
           }>
-            <DialogTitle id="form-dialog-title">Nieuwe wandelaar toevoegen</DialogTitle>
+            <DialogTitle id="form-dialog-title">Nieuwe deelnemer toevoegen</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Vul hieronder de gegevens in van de wandelaar.
+                Vul hieronder de gegevens in van de deelnemer.
               </DialogContentText>
               <TextField
                 autoFocus
@@ -368,7 +368,7 @@ export default withStyles({
             <DialogTitle id="form-dialog-title">Gegevens bijwerken</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Vul hieronder de gegevens in van de wandelaar.
+                Vul hieronder de gegevens in van de deelnemer.
               </DialogContentText>
               <TextField
                 autoFocus
