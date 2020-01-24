@@ -54,7 +54,7 @@ interface CountingListStateInterface {
     findIndex: any;
     find: any;
   }
-
+  rendered?: React.ReactNode;
   dialogOpen: boolean;
   currentPerson: PersonObjectInterface;
   listClickDisabled: boolean;
@@ -67,6 +67,13 @@ interface CountingListStateInterface {
   personEdit: string;
   paymentDialogOpen: any;
 }
+
+// Static vars
+// Deze worden niet verwijdert als het component herlaad
+let _hasLoaded:boolean = false;
+let _hasFailed:boolean = false;
+let renderedData:React.ReactNode;
+let localState:any;
 
 // Dit is de lijst voor de rondes
 export default withStyles({
@@ -113,20 +120,31 @@ export default withStyles({
       personEdit: "",
       paymentDialogOpen: false
     };
+
+    if (_hasLoaded && !_hasFailed) {
+      this.state = {
+        ...this.state,
+        rendered: renderedData,
+      }
+    }
   }
 
   getData() {
     // Haal de data op van de database
-    const that = this;
     this._isMounted ? fetch(serverUrl + '/api/getUsers/')
       .then(response => { var a = response.json(); return a })
-      .then(data => { this._isMounted ? that.setState({ persons: data, listClickDisabled: false }) : null })
+      .then(data => {
+        if (this._isMounted) {
+          localState.setState({ persons: data, listClickDisabled: false });
+          _hasLoaded = true;
+        }
+       })
       .catch(() => {
         this.props.enqueueSnackbar('Kan niet verbinden met database', {
           variant: 'error',
           autoHideDuration: 5000,
         });
-        this._isMounted ? that.setState(
+        this._isMounted ? localState.setState(
           {
             persons: [
               {
@@ -143,13 +161,14 @@ export default withStyles({
                 "betaald": 0
               }
             ], listClickDisabled: true
-          }) : null
+          }) : null;
+          _hasFailed = true;
       }) : null;
   }
 
   componentDidMount() {
     this._isMounted = true;
-    (this.state.persons.length == 0 || this.state.persons[0].code == '000000') ? this.getData() : null;
+    (!_hasLoaded || !_hasFailed) ? this.getData() : null;
   }
 
   UNSAFE_componentWillReceiveProps(newProps) {

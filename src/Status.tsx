@@ -22,6 +22,13 @@ interface PersonObjectInterface {
   code: string;
 }
 
+// Static vars
+// Deze worden niet verwijdert als het component herlaad
+let _hasLoaded: boolean = false;
+let _hasFailed: boolean = false;
+let renderedData: React.ReactNode;
+let localState: any;
+
 export default withStyles({
   title: {
     color: (localStorage.getItem('dark') == 'true') ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
@@ -53,7 +60,8 @@ export default withStyles({
     avgRoundValue: number,
     fixedValue: number,
     avgFixedValue: number,
-    persons: number
+    persons: number,
+    rendered?: React.ReactNode
   };
   _isMounted: any;
   constructor(props) {
@@ -69,10 +77,16 @@ export default withStyles({
       avgFixedValue: 0,
       persons: 0
     };
+
+    if (_hasLoaded && !_hasFailed) {
+      this.state = {
+        ...this.state,
+        rendered: renderedData,
+      }
+    }
   }
   getData() {
     // Haal de data op van de database
-    const that = this;
     this._isMounted ? fetch(serverUrl + '/api/getUsers/')
       .then(response => { var a = response.json(); return a })
       .then(data => {
@@ -100,7 +114,7 @@ export default withStyles({
         avgTotalValue /= persons;
         avgRoundValue /= persons;
         avgFixedValue /= persons;
-        this._isMounted ? this.setState({
+        this._isMounted ? localState.setState({
           totalRound: totalRound,
           avgRound: avgRound,
           totalValue: totalValue,
@@ -111,9 +125,10 @@ export default withStyles({
           avgFixedValue: avgFixedValue,
           persons: persons
         }) : null;
+        _hasLoaded = true;
       })
       .catch(() => {
-        this._isMounted ? that.setState(
+        this._isMounted ? localState.setState(
           {
             persons: [
               {
@@ -131,77 +146,83 @@ export default withStyles({
             ], listClickDisabled: true
           }) : null
       }) : null;
+      _hasFailed = true;
+
   }
   componentDidMount() {
     this._isMounted = true;
-    (this.state.persons == 0) ? this.getData() : null;
+    localState = this;
+    (!_hasFailed || !_hasLoaded) ? this.getData() : null;
   }
   componentWillUnmount() {
     this._isMounted = false;
   }
   render() {
     const { classes } = this.props;
-
-    return (<div>
+    if (renderedData == null || !_hasLoaded) {
+      renderedData = (
       <Card className={classes.card} raised={true}>
-        <CardContent>
+          <CardContent>
           <Typography className={classes.title} gutterBottom variant="h5"><b>Opbrengsten</b></Typography>
           <Typography className={classes.text} gutterBottom><b>Totale opbrengst</b>
-            <span className={classes.value}>€ {
-              this.state.totalValue.toFixed(2) // always two decimal digits
-                .replace('.', ',') // replace decimal point character with ,
-                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')// use . as a separator
-            }</span>
+          <span className={classes.value}>€ {
+            this.state.totalValue.toFixed(2) // always two decimal digits
+            .replace('.', ',') // replace decimal point character with ,
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')// use . as a separator
+          }</span>
           </Typography>
           <Typography className={classes.text} gutterBottom><b>Totale opbrengst van rondes</b>
-            <span className={classes.value}>€ {
-              this.state.roundValue.toFixed(2)
-                .replace('.', ',')
-                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-            }
-            </span>
+          <span className={classes.value}>€ {
+            this.state.roundValue.toFixed(2)
+            .replace('.', ',')
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+          }
+          </span>
           </Typography>
           <Typography className={classes.text} gutterBottom><b>Totale opbrengst van vaste bedragen</b>
-            <span className={classes.value}>€ {
-              this.state.fixedValue.toFixed(2)
-                .replace('.', ',')
-                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-            }
-            </span>
+          <span className={classes.value}>€ {
+            this.state.fixedValue.toFixed(2)
+            .replace('.', ',')
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+          }
+          </span>
           </Typography>
           <Typography className={classes.text} gutterBottom><b>Gemiddelde opbrengst</b>
-            <span className={classes.value}>€ {
-              (this.state.avgTotalValue.toFixed(2)=="NaN")?'0,00' :
-              this.state.avgTotalValue.toFixed(2)
-                .replace('.', ',')
-                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-            }
-            </span>
+          <span className={classes.value}>€ {
+            (this.state.avgTotalValue.toFixed(2) == "NaN") ? '0,00' :
+            this.state.avgTotalValue.toFixed(2)
+            .replace('.', ',')
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+          }
+          </span>
           </Typography>
           <Typography className={classes.text} gutterBottom><b>Gemiddelde opbrengst van rondes</b>
-            <span className={classes.value}>€ {
-              (this.state.avgRoundValue.toFixed(2)=="NaN")?'0,00' :
-              this.state.avgRoundValue.toFixed(2)
-                .replace('.', ',')
-                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-            }
-            </span>
+          <span className={classes.value}>€ {
+            (this.state.avgRoundValue.toFixed(2) == "NaN") ? '0,00' :
+            this.state.avgRoundValue.toFixed(2)
+            .replace('.', ',')
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+          }
+          </span>
           </Typography>
           <Typography className={classes.text} gutterBottom><b>Gemiddelde opbrengst van vaste bedragen</b>
-            <span className={classes.value}>€ {
-              (this.state.avgFixedValue.toFixed(2)=="NaN")?'0,00' :
-              this.state.avgFixedValue.toFixed(2)
-                .replace('.', ',')
-                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+          <span className={classes.value}>€ {
+            (this.state.avgFixedValue.toFixed(2) == "NaN") ? '0,00' :
+            this.state.avgFixedValue.toFixed(2)
+            .replace('.', ',')
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
 
-            }
-            </span>
+          }
+          </span>
           </Typography>
           <Typography className={classes.text} gutterBottom><b>Aantal lopers</b>
-            <span className={classes.value}>{this.state.persons}</span>
+          <span className={classes.value}>{this.state.persons}</span>
           </Typography>
-        </CardContent>
-      </Card>
+          </CardContent>
+          </Card>)
+    }
+    return (<div>
+      {renderedData}
     </div>);
   }
 });

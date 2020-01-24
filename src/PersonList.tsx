@@ -11,7 +11,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import $ from 'jquery';
-import { withSnackbar, useSnackbar } from 'notistack';
+import { withSnackbar } from 'notistack';
 import AddIcon from '@material-ui/icons/Add';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -41,17 +41,20 @@ interface PersonObjectInterface {
 }
 
 interface PersonListStateInterface {
-  persons?: {
-    [index: number]: PersonObjectInterface;
-    map: any;
-  }
-
+  persons?: React.ReactNode,
   dialogOpen: boolean;
   currentPerson: PersonObjectInterface;
   listClickDisabled: boolean;
   addDialogOpen: boolean;
   editDialogOpen: any;
 }
+
+// Static vars
+// Deze worden niet verwijdert als het component herlaad
+let _hasLoaded:boolean = false;
+let _hasFailed:boolean = false;
+let renderedData:React.ReactNode;
+let localState:any;
 
 // Dit is de lijst voor alle personen
 export default withStyles({
@@ -90,11 +93,17 @@ export default withStyles({
       addDialogOpen: false,
       editDialogOpen: false
     };
+
+    if (_hasLoaded && !_hasFailed) {
+      this.state = {
+        ...this.state,
+        persons: renderedData,
+      }
+    }
   }
 
   getData() {
     // Haal de data op van de database
-    const that = this;
     fetch(serverUrl + '/api/getUsers/') // change this to yourip:4322
       .then(response => {
         if (response.status !== 200) {
@@ -102,36 +111,69 @@ export default withStyles({
         }
         var a = response.json();
         return a;
-      })
-      .then(data => { this._isMounted ? that.setState({ persons: data, listClickDisabled: false }) : null })
-      .catch(() => {
+      }).then(data => {
+        const { classes } = this.props;
+        renderedData = <List className={classes.root}>
+          {data.map((person: PersonObjectInterface, i: number) =>
+            <ListItem divider button key={i} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: data[i] }) : null}>
+              <ListItemText id={person.id.toString()} primary={person.naam} secondary={person.code} />
+            </ListItem>
+          )}
+        </List>;
+
+        // Update component when it is mounted
+        this._isMounted ? localState.setState({
+          persons: renderedData,
+          listClickDisabled: false
+        }) : null;
+
+        _hasLoaded = true;
+      }).catch(() => {
         this.props.enqueueSnackbar('Kan niet verbinden met database', {
           variant: 'error',
           autoHideDuration: 5000,
         });
-        this._isMounted ? that.setState({
-          persons: [
-            {
-              "id": 1,
-              "naam": "Kan niet verbinden met database.",
-              "huisnummer": "0",
-              "postcode": "0000AA",
-              "telefoonnummer": "0000000000",
-              "vastBedrag": 0,
-              "rondeBedrag": 0,
-              "rondes": 0,
-              "code": '00000',
-              "create_time": "2019-12-27T15:16:48.000Z"
-            }
-          ],
+
+        let data = [
+          {
+            "id": 1,
+            "naam": "Kan niet verbinden met database.",
+            "huisnummer": "0",
+            "postcode": "0000AA",
+            "telefoonnummer": "0000000000",
+            "vastBedrag": 0,
+            "rondeBedrag": 0,
+            "rondes": 0,
+            "code": '00000',
+            "create_time": "2019-12-27T15:16:48.000Z"
+          }
+        ];
+
+        const { classes } = this.props;
+        renderedData = <List className={classes.root}>
+          {data.map((person: PersonObjectInterface, i: number) =>
+            <ListItem divider button key={i} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: data[i] }) : null}>
+              <ListItemText id={person.id.toString()} primary={person.naam} secondary={person.code} />
+            </ListItem>
+          )}
+        </List>;
+
+        localState._isMounted ? localState.setState({
+          persons: renderedData,
           listClickDisabled: true
         }) : null;
+
+        _hasFailed = true;
       });
   }
 
   componentDidMount() {
     this._isMounted = true;
-    this.getData();
+    localState = this;
+
+    if (!_hasLoaded && !_hasFailed) {
+      setTimeout(() => {this.getData()},0);
+    }
   }
 
   componentWillUnmount() {
@@ -140,7 +182,6 @@ export default withStyles({
 
   render() {
     const { classes } = this.props;
-    const { persons } = this.state;
 
     return (
       <div>
@@ -150,14 +191,7 @@ export default withStyles({
           </Fab>
         </Zoom>
 
-        {this.state.persons ? (
-          <List className={classes.root}>
-            {persons.map((person: PersonObjectInterface, i: number) =>
-              <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
-                <ListItemText id={person.id.toString()} primary={person.naam} secondary={person.code} />
-              </ListItem>
-            )}
-          </List>) : <CircularProgress color="secondary" />} {/* Moet een skeleton worden */}
+        {this.state.persons ? ( this.state.persons ) : <CircularProgress color="secondary" />} {/* Moet een skeleton worden */}
         {this.state.dialogOpen ? (
           <Dialog open={this.state.dialogOpen} className={classes.root} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">
@@ -183,7 +217,7 @@ export default withStyles({
               </DialogContentText>
               <DialogContentText>aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
               <DialogContentText>aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
-              <DialogContentText>betaald: {Boolean(this.state.currentPerson.betaald) ? 'ja' : 'nee'}</DialogContentText>
+              <DialogContentText>betaald: {(this.state.currentPerson.betaald) ? 'ja' : 'nee'}</DialogContentText>
               <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -325,7 +359,6 @@ export default withStyles({
             </DialogActions>
           </form>
         </Dialog>
-
 
         {/* edit user dialog */}
         {this.state.editDialogOpen ? <Dialog className={classes.root} open={this.state.editDialogOpen} onClose={() => this.setState({ editDialogOpen: false })} aria-labelledby="form-dialog-title">
