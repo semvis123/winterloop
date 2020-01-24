@@ -41,6 +41,7 @@ interface PersonObjectInterface {
 }
 
 interface PersonListStateInterface {
+  paymentDialogOpen: boolean;
   persons?: React.ReactNode,
   dialogOpen: boolean;
   currentPerson: PersonObjectInterface;
@@ -78,6 +79,7 @@ export default withStyles({
   props: {
     classes: any;
     enqueueSnackbar: any;
+    closeSnackbar: any;
   }
 
   // Global vars
@@ -91,7 +93,8 @@ export default withStyles({
       currentPerson: null,
       listClickDisabled: false,
       addDialogOpen: false,
-      editDialogOpen: false
+      editDialogOpen: false,
+      paymentDialogOpen: false
     };
 
     if (_hasLoaded && !_hasFailed) {
@@ -468,6 +471,111 @@ export default withStyles({
             </DialogActions>
           </form>
         </Dialog> : null}
+
+        {/* paynent dialog */}
+        {this.state.paymentDialogOpen ? (
+          <Dialog open={this.state.paymentDialogOpen} onClose={() => this.setState({ paymentDialogOpen: false,  personEdit: '' })} aria-labelledby="form-dialog-title">
+            <DialogTitle id="form-dialog-title">Betalen</DialogTitle>
+            <DialogContent>
+              <DialogContentText>Wilt u contant of met Sumup betalen?</DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => this.setState({ paymentDialogOpen: false, personEdit: '' })} color="primary">
+                Annuleren
+                </Button>
+              <Button onClick={() => {
+
+                const action = key => (
+                  <React.Fragment>
+                    <Button onClick={() => {
+                      this.props.closeSnackbar(key);
+                      this.props.enqueueSnackbar('Betalen mislukt', {
+                        variant: 'error',
+                        autoHideDuration: 5000,
+                      });
+                    }}>
+                      Annuleren
+                          </Button>
+                    <Button onClick={() => {
+                      fetch(serverUrl + '/api/setPayed/', {
+                        method: 'post',
+                        headers: {
+                          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                          'Access-Control-Allow-Origin': '*'
+                        },
+                        body: "code=" + this.state.currentPerson.code + "&payed=1"
+                      }).then((e) => {
+                        if (e.status !== 200) {
+                          throw e.status;
+                        } else {
+                          this.setState({ paymentDialogOpen: false });
+                        }
+                        this.props.enqueueSnackbar('Betalen gelukt', {
+                          variant: 'success',
+                          autoHideDuration: 5000,
+                        });
+                      }
+                      ).catch(() => {
+                        this.props.enqueueSnackbar('Betaal status zetten mislukt', {
+                          variant: 'error',
+                          autoHideDuration: 5000,
+                        });
+                      });
+                      this.props.closeSnackbar(key);
+                    }}>
+                      Gelukt
+                          </Button>
+                  </React.Fragment>
+                );
+                let person = this.state.currentPerson;
+                let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2)
+                  .replace('.', ',')
+                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+
+                this.props.enqueueSnackbar('Te betalen: € ' + amount, {
+                  variant: 'info',
+                  persist: true,
+                  action,
+                });
+              }} color="secondary">
+                Contant
+                </Button>
+              <Button onClick={() => {
+                fetch(serverUrl + '/api/setPayed/', {
+                  method: 'post',
+                  headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                    'Access-Control-Allow-Origin': '*'
+                  },
+                  body: "code=" + this.state.currentPerson.code + "&payed=1"
+                }).then((e) => {
+                  if (e.status !== 200) {
+                    throw e.status;
+                  } else {
+                    this.setState({ paymentDialogOpen: false });
+                  }
+                }
+                ).catch(() => {
+                  this.props.enqueueSnackbar('Betalen mislukt', {
+                    variant: 'error',
+                    autoHideDuration: 5000,
+                  });
+                });
+                let person = this.state.currentPerson;
+                let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
+                window.location.href = 'sumupmerchant://pay/1.0?amount=' + amount
+                  + '&affiliate-key=' + Config.sumup.affiliateKey + 'currency=' + Config.sumup.currency + '&title=' + Config.sumup.title;
+                this.props.enqueueSnackbar('Betalen gelukt', {
+                  variant: 'success',
+                  autoHideDuration: 5000,
+                });
+              }} color="secondary">
+                Sumup
+                </Button>
+            </DialogActions>
+          </Dialog>
+
+        ) : null}
       </div>);
 
   }
