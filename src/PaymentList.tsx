@@ -74,21 +74,11 @@ let _hasLoaded: boolean = false;
 let _hasFailed: boolean = false;
 let renderedData: React.ReactNode;
 let localState: any;
-let search:string = "";
-let unfilteredPersons:any;
+let search: string = "";
+let unfilteredPersons: any;
 
 // Dit is de lijst voor de rondes
 export default withStyles({
-  betaald: {
-    color: '#4CAF50',
-    fontWeight: 'bold',
-  },
-  editButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: theme.palette.grey[500],
-  },
 })(withSnackbar(class PaymentList extends React.Component<PaymentListInterface> {
   // Define interfaces
   // To keep TypeScript happy
@@ -129,63 +119,65 @@ export default withStyles({
 
   getData() {
     // Haal de data op van de database
-    this._isMounted ? fetch(serverUrl + '/api/getUsers/')
+    fetch(serverUrl + '/api/getUsers/')
       .then(response => { var a = response.json(); return a })
       .then(data => {
-        localState._isMounted ? localState.setState({ persons: data, listClickDisabled: false }) : null;
-        const persons = localState.state.persons.filter(function(person: PersonObjectInterface) {
-          return ((person.naam.toLocaleLowerCase().indexOf(localState.props.search.toLocaleLowerCase()) !== -1) || (String(person.code).indexOf(localState.props.search) !== -1));
-        });
-        const { classes } = localState.props;
-        unfilteredPersons = data;
-        renderedData = <List className={classes.root}>
-          {persons.map((person: PersonObjectInterface, i: number) =>
-            <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
-              <ListItemText primary={person.naam} secondary={person.code} />
-              <ListItemText primary={
-                <Typography align="center" className={classes.betaald}>{Boolean(person.betaald) ? 'BETAALD' : ''}</Typography>
-              } />
-              <ListItemText primary={
-                <Typography align="right" className={classes.root}>€ {
-                  (person.rondes * person.rondeBedrag + person.vastBedrag)
-                    .toFixed(2)
-                    .replace('.', ',')
-                    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-                }</Typography>
-              } />
-            </ListItem>
-          )}
-        </List>
-        localState.setState({ rendered: renderedData });
-        _hasLoaded = true;
+        if (localState._isMounted) {
+          localState.setState({ persons: data, listClickDisabled: false });
+          const { classes } = this.props;
+          unfilteredPersons = data;
+          let persons = localState.state.persons;
+          renderedData = (
+            <List className={classes.root}>
+            {persons.map((person: PersonObjectInterface, i: number) =>
+              <ListItem divider button key={i} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
+                <ListItemText primary={person.naam} secondary={person.code} />
+                <ListItemText primary={
+                  <Typography align="center" style={{color: '#4CAF50',fontWeight: 'bold'}}className={classes.betaald}>{Boolean(person.betaald) ? 'BETAALD' : ''}</Typography>
+                } />
+                <ListItemText primary={
+                  <Typography align="right" className={classes.root}>€ {
+                    (person.rondes * person.rondeBedrag + person.vastBedrag)
+                      .toFixed(2)
+                      .replace('.', ',')
+                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+                  }</Typography>
+                } />
+              </ListItem>
+            )}
+          </List>)
+          localState.setState({ rendered: renderedData });
+        }
       })
-
       .catch((e) => {
         console.log(e);
         const { classes } = this.props;
-        _hasFailed = true;
-        localState.props.enqueueSnackbar('Kan niet verbinden met database', {
+        this.props.enqueueSnackbar('Kan niet verbinden met database', {
           variant: 'error',
           autoHideDuration: 5000,
         });
-        let persons = [
+        localState._isMounted ? localState.setState(
           {
-            "id": 1,
-            "naam": "Kan niet verbinden met database.",
-            "huisnummer": "0",
-            "postcode": "0000AA",
-            "telefoonnummer": "0000000000",
-            "vastBedrag": 0,
-            "rondeBedrag": 0,
-            "rondes": 0,
-            "code": '000000',
-            "create_time": "2019-12-27T15:16:48.000Z",
-            "betaald": false
-          }
-        ]
+            persons: [
+              {
+                "id": 1,
+                "naam": "Kan niet verbinden met database.",
+                "huisnummer": "0",
+                "postcode": "0000AA",
+                "telefoonnummer": "0000000000",
+                "vastBedrag": 0,
+                "rondeBedrag": 0,
+                "rondes": 0,
+                "code": '000000',
+                "create_time": "2019-12-27T15:16:48.000Z",
+                "betaald": 0
+              }
+            ], listClickDisabled: true
+          }) : null;
+          const persons = localState.state.persons;
         renderedData = (<List className={classes.root}>
           {persons.map((person: PersonObjectInterface, i: number) =>
-            <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
+            <ListItem divider button key={i} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
               <ListItemText primary={person.naam} secondary={person.code} />
               <ListItemText primary={
                 <Typography align="center" className={classes.betaald}>{Boolean(person.betaald) ? 'BETAALD' : ''}</Typography>
@@ -202,13 +194,15 @@ export default withStyles({
           )}
         </List>)
         localState.setState({ rendered: renderedData });
-      }) : null;
+        _hasFailed = true;
+      })
   }
 
   componentDidMount() {
     this._isMounted = true;
     localState = this;
     if (!_hasLoaded && !_hasFailed) {
+      _hasLoaded = true;
       setTimeout(() => { this.getData() }, 0);
     }
     // searching persons
@@ -221,7 +215,7 @@ export default withStyles({
       renderedData = (
         <List className={classes.root}>
           {persons.map((person: PersonObjectInterface, i: number) =>
-            <ListItem divider button key={i} onClick={() => (!this.state.listClickDisabled && this._isMounted) ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
+            <ListItem divider button key={i} onClick={() => (!localState.state.listClickDisabled && localState._isMounted) ? localState.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
               <ListItemText primary={person.naam} secondary={person.code} />
               <ListItemText primary={
                 <Typography align="right" className={classes.root}>{person.rondes}</Typography>
@@ -233,17 +227,12 @@ export default withStyles({
     }
   }
 
-  UNSAFE_componentWillReceiveProps(newProps) {
-    this.props = newProps;
-  }
-
   componentWillUnmount() {
     this._isMounted = false;
   }
 
   render() {
     const { classes } = this.props;
-
     return (
       <div>
         {this.state.rendered ? (this.state.rendered) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}

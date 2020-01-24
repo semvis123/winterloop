@@ -70,12 +70,12 @@ interface CountingListStateInterface {
 
 // Static vars
 // Deze worden niet verwijdert als het component herlaad
-let _hasLoaded:boolean = false;
-let _hasFailed:boolean = false;
-let renderedData:React.ReactNode;
-let localState:any;
-let search:string = "";
-let unfilteredPersons:any;
+let _hasLoaded: boolean = false;
+let _hasFailed: boolean = false;
+let renderedData: React.ReactNode;
+let localState: any;
+let search: string = "";
+let unfilteredPersons: any;
 
 // Dit is de lijst voor de rondes
 export default withStyles({
@@ -133,22 +133,18 @@ export default withStyles({
 
   getData() {
     // Haal de data op van de database
-    (this._isMounted && (!_hasLoaded || !_hasFailed)) ? fetch(serverUrl + '/api/getUsers/')
+    fetch(serverUrl + '/api/getUsers/')
       .then(response => { var a = response.json(); return a })
       .then(data => {
-        _hasLoaded = true;
-        if (this._isMounted) {
+        if (localState._isMounted) {
           localState.setState({ persons: data, listClickDisabled: false });
           unfilteredPersons = data;
-          const persons = this.state.persons.filter((person: PersonObjectInterface) => {
-            return ((person.naam.toLocaleLowerCase().indexOf(this.props.search.toLocaleLowerCase()) !== -1) || (String(person.code).indexOf(this.props.search) !== -1));
-          });
-
           const { classes } = this.props;
+          let persons = localState.state.persons;
           renderedData = (
             <List className={classes.root}>
               {persons.map((person: PersonObjectInterface, i: number) =>
-                <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
+                <ListItem divider button key={i} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
                   <ListItemText primary={person.naam} secondary={person.code} />
                   <ListItemText primary={
                     <Typography align="right" className={classes.root}>{person.rondes}</Typography>
@@ -157,16 +153,16 @@ export default withStyles({
               )}
             </List>)
 
-          this.setState({rendered: renderedData});
+          localState.setState({ rendered: renderedData });
 
         }
-       })
+      })
       .catch(() => {
         this.props.enqueueSnackbar('Kan niet verbinden met database', {
           variant: 'error',
           autoHideDuration: 5000,
         });
-        this._isMounted ? localState.setState(
+        localState._isMounted ? localState.setState(
           {
             persons: [
               {
@@ -184,19 +180,34 @@ export default withStyles({
               }
             ], listClickDisabled: true
           }) : null;
-          _hasFailed = true;
-      }) : null;
+        const { classes } = this.props;
+        const persons = localState.state.persons;
+        renderedData = (
+          <List className={classes.root}>
+            {persons.map((person: PersonObjectInterface, i: number) =>
+              <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
+                <ListItemText primary={person.naam} secondary={person.code} />
+                <ListItemText primary={
+                  <Typography align="right" className={classes.root}>{person.rondes}</Typography>
+                } />
+              </ListItem>
+            )}
+          </List>)
+        localState.setState({ rendered: renderedData });
+        _hasFailed = true;
+      });
   }
 
   componentDidMount() {
     this._isMounted = true;
     localState = this;
     if (!_hasLoaded && !_hasFailed) {
-      setTimeout(() => {this.getData()},0);
+      _hasLoaded = true;
+      setTimeout(() => { this.getData() }, 0);
     }
 
     // searching persons
-    if (search != this.props.search && _hasLoaded){
+    if (search != this.props.search && _hasLoaded) {
       search = this.props.search;
       const { classes } = this.props;
       const persons = unfilteredPersons.filter((person: PersonObjectInterface) => {
@@ -204,24 +215,21 @@ export default withStyles({
       });
       renderedData = (
         <List className={classes.root}>
-        {persons.map((person: PersonObjectInterface, i: number) =>
-          <ListItem divider button key={i} onClick={() => (!this.state.listClickDisabled && this._isMounted) ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
-          <ListItemText primary={person.naam} secondary={person.code} />
-          <ListItemText primary={
-            <Typography align="right" className={classes.root}>{person.rondes}</Typography>
-          } />
-          </ListItem>
-        )}
+          {persons.map((person: PersonObjectInterface, i: number) =>
+            <ListItem divider button key={i} onClick={() => (!this.state.listClickDisabled && this._isMounted) ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
+              <ListItemText primary={person.naam} secondary={person.code} />
+              <ListItemText primary={
+                <Typography align="right" className={classes.root}>{person.rondes}</Typography>
+              } />
+            </ListItem>
+          )}
         </List>)
-        this.setState({rendered: renderedData});
-      }
+      this.setState({ rendered: renderedData });
+    }
   }
 
   componentWillUnmount() {
     this._isMounted = false;
-    if(!this._isMounted){
-      this.forceUpdate();
-    }
   }
   render() {
     const { classes } = this.props;
@@ -241,8 +249,7 @@ export default withStyles({
             <PersonIcon />
           </Fab>
         </Zoom>
-        {this._isMounted}
-        {this.state.rendered? (this.state.rendered) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
+        {this.state.rendered ? (this.state.rendered) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
 
         {/* dialog for person information */}
         {this.state.dialogOpen ? (
@@ -337,7 +344,7 @@ export default withStyles({
                       )}
                     </List>)
 
-                  this.setState({rendered: renderedData});
+                  this.setState({ rendered: renderedData });
 
                   // set focus back and empty fields
                   $("#setRoundForm [name='code']").focus();
