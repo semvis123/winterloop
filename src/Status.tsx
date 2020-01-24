@@ -90,6 +90,7 @@ export default withStyles({
     this._isMounted ? fetch(serverUrl + '/api/getUsers/')
       .then(response => { var a = response.json(); return a })
       .then(data => {
+        // calculate values
         let totalRound = 0;
         let avgRound = 0;
         let totalValue = 0;
@@ -145,14 +146,16 @@ export default withStyles({
               }
             ], listClickDisabled: true
           }) : null
+          _hasFailed = true;
       }) : null;
-      _hasFailed = true;
 
   }
   componentDidMount() {
     this._isMounted = true;
     localState = this;
-    (!_hasFailed || !_hasLoaded) ? this.getData() : null;
+    if (!_hasLoaded && !_hasFailed) {
+      setTimeout(() => { this.getData() }, 0);
+    }
   }
   componentWillUnmount() {
     this._isMounted = false;

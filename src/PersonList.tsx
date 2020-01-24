@@ -104,7 +104,7 @@ export default withStyles({
 
   getData() {
     // Haal de data op van de database
-    fetch(serverUrl + '/api/getUsers/') // change this to yourip:4322
+    fetch(serverUrl + '/api/getUsers/')
       .then(response => {
         if (response.status !== 200) {
           throw "error server code: " + response.status;
@@ -122,12 +122,11 @@ export default withStyles({
         </List>;
 
         // Update component when it is mounted
-        this._isMounted ? localState.setState({
+        localState.setState({
           persons: renderedData,
           listClickDisabled: false
-        }) : null;
+        });
 
-        _hasLoaded = true;
       }).catch(() => {
         this.props.enqueueSnackbar('Kan niet verbinden met database', {
           variant: 'error',
@@ -170,8 +169,8 @@ export default withStyles({
   componentDidMount() {
     this._isMounted = true;
     localState = this;
-
     if (!_hasLoaded && !_hasFailed) {
+      _hasLoaded = true;
       setTimeout(() => {this.getData()},0);
     }
   }

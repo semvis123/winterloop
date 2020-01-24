@@ -487,7 +487,7 @@ function AppReact() {
       {/* Pages */}
       {pages.map((data, index) => (
         <Page value={pageValue} index={index} key={index}>
-          {data.content}
+          {(pageValue == index)? data.content: null}
         </Page>
       ))}
     </SnackbarProvider>

@@ -54,6 +54,7 @@ interface PaymentListStateInterface {
     findIndex: any;
     find: any;
   }
+  rendered?: React.ReactNode;
 
   dialogOpen: boolean;
   currentPerson: PersonObjectInterface;
@@ -66,6 +67,15 @@ interface PaymentListStateInterface {
   setRoundButtonDisabled: boolean;
   personEdit: string;
 }
+
+// Static vars
+// Deze worden niet verwijdert als het component herlaad
+let _hasLoaded: boolean = false;
+let _hasFailed: boolean = false;
+let renderedData: React.ReactNode;
+let localState: any;
+let search:string = "";
+let unfilteredPersons:any;
 
 // Dit is de lijst voor de rondes
 export default withStyles({
@@ -109,48 +119,122 @@ export default withStyles({
       setRoundButtonDisabled: true,
       personEdit: ""
     };
+    if (_hasLoaded && !_hasFailed) {
+      this.state = {
+        ...this.state,
+        rendered: renderedData,
+      }
+    }
   }
 
   getData() {
     // Haal de data op van de database
-    const that = this;
     this._isMounted ? fetch(serverUrl + '/api/getUsers/')
       .then(response => { var a = response.json(); return a })
-      .then(data => { this._isMounted ? that.setState({ persons: data, listClickDisabled: false }) : null })
-      .catch(() => {
-        this.props.enqueueSnackbar('Kan niet verbinden met database', {
+      .then(data => {
+        localState._isMounted ? localState.setState({ persons: data, listClickDisabled: false }) : null;
+        const persons = localState.state.persons.filter(function(person: PersonObjectInterface) {
+          return ((person.naam.toLocaleLowerCase().indexOf(localState.props.search.toLocaleLowerCase()) !== -1) || (String(person.code).indexOf(localState.props.search) !== -1));
+        });
+        const { classes } = localState.props;
+        unfilteredPersons = data;
+        renderedData = <List className={classes.root}>
+          {persons.map((person: PersonObjectInterface, i: number) =>
+            <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
+              <ListItemText primary={person.naam} secondary={person.code} />
+              <ListItemText primary={
+                <Typography align="center" className={classes.betaald}>{Boolean(person.betaald) ? 'BETAALD' : ''}</Typography>
+              } />
+              <ListItemText primary={
+                <Typography align="right" className={classes.root}>€ {
+                  (person.rondes * person.rondeBedrag + person.vastBedrag)
+                    .toFixed(2)
+                    .replace('.', ',')
+                    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+                }</Typography>
+              } />
+            </ListItem>
+          )}
+        </List>
+        localState.setState({ rendered: renderedData });
+        _hasLoaded = true;
+      })
+
+      .catch((e) => {
+        console.log(e);
+        const { classes } = this.props;
+        _hasFailed = true;
+        localState.props.enqueueSnackbar('Kan niet verbinden met database', {
           variant: 'error',
           autoHideDuration: 5000,
         });
-        this._isMounted ? that.setState(
+        let persons = [
           {
-            persons: [
-              {
-                "id": 1,
-                "naam": "Kan niet verbinden met database.",
-                "huisnummer": "0",
-                "postcode": "0000AA",
-                "telefoonnummer": "0000000000",
-                "vastBedrag": 0,
-                "rondeBedrag": 0,
-                "rondes": 0,
-                "code": '000000',
-                "create_time": "2019-12-27T15:16:48.000Z",
-                "betaald": 0
-              }
-            ], listClickDisabled: true
-          }) : null
+            "id": 1,
+            "naam": "Kan niet verbinden met database.",
+            "huisnummer": "0",
+            "postcode": "0000AA",
+            "telefoonnummer": "0000000000",
+            "vastBedrag": 0,
+            "rondeBedrag": 0,
+            "rondes": 0,
+            "code": '000000',
+            "create_time": "2019-12-27T15:16:48.000Z",
+            "betaald": false
+          }
+        ]
+        renderedData = (<List className={classes.root}>
+          {persons.map((person: PersonObjectInterface, i: number) =>
+            <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
+              <ListItemText primary={person.naam} secondary={person.code} />
+              <ListItemText primary={
+                <Typography align="center" className={classes.betaald}>{Boolean(person.betaald) ? 'BETAALD' : ''}</Typography>
+              } />
+              <ListItemText primary={
+                <Typography align="right" className={classes.root}>€ {
+                  (person.rondes * person.rondeBedrag + person.vastBedrag)
+                    .toFixed(2)
+                    .replace('.', ',')
+                    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+                }</Typography>
+              } />
+            </ListItem>
+          )}
+        </List>)
+        localState.setState({ rendered: renderedData });
       }) : null;
   }
 
   componentDidMount() {
     this._isMounted = true;
-    (this.state.persons.length == 0 || this.state.persons[0].code == '000000') ? this.getData() : null;
+    localState = this;
+    if (!_hasLoaded && !_hasFailed) {
+      setTimeout(() => { this.getData() }, 0);
+    }
+    // searching persons
+    if (search != this.props.search && _hasLoaded) {
+      search = this.props.search;
+      const { classes } = this.props;
+      const persons = unfilteredPersons.filter((person: PersonObjectInterface) => {
+        return ((person.naam.toLocaleLowerCase().indexOf(this.props.search.toLocaleLowerCase()) !== -1) || (String(person.code).indexOf(this.props.search) !== -1));
+      });
+      renderedData = (
+        <List className={classes.root}>
+          {persons.map((person: PersonObjectInterface, i: number) =>
+            <ListItem divider button key={i} onClick={() => (!this.state.listClickDisabled && this._isMounted) ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
+              <ListItemText primary={person.naam} secondary={person.code} />
+              <ListItemText primary={
+                <Typography align="right" className={classes.root}>{person.rondes}</Typography>
+              } />
+            </ListItem>
+          )}
+        </List>)
+      this.setState({ rendered: renderedData });
+    }
   }
 
   UNSAFE_componentWillReceiveProps(newProps) {
     this.props = newProps;
-    (this.state.persons.length == 0 || this.state.persons[0].code == '000000') ? this.getData() : null;
   }
 
   componentWillUnmount() {
@@ -159,33 +243,10 @@ export default withStyles({
 
   render() {
     const { classes } = this.props;
-    const that = this;
-    const persons = this.state.persons.filter(function(person: PersonObjectInterface) {
-      return ((person.naam.toLocaleLowerCase().indexOf(that.props.search.toLocaleLowerCase()) !== -1) || (String(person.code).indexOf(that.props.search) !== -1));
-    });
 
     return (
       <div>
-        {persons ? (
-          <List className={classes.root}>
-            {persons.map((person: PersonObjectInterface, i: number) =>
-              <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
-                <ListItemText primary={person.naam} secondary={person.code} />
-                <ListItemText primary={
-                  <Typography align="center" className={classes.betaald}>{Boolean(person.betaald) ? 'BETAALD' : ''}</Typography>
-                } />
-                <ListItemText primary={
-                  <Typography align="right" className={classes.root}>€ {
-                    (person.rondes * person.rondeBedrag + person.vastBedrag)
-                      .toFixed(2)
-                      .replace('.', ',')
-                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-                  }</Typography>
-                } />
-              </ListItem>
-            )}
-          </List>
-        ) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
+        {this.state.rendered ? (this.state.rendered) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
 
         {/* dialog for person information */}
         {this.state.dialogOpen ? (
@@ -225,105 +286,107 @@ export default withStyles({
         {this.state.paymentDialogOpen ? (
           <Dialog open={this.state.paymentDialogOpen} onClose={() => this.setState({ paymentDialogOpen: false, currentNameSetRound: '', personEdit: '' })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Betalen</DialogTitle>
-              <DialogContent>
-                <DialogContentText>Wilt u contant of met Sumup betalen?</DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={() => this.setState({ paymentDialogOpen: false, currentNameSetRound: '', personEdit: '' })} color="primary">
-                  Annuleren
+            <DialogContent>
+              <DialogContentText>Wilt u contant of met Sumup betalen?</DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => this.setState({ paymentDialogOpen: false, currentNameSetRound: '', personEdit: '' })} color="primary">
+                Annuleren
                 </Button>
-                <Button onClick={()=> {
+              <Button onClick={() => {
 
-                  const action = key => (
-                      <React.Fragment>
-                          <Button onClick={() => {
-                             this.props.closeSnackbar(key);
-                             this.props.enqueueSnackbar('Betalen mislukt', {
-                               variant: 'error',
-                               autoHideDuration: 5000,
-                             });
-                           }}>
-                          Annuleren
+                const action = key => (
+                  <React.Fragment>
+                    <Button onClick={() => {
+                      this.props.closeSnackbar(key);
+                      this.props.enqueueSnackbar('Betalen mislukt', {
+                        variant: 'error',
+                        autoHideDuration: 5000,
+                      });
+                    }}>
+                      Annuleren
                           </Button>
-                          <Button onClick={() => {
-                            fetch(serverUrl + '/api/setPayed/', {
-                              method: 'post',
-                              headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                                'Access-Control-Allow-Origin': '*'
-                              },
-                              body: "code=" + this.state.currentPerson.code + "&payed=1"
-                            }).then((e) => {
-                              if (e.status !== 200) {
-                                throw e.status;
-                              } else {
-                                persons[persons.indexOf(this.state.currentPerson)].betaald = true;
-                                this.setState({ paymentDialogOpen: false });
-                              }
-                              this.props.enqueueSnackbar('Betalen gelukt', {
-                                variant: 'success',
-                                autoHideDuration: 5000,
-                              });
-                            }
-                            ).catch(() => {
-                              this.props.enqueueSnackbar('Betaal status zetten mislukt', {
-                                variant: 'error',
-                                autoHideDuration: 5000,
-                              });
-                            });
-                             this.props.closeSnackbar(key);
-                           }}>
-                          Gelukt
+                    <Button onClick={() => {
+                      fetch(serverUrl + '/api/setPayed/', {
+                        method: 'post',
+                        headers: {
+                          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                          'Access-Control-Allow-Origin': '*'
+                        },
+                        body: "code=" + this.state.currentPerson.code + "&payed=1"
+                      }).then((e) => {
+                        if (e.status !== 200) {
+                          throw e.status;
+                        } else {
+                          let persons = this.state.persons
+                          persons[persons.indexOf(this.state.currentPerson)].betaald = true;
+                          this.setState({ paymentDialogOpen: false });
+                        }
+                        this.props.enqueueSnackbar('Betalen gelukt', {
+                          variant: 'success',
+                          autoHideDuration: 5000,
+                        });
+                      }
+                      ).catch(() => {
+                        this.props.enqueueSnackbar('Betaal status zetten mislukt', {
+                          variant: 'error',
+                          autoHideDuration: 5000,
+                        });
+                      });
+                      this.props.closeSnackbar(key);
+                    }}>
+                      Gelukt
                           </Button>
-                      </React.Fragment>
-                  );
-                  let person = this.state.currentPerson;
-                  let amount = (person.rondeBedrag * person.rondes + person.vastBedrag ).toFixed(2)
+                  </React.Fragment>
+                );
+                let person = this.state.currentPerson;
+                let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2)
                   .replace('.', ',')
                   .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
 
-                  this.props.enqueueSnackbar('Te betalen: € '+ amount, {
-                      variant: 'info',
-                      persist: true,
-                      action,
-                  });
-                }} color="secondary">
-                  Contant
+                this.props.enqueueSnackbar('Te betalen: € ' + amount, {
+                  variant: 'info',
+                  persist: true,
+                  action,
+                });
+              }} color="secondary">
+                Contant
                 </Button>
-                <Button onClick={()=> {
-                  fetch(serverUrl + '/api/setPayed/', {
-                    method: 'post',
-                    headers: {
-                      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                      'Access-Control-Allow-Origin': '*'
-                    },
-                    body: "code=" + this.state.currentPerson.code + "&payed=1"
-                  }).then((e) => {
-                    if (e.status !== 200) {
-                      throw e.status;
-                    } else {
-                      persons[persons.indexOf(this.state.currentPerson)].betaald = true;
-                      this.setState({ paymentDialogOpen: false });
-                    }
+              <Button onClick={() => {
+                fetch(serverUrl + '/api/setPayed/', {
+                  method: 'post',
+                  headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                    'Access-Control-Allow-Origin': '*'
+                  },
+                  body: "code=" + this.state.currentPerson.code + "&payed=1"
+                }).then((e) => {
+                  if (e.status !== 200) {
+                    throw e.status;
+                  } else {
+                    let persons = this.state.persons;
+                    persons[persons.indexOf(this.state.currentPerson)].betaald = true;
+                    this.setState({ paymentDialogOpen: false });
                   }
-                  ).catch(() => {
-                    this.props.enqueueSnackbar('Betalen mislukt', {
-                      variant: 'error',
-                      autoHideDuration: 5000,
-                    });
-                  });
-                  let person = this.state.currentPerson;
-                  let amount = (person.rondeBedrag * person.rondes + person.vastBedrag ).toFixed(2);
-                  window.location.href = 'sumupmerchant://pay/1.0?amount=' + amount
-                  + '&affiliate-key=' + Config.sumup.affiliateKey + 'currency='+ Config.sumup.currency +'&title=' + Config.sumup.title;
-                  this.props.enqueueSnackbar('Betalen gelukt', {
-                    variant: 'success',
+                }
+                ).catch(() => {
+                  this.props.enqueueSnackbar('Betalen mislukt', {
+                    variant: 'error',
                     autoHideDuration: 5000,
                   });
-                }} color="secondary">
-                  Sumup
+                });
+                let person = this.state.currentPerson;
+                let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
+                window.location.href = 'sumupmerchant://pay/1.0?amount=' + amount
+                  + '&affiliate-key=' + Config.sumup.affiliateKey + 'currency=' + Config.sumup.currency + '&title=' + Config.sumup.title;
+                this.props.enqueueSnackbar('Betalen gelukt', {
+                  variant: 'success',
+                  autoHideDuration: 5000,
+                });
+              }} color="secondary">
+                Sumup
                 </Button>
-              </DialogActions>
+            </DialogActions>
           </Dialog>
 
         ) : null}
