@@ -221,6 +221,14 @@ export default withStyles({
           <Typography className={classes.text} gutterBottom><b>Aantal lopers</b>
           <span className={classes.value}>{this.state.persons}</span>
           </Typography>
+          <Typography className={classes.text} gutterBottom><b>Gemiddeld aantal rondes</b>
+          <span className={classes.value}>{
+            (this.state.avgRound.toFixed(2) == "NaN") ? '0,00' :
+            this.state.avgRound.toFixed(2)
+            .replace('.', ',')
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+          }</span>
+          </Typography>
           </CardContent>
           </Card>)
     }
