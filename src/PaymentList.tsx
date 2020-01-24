@@ -315,6 +315,7 @@ export default withStyles({
                           variant: 'success',
                           autoHideDuration: 5000,
                         });
+                        this.getData();
                       }
                       ).catch(() => {
                         this.props.enqueueSnackbar('Betaal status zetten mislukt', {
@@ -356,6 +357,7 @@ export default withStyles({
                     let persons = this.state.persons;
                     persons[persons.indexOf(this.state.currentPerson)].betaald = true;
                     this.setState({ paymentDialogOpen: false });
+                    this.getData();
                   }
                 }
                 ).catch(() => {
