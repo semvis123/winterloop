@@ -11,7 +11,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import $ from 'jquery';
-import { withSnackbar, useSnackbar } from 'notistack';
+import { withSnackbar } from 'notistack';
 import AddIcon from '@material-ui/icons/Add';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -183,7 +183,7 @@ export default withStyles({
               </DialogContentText>
               <DialogContentText>aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
               <DialogContentText>aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
-              <DialogContentText>betaald: {Boolean(this.state.currentPerson.betaald) ? 'ja' : 'nee'}</DialogContentText>
+              <DialogContentText>betaald: {(this.state.currentPerson.betaald) ? 'ja' : 'nee'}</DialogContentText>
               <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
             </DialogContent>
             <DialogActions>
