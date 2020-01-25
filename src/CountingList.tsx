@@ -151,7 +151,6 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
       .then(data => {
           localState.setState({ persons: data, listClickDisabled: false });
           unfilteredPersons = data;
-          const { classes } = this.props;
           itemData = data
           renderedData = <div className="list">
             <AutoSizer>
@@ -213,7 +212,6 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
     // searching persons
     if (search != this.props.search && _hasLoaded) {
       search = this.props.search;
-      const { classes } = this.props;
       const persons = unfilteredPersons.filter((person: PersonObjectInterface) => {
         return ((person.naam.toLocaleLowerCase().indexOf(this.props.search.toLocaleLowerCase()) !== -1) || (String(person.code).indexOf(this.props.search) !== -1));
       });
@@ -235,7 +233,6 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
     this._isMounted = false;
   }
   render() {
-    const { classes } = this.props;
     return (
       <div>
         <Zoom

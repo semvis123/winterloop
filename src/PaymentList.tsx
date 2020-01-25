@@ -1,6 +1,5 @@
 import React = require('react');
 import $ from 'jquery';
-import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Dialog from '@material-ui/core/Dialog';
@@ -11,11 +10,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import * as Config from '../configuration.json';
-import { ListItemSecondaryAction, IconButton, Typography, Fab, Zoom, TextField } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import PersonIcon from '@material-ui/icons/Person';
-import EditIcon from '@material-ui/icons/Edit';
-import theme from './theme';
+import { Typography } from '@material-ui/core';
 import { withSnackbar } from 'notistack';
 import { FixedSizeList } from 'react-window';
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -231,7 +226,6 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
   }
 
   render() {
-    const { classes } = this.props;
     return (
       <div>
         {this.state.rendered ? (this.state.rendered) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
