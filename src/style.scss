@@ -1,3 +1,16 @@
 /* uncss:ignore start */
 html, body, div[data-type="main"] { margin: 0; padding: 0; width: 100%; height: 100%;} div[data-type="main"] {min-height: 100%; height: auto;}
+.list {
+  height: calc(100vh - 56px);
+}
+@media (min-width:0px) and (orientation: landscape) {
+  .list {
+    height: calc(100vh - 48px);
+  }
+}
+@media (min-width:600px) {
+  .list {
+    height: calc(100vh - 64px);
+  }
+}
 /* uncss:ignore end */

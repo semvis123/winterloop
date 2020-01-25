@@ -1,6 +1,5 @@
 import React = require('react');
 import $ from 'jquery';
-import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -18,6 +17,8 @@ import PersonIcon from '@material-ui/icons/Person';
 import EditIcon from '@material-ui/icons/Edit';
 import theme from './theme';
 import { withSnackbar } from 'notistack';
+import { FixedSizeList } from 'react-window';
+import AutoSizer from "react-virtualized-auto-sizer";
 
 // Grab server url from configuration file
 const serverUrl = Config.server.url + ':' + Config.server.port;
@@ -76,10 +77,15 @@ let renderedData: React.ReactNode;
 let localState: any;
 let search: string = "";
 let unfilteredPersons: any;
-
+let itemData: any;
+let styles: any = {
+  betaald: {
+    color: '#4CAF50',
+    fontWeight: 'bold'
+  }
+};
 // Dit is de lijst voor de rondes
-export default withStyles({
-})(withSnackbar(class PaymentList extends React.Component<PaymentListInterface> {
+export default withSnackbar(class PaymentList extends React.Component<PaymentListInterface> {
   // Define interfaces
   // To keep TypeScript happy
   state: PaymentListStateInterface;
@@ -117,6 +123,25 @@ export default withStyles({
     }
   }
 
+  renderItem({ index, style }) {
+    return (
+      <ListItem style={style} divider button key={index} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: itemData[index] }) : null}>
+        <ListItemText primary={itemData[index].naam} secondary={itemData[index].code} />
+        <ListItemText primary={
+          <Typography align="center" style={styles.betaald}>{Boolean(itemData[index].betaald) ? 'BETAALD' : ''}</Typography>
+        } />
+        <ListItemText primary={
+          <Typography align="right">€ {
+            (itemData[index].rondes * itemData[index].rondeBedrag + itemData[index].vastBedrag)
+              .toFixed(2)
+              .replace('.', ',')
+              .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+          }</Typography>
+        } />
+      </ListItem>
+    )
+  }
+
   getData() {
     // Haal de data op van de database
     fetch(serverUrl + '/api/getUsers/')
@@ -124,41 +149,27 @@ export default withStyles({
       .then(data => {
         if (localState._isMounted) {
           localState.setState({ persons: data, listClickDisabled: false });
-          const { classes } = this.props;
           unfilteredPersons = data;
-          let persons = localState.state.persons;
-          renderedData = (
-            <List className={classes.root}>
-            {persons.map((person: PersonObjectInterface, i: number) =>
-              <ListItem divider button key={i} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
-                <ListItemText primary={person.naam} secondary={person.code} />
-                <ListItemText primary={
-                  <Typography align="center" style={{color: '#4CAF50',fontWeight: 'bold'}}className={classes.betaald}>{Boolean(person.betaald) ? 'BETAALD' : ''}</Typography>
-                } />
-                <ListItemText primary={
-                  <Typography align="right" className={classes.root}>€ {
-                    (person.rondes * person.rondeBedrag + person.vastBedrag)
-                      .toFixed(2)
-                      .replace('.', ',')
-                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-                  }</Typography>
-                } />
-              </ListItem>
-            )}
-          </List>)
+          itemData = data
+          renderedData = <div className="list">
+            <AutoSizer>
+              {({ height, width }) => (
+                <FixedSizeList height={height} width={width} itemSize={73} overscanCount={10} itemCount={data.length}>
+                  {this.renderItem}
+                </FixedSizeList>
+              )}
+            </AutoSizer>
+          </div>
           localState.setState({ rendered: renderedData });
         }
       })
       .catch((e) => {
         console.log(e);
-        const { classes } = this.props;
         this.props.enqueueSnackbar('Kan niet verbinden met database', {
           variant: 'error',
           autoHideDuration: 5000,
         });
-        localState._isMounted ? localState.setState(
-          {
-            persons: [
+        let data =  [
               {
                 "id": 1,
                 "naam": "Kan niet verbinden met database.",
@@ -172,28 +183,18 @@ export default withStyles({
                 "create_time": "2019-12-27T15:16:48.000Z",
                 "betaald": 0
               }
-            ], listClickDisabled: true
-          }) : null;
-          const persons = localState.state.persons;
-        renderedData = (<List className={classes.root}>
-          {persons.map((person: PersonObjectInterface, i: number) =>
-            <ListItem divider button key={i} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
-              <ListItemText primary={person.naam} secondary={person.code} />
-              <ListItemText primary={
-                <Typography align="center" className={classes.betaald}>{Boolean(person.betaald) ? 'BETAALD' : ''}</Typography>
-              } />
-              <ListItemText primary={
-                <Typography align="right" className={classes.root}>€ {
-                  (person.rondes * person.rondeBedrag + person.vastBedrag)
-                    .toFixed(2)
-                    .replace('.', ',')
-                    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-                }</Typography>
-              } />
-            </ListItem>
-          )}
-        </List>)
-        localState.setState({ rendered: renderedData });
+            ]
+        itemData = data
+        renderedData = <div className="list">
+          <AutoSizer>
+            {({ height, width }) => (
+              <FixedSizeList height={height} width={width} itemSize={73} overscanCount={10} itemCount={data.length}>
+                {this.renderItem}
+              </FixedSizeList>
+            )}
+          </AutoSizer>
+        </div>
+        localState.setState({ rendered: renderedData, listClickDisabled: true });
         _hasFailed = true;
       })
   }
@@ -208,21 +209,19 @@ export default withStyles({
     // searching persons
     if (search != this.props.search && _hasLoaded) {
       search = this.props.search;
-      const { classes } = this.props;
       const persons = unfilteredPersons.filter((person: PersonObjectInterface) => {
         return ((person.naam.toLocaleLowerCase().indexOf(this.props.search.toLocaleLowerCase()) !== -1) || (String(person.code).indexOf(this.props.search) !== -1));
       });
-      renderedData = (
-        <List className={classes.root}>
-          {persons.map((person: PersonObjectInterface, i: number) =>
-            <ListItem divider button key={i} onClick={() => (!localState.state.listClickDisabled && localState._isMounted) ? localState.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
-              <ListItemText primary={person.naam} secondary={person.code} />
-              <ListItemText primary={
-                <Typography align="right" className={classes.root}>{person.rondes}</Typography>
-              } />
-            </ListItem>
+      itemData = persons;
+      renderedData = <div className="list">
+        <AutoSizer>
+          {({ height, width }) => (
+            <FixedSizeList height={height} width={width} itemSize={73} overscanCount={10} itemCount={persons.length}>
+              {this.renderItem}
+            </FixedSizeList>
           )}
-        </List>)
+        </AutoSizer>
+      </div>
       this.setState({ rendered: renderedData });
     }
   }
@@ -385,4 +384,4 @@ export default withStyles({
       </div>);
 
   }
-}));
+});

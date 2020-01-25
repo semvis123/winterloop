@@ -1,6 +1,5 @@
 import React = require('react');
 import $ from 'jquery';
-import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -12,12 +11,13 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import * as Config from '../configuration.json';
-import { ListItemSecondaryAction, IconButton, Typography, Fab, Zoom, TextField } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
+import { IconButton, Typography, Fab, Zoom, TextField } from '@material-ui/core';
 import PersonIcon from '@material-ui/icons/Person';
 import EditIcon from '@material-ui/icons/Edit';
 import theme from './theme';
 import { withSnackbar } from 'notistack';
+import { FixedSizeList } from 'react-window';
+import AutoSizer from "react-virtualized-auto-sizer";
 
 // Grab server url from configuration file
 const serverUrl = Config.server.url + ':' + Config.server.port;
@@ -76,9 +76,8 @@ let renderedData: React.ReactNode;
 let localState: any;
 let search: string = "";
 let unfilteredPersons: any;
-
-// Dit is de lijst voor de rondes
-export default withStyles({
+let itemData: any;
+let style: any = {
   fab: {
     position: 'fixed',
     bottom: 16,
@@ -90,8 +89,12 @@ export default withStyles({
     right: theme.spacing(1),
     top: theme.spacing(1),
     color: theme.palette.grey[500],
-  },
-})(withSnackbar(class CountingList extends React.Component<CountingListInterface> {
+  }
+};
+
+
+// Dit is de lijst voor de rondes
+export default withSnackbar(class CountingList extends React.Component<CountingListInterface> {
   // Define interfaces
   // To keep TypeScript happy
   state: CountingListStateInterface;
@@ -130,41 +133,46 @@ export default withStyles({
       }
     }
   }
+  renderItem({ index, style }) {
+    return (
+      <ListItem style={style} divider button key={index} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: itemData[index] }) : null}>
+        <ListItemText primary={itemData[index].naam} secondary={itemData[index].code} />
+        <ListItemText primary={
+          <Typography align="right">{itemData[index].rondes}</Typography>
+        } />
+      </ListItem>
+    )
+  }
 
   getData() {
     // Haal de data op van de database
     fetch(serverUrl + '/api/getUsers/')
       .then(response => { var a = response.json(); return a })
       .then(data => {
-        if (localState._isMounted) {
           localState.setState({ persons: data, listClickDisabled: false });
           unfilteredPersons = data;
           const { classes } = this.props;
-          let persons = localState.state.persons;
-          renderedData = (
-            <List className={classes.root}>
-              {persons.map((person: PersonObjectInterface, i: number) =>
-                <ListItem divider button key={i} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
-                  <ListItemText primary={person.naam} secondary={person.code} />
-                  <ListItemText primary={
-                    <Typography align="right" className={classes.root}>{person.rondes}</Typography>
-                  } />
-                </ListItem>
+          itemData = data
+          renderedData = <div className="list">
+            <AutoSizer>
+              {({ height, width }) => (
+                <FixedSizeList height={height} width={width} itemSize={73} overscanCount={10} itemCount={data.length}>
+                  {this.renderItem}
+                </FixedSizeList>
               )}
-            </List>)
+            </AutoSizer>
+          </div>
 
           localState.setState({ rendered: renderedData });
 
         }
-      })
+      )
       .catch(() => {
         this.props.enqueueSnackbar('Kan niet verbinden met database', {
           variant: 'error',
           autoHideDuration: 5000,
         });
-        localState._isMounted ? localState.setState(
-          {
-            persons: [
+        let data = [
               {
                 "id": 1,
                 "naam": "Kan niet verbinden met database.",
@@ -178,22 +186,18 @@ export default withStyles({
                 "create_time": "2019-12-27T15:16:48.000Z",
                 "betaald": 0
               }
-            ], listClickDisabled: true
-          }) : null;
-        const { classes } = this.props;
-        const persons = localState.state.persons;
-        renderedData = (
-          <List className={classes.root}>
-            {persons.map((person: PersonObjectInterface, i: number) =>
-              <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
-                <ListItemText primary={person.naam} secondary={person.code} />
-                <ListItemText primary={
-                  <Typography align="right" className={classes.root}>{person.rondes}</Typography>
-                } />
-              </ListItem>
-            )}
-          </List>)
-        localState.setState({ rendered: renderedData });
+            ]
+          itemData = data
+          renderedData = <div className="list">
+            <AutoSizer>
+              {({ height, width }) => (
+                <FixedSizeList height={height} width={width} itemSize={73} overscanCount={10} itemCount={data.length}>
+                  {this.renderItem}
+                </FixedSizeList>
+              )}
+            </AutoSizer>
+          </div>
+        localState.setState({ rendered: renderedData, listClickDisabled: true });
         _hasFailed = true;
       });
   }
@@ -213,17 +217,16 @@ export default withStyles({
       const persons = unfilteredPersons.filter((person: PersonObjectInterface) => {
         return ((person.naam.toLocaleLowerCase().indexOf(this.props.search.toLocaleLowerCase()) !== -1) || (String(person.code).indexOf(this.props.search) !== -1));
       });
-      renderedData = (
-        <List className={classes.root}>
-          {persons.map((person: PersonObjectInterface, i: number) =>
-            <ListItem divider button key={i} onClick={() => (!this.state.listClickDisabled && this._isMounted) ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
-              <ListItemText primary={person.naam} secondary={person.code} />
-              <ListItemText primary={
-                <Typography align="right" className={classes.root}>{person.rondes}</Typography>
-              } />
-            </ListItem>
+      itemData = persons;
+      renderedData = <div className="list">
+        <AutoSizer>
+          {({ height, width }) => (
+            <FixedSizeList height={height} width={width} itemSize={73} overscanCount={10} itemCount={persons.length}>
+              {this.renderItem}
+            </FixedSizeList>
           )}
-        </List>)
+        </AutoSizer>
+      </div>
       this.setState({ rendered: renderedData });
     }
   }
@@ -238,7 +241,7 @@ export default withStyles({
         <Zoom
           in={true}
         >
-          <Fab color="secondary" className={classes.fab} onClick={() => {
+          <Fab color="secondary" style={style.fab} onClick={() => {
             this.setState({ changeRoundOpen: true });
             let codes = new Array();
             this.state.persons.forEach((person: PersonObjectInterface) => {
@@ -255,7 +258,7 @@ export default withStyles({
         {this.state.dialogOpen ? (
           <Dialog open={this.state.dialogOpen} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">
-              <IconButton aria-label="edit" className={classes.editButton} disabled={Boolean(this.state.currentPerson.betaald)} onClick={() => {
+              <IconButton aria-label="edit" style={style.editButton} disabled={Boolean(this.state.currentPerson.betaald)} onClick={() => {
                 this.setState({
                   personEdit: this.state.currentPerson.code,
                   changeRoundOpen: true,
@@ -333,12 +336,12 @@ export default withStyles({
 
                   const { classes } = this.props;
                   renderedData = (
-                    <List className={classes.root}>
+                    <List>
                       {persons.map((person: PersonObjectInterface, i: number) =>
                         <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
                           <ListItemText primary={person.naam} secondary={person.code} />
                           <ListItemText primary={
-                            <Typography align="right" className={classes.root}>{person.rondes}</Typography>
+                            <Typography align="right">{person.rondes}</Typography>
                           } />
                         </ListItem>
                       )}
@@ -520,4 +523,4 @@ export default withStyles({
       </div>);
 
   }
-}));
+});

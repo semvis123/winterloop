@@ -1,5 +1,4 @@
 import React = require('react');
-import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -17,6 +16,8 @@ import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { Zoom, Fab, IconButton } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
+import { FixedSizeList } from 'react-window';
+import AutoSizer from "react-virtualized-auto-sizer";
 
 import * as Config from '../configuration.json';
 import theme from './theme';
@@ -48,17 +49,17 @@ interface PersonListStateInterface {
   listClickDisabled: boolean;
   addDialogOpen: boolean;
   editDialogOpen: any;
+  data?: any;
 }
 
 // Static vars
 // Deze worden niet verwijdert als het component herlaad
-let _hasLoaded:boolean = false;
-let _hasFailed:boolean = false;
-let renderedData:React.ReactNode;
-let localState:any;
-
-// Dit is de lijst voor alle personen
-export default withStyles({
+let _hasLoaded: boolean = false;
+let _hasFailed: boolean = false;
+let renderedData: React.ReactNode;
+let localState: any;
+let itemData: any;
+let style: any = {
   fab: {
     position: 'fixed',
     bottom: 16,
@@ -71,13 +72,16 @@ export default withStyles({
     top: theme.spacing(1),
     color: theme.palette.grey[500],
   },
-})(withSnackbar(class PersonList extends React.Component {
+}
+
+
+// Dit is de lijst voor alle personen
+export default withSnackbar(class PersonList extends React.Component {
   // Define interfaces
   // To keep TypeScript happy
   state: PersonListStateInterface;
 
   props: {
-    classes: any;
     enqueueSnackbar: any;
     closeSnackbar: any;
   }
@@ -104,6 +108,13 @@ export default withStyles({
       }
     }
   }
+  renderItem({ index, style }) {
+    return (
+      <ListItem style={style} divider button key={index} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: itemData[index] }) : null}>
+        <ListItemText id={itemData[index].id.toString()} primary={itemData[index].naam} secondary={itemData[index].code} />
+      </ListItem>
+    )
+  }
 
   getData() {
     // Haal de data op van de database
@@ -115,14 +126,16 @@ export default withStyles({
         var a = response.json();
         return a;
       }).then(data => {
-        const { classes } = this.props;
-        renderedData = <List className={classes.root}>
-          {data.map((person: PersonObjectInterface, i: number) =>
-            <ListItem divider button key={i} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: data[i] }) : null}>
-              <ListItemText id={person.id.toString()} primary={person.naam} secondary={person.code} />
-            </ListItem>
-          )}
-        </List>;
+        itemData = data
+        renderedData = <div className="list">
+          <AutoSizer>
+            {({ height, width }) => (
+              <FixedSizeList height={height} width={width} itemSize={73} overscanCount={10} itemCount={data.length}>
+                {this.renderItem}
+              </FixedSizeList>
+            )}
+          </AutoSizer>
+        </div>
 
         // Update component when it is mounted
         localState.setState({
@@ -130,7 +143,8 @@ export default withStyles({
           listClickDisabled: false
         });
 
-      }).catch(() => {
+      }).catch((e) => {
+        console.log(e);
         this.props.enqueueSnackbar('Kan niet verbinden met database', {
           variant: 'error',
           autoHideDuration: 5000,
@@ -151,14 +165,16 @@ export default withStyles({
           }
         ];
 
-        const { classes } = this.props;
-        renderedData = <List className={classes.root}>
-          {data.map((person: PersonObjectInterface, i: number) =>
-            <ListItem divider button key={i} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: data[i] }) : null}>
-              <ListItemText id={person.id.toString()} primary={person.naam} secondary={person.code} />
-            </ListItem>
-          )}
-        </List>;
+        itemData = data
+        renderedData = <div className="list">
+          <AutoSizer>
+            {({ height, width }) => (
+              <FixedSizeList height={height} width={width} itemSize={73} overscanCount={10} itemCount={data.length}>
+                {this.renderItem}
+              </FixedSizeList>
+            )}
+          </AutoSizer>
+        </div>
 
         localState._isMounted ? localState.setState({
           persons: renderedData,
@@ -174,7 +190,7 @@ export default withStyles({
     localState = this;
     if (!_hasLoaded && !_hasFailed) {
       _hasLoaded = true;
-      setTimeout(() => {this.getData()},0);
+      setTimeout(() => { this.getData() }, 0);
     }
   }
 
@@ -183,21 +199,20 @@ export default withStyles({
   }
 
   render() {
-    const { classes } = this.props;
 
     return (
       <div>
         <Zoom in={true}>
-          <Fab color="secondary" className={classes.fab} onClick={() => this.setState({ addDialogOpen: true })}>
+          <Fab color="secondary" style={style.fab} onClick={() => this.setState({ addDialogOpen: true })}>
             <AddIcon />
           </Fab>
         </Zoom>
 
-        {this.state.persons ? ( this.state.persons ) : <CircularProgress color="secondary" />} {/* Moet een skeleton worden */}
+        {this.state.persons ? (this.state.persons) : <CircularProgress color="secondary" />} {/* Moet een skeleton worden */}
         {this.state.dialogOpen ? (
-          <Dialog open={this.state.dialogOpen} className={classes.root} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
+          <Dialog open={this.state.dialogOpen} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">
-              <IconButton aria-label="edit" className={classes.editButton} onClick={() => {
+              <IconButton aria-label="edit" style={style.editButton} onClick={() => {
                 this.setState({
                   editDialogOpen: true
                 });
@@ -259,7 +274,7 @@ export default withStyles({
         ) : null}
 
         {/* add user dialog */}
-        <Dialog className={classes.root} open={this.state.addDialogOpen} onClose={() => this.setState({ addDialogOpen: false })} aria-labelledby="form-dialog-title">
+        <Dialog open={this.state.addDialogOpen} onClose={() => this.setState({ addDialogOpen: false })} aria-labelledby="form-dialog-title">
           <form id="addUserForm" action="#" method="POST" onSubmit={e => {
             e.preventDefault(); // remove the redirect
             fetch(serverUrl + '/api/addUser/', {
@@ -363,7 +378,7 @@ export default withStyles({
         </Dialog>
 
         {/* edit user dialog */}
-        {this.state.editDialogOpen ? <Dialog className={classes.root} open={this.state.editDialogOpen} onClose={() => this.setState({ editDialogOpen: false })} aria-labelledby="form-dialog-title">
+        {this.state.editDialogOpen ? <Dialog open={this.state.editDialogOpen} onClose={() => this.setState({ editDialogOpen: false })} aria-labelledby="form-dialog-title">
           <form id="editUserForm" action="#" method="POST" onSubmit={e => {
             e.preventDefault(); // remove the redirect
             fetch(serverUrl + '/api/editUser/', {
@@ -474,7 +489,7 @@ export default withStyles({
 
         {/* paynent dialog */}
         {this.state.paymentDialogOpen ? (
-          <Dialog open={this.state.paymentDialogOpen} onClose={() => this.setState({ paymentDialogOpen: false,  personEdit: '' })} aria-labelledby="form-dialog-title">
+          <Dialog open={this.state.paymentDialogOpen} onClose={() => this.setState({ paymentDialogOpen: false, personEdit: '' })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Betalen</DialogTitle>
             <DialogContent>
               <DialogContentText>Wilt u contant of met Sumup betalen?</DialogContentText>
@@ -579,4 +594,4 @@ export default withStyles({
       </div>);
 
   }
-}));
+});
