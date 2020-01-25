@@ -58,7 +58,6 @@ let _hasFailed: boolean = false;
 let renderedData: React.ReactNode;
 let localState: any;
 let itemData: any;
-let mountTime: number = 0;
 let style: any = {
   fab: {
     position: 'fixed',
@@ -190,7 +189,7 @@ export default withSnackbar(class PersonList extends React.Component {
   componentDidMount() {
     this._isMounted = true;
     localState = this;
-    if ((!_hasLoaded && !_hasFailed)|| !this.props.shouldload) {
+    if ((!_hasLoaded && !_hasFailed) || !this.props.shouldload) {
       this.props.loaded();
       _hasLoaded = true;
       setTimeout(() => { this.getData() }, 0);
@@ -278,7 +277,7 @@ export default withSnackbar(class PersonList extends React.Component {
 
         {/* add user dialog */}
         <Dialog open={this.state.addDialogOpen} onClose={() => this.setState({ addDialogOpen: false })} aria-labelledby="form-dialog-title">
-          <form id="addUserForm" action="#" method="POST" onSubmit={e => {
+          <form noValidate id="addUserForm" action="#" method="POST" onSubmit={e => {
             e.preventDefault(); // remove the redirect
             fetch(serverUrl + '/api/addUser/', {
               method: 'post',
@@ -287,8 +286,8 @@ export default withSnackbar(class PersonList extends React.Component {
                 "&huisnummer=" + $("#addUserForm [name='huisnummer']").val() +
                 "&postcode=" + $("#addUserForm [name='postcode']").val() +
                 "&telefoonnummer=" + $("#addUserForm [name='telefoonnummer']").val() +
-                "&vastBedrag=" + $("#addUserForm [name='vastBedrag']").val() +
-                "&rondeBedrag=" + $("#addUserForm [name='rondeBedrag']").val()
+                "&vastBedrag=" + $("#addUserForm [name='vastBedrag']").val().replace(',', '.') +
+                "&rondeBedrag=" + $("#addUserForm [name='rondeBedrag']").val().replace(',', '.')
             })
               .then(response => {
                 if (response.status !== 200) {
@@ -298,11 +297,24 @@ export default withSnackbar(class PersonList extends React.Component {
                 return a
               })
               .then((a) => {
-                this.setState({ addDialogOpen: false });
                 this.props.enqueueSnackbar('Persoon toegevoegd met code: ' + a.code, {
                   variant: 'success',
                   autoHideDuration: 5000,
                 });
+                itemData.push({
+                  "id": itemData.length,
+                  "naam": $("#addUserForm [name='naam']").val(),
+                  "huisnummer": $("#addUserForm [name='huisnummer']").val(),
+                  "postcode": $("#addUserForm [name='postcode']").val(),
+                  "telefoonnummer": $("#addUserForm [name='telefoonnummer']").val(),
+                  "vastBedrag": parseFloat($("#addUserForm [name='vastBedrag']").val()),
+                  "rondeBedrag": parseFloat($("#addUserForm [name='rondeBedrag']").val()),
+                  "rondes": 0,
+                  "code": a.code,
+                  "create_time": "onbekend"
+                });
+                localState.setState({ currentPerson: itemData.find(x => x.code == a.code) });
+                this.setState({ addDialogOpen: false, paymentDialogOpen: true });
                 this.getData();
               })
               .catch(() => {
@@ -373,7 +385,7 @@ export default withSnackbar(class PersonList extends React.Component {
               <Button onClick={() => this.setState({ addDialogOpen: false })} color="primary">
                 Annuleren
               </Button>
-              <Button onClick={() => this.setState({ addDialogOpen: false })} color="primary" type="submit">
+              <Button color="primary" type="submit">
                 Opslaan
               </Button>
             </DialogActions>
@@ -382,7 +394,7 @@ export default withSnackbar(class PersonList extends React.Component {
 
         {/* edit user dialog */}
         {this.state.editDialogOpen ? <Dialog open={this.state.editDialogOpen} onClose={() => this.setState({ editDialogOpen: false })} aria-labelledby="form-dialog-title">
-          <form id="editUserForm" action="#" method="POST" onSubmit={e => {
+          <form noValidate id="editUserForm" action="#" method="POST" onSubmit={e => {
             e.preventDefault(); // remove the redirect
             fetch(serverUrl + '/api/editUser/', {
               method: 'post',
@@ -391,8 +403,8 @@ export default withSnackbar(class PersonList extends React.Component {
                 "&huisnummer=" + $("#editUserForm [name='huisnummer']").val() +
                 "&postcode=" + $("#editUserForm [name='postcode']").val() +
                 "&telefoonnummer=" + $("#editUserForm [name='telefoonnummer']").val() +
-                "&vastBedrag=" + $("#editUserForm [name='vastBedrag']").val() +
-                "&rondeBedrag=" + $("#editUserForm [name='rondeBedrag']").val() +
+                "&vastBedrag=" + $("#editUserForm [name='vastBedrag']").val().replace(',', '.') +
+                "&rondeBedrag=" + $("#editUserForm [name='rondeBedrag']").val().replace(',', '.') +
                 "&id=" + this.state.currentPerson.id
             })
               .then(response => {
@@ -490,15 +502,15 @@ export default withSnackbar(class PersonList extends React.Component {
           </form>
         </Dialog> : null}
 
-        {/* paynent dialog */}
+        {/* dialog for payment suggestion */}
         {this.state.paymentDialogOpen ? (
-          <Dialog open={this.state.paymentDialogOpen} onClose={() => this.setState({ paymentDialogOpen: false, personEdit: '' })} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">Betalen</DialogTitle>
+          <Dialog open={this.state.paymentDialogOpen} onClose={() => this.setState({ paymentDialogOpen: false })} aria-labelledby="form-dialog-title">
+            <DialogTitle id="form-dialog-title">Afrekenen</DialogTitle>
             <DialogContent>
-              <DialogContentText>Wilt u contant of met Sumup betalen?</DialogContentText>
+              <DialogContentText>Wilt u direct afrekenen?</DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => this.setState({ paymentDialogOpen: false, personEdit: '' })} color="primary">
+              <Button onClick={() => this.setState({ paymentDialogOpen: false })} color="primary">
                 Annuleren
                 </Button>
               <Button onClick={() => {
@@ -513,7 +525,7 @@ export default withSnackbar(class PersonList extends React.Component {
                       });
                     }}>
                       Annuleren
-                          </Button>
+                    </Button>
                     <Button onClick={() => {
                       fetch(serverUrl + '/api/setPayed/', {
                         method: 'post',
@@ -526,6 +538,7 @@ export default withSnackbar(class PersonList extends React.Component {
                         if (e.status !== 200) {
                           throw e.status;
                         } else {
+                          itemData[itemData.findIndex(x => x.code === this.state.currentPerson.code)].betaald = true;
                           this.setState({ paymentDialogOpen: false });
                         }
                         this.props.enqueueSnackbar('Betalen gelukt', {
@@ -542,10 +555,10 @@ export default withSnackbar(class PersonList extends React.Component {
                       this.props.closeSnackbar(key);
                     }}>
                       Gelukt
-                          </Button>
+                    </Button>
                   </React.Fragment>
                 );
-                let person = this.state.currentPerson;
+                let person = localState.state.currentPerson;
                 let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2)
                   .replace('.', ',')
                   .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
@@ -570,6 +583,7 @@ export default withSnackbar(class PersonList extends React.Component {
                   if (e.status !== 200) {
                     throw e.status;
                   } else {
+                    itemData[itemData.findIndex(x => x.code === this.state.currentPerson.code)].betaald = true;
                     this.setState({ paymentDialogOpen: false });
                   }
                 }
@@ -579,7 +593,7 @@ export default withSnackbar(class PersonList extends React.Component {
                     autoHideDuration: 5000,
                   });
                 });
-                let person = this.state.currentPerson;
+                let person = localState.state.currentPerson;
                 let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
                 window.location.href = 'sumupmerchant://pay/1.0?amount=' + amount
                   + '&affiliate-key=' + Config.sumup.affiliateKey + 'currency=' + Config.sumup.currency + '&title=' + Config.sumup.title;
@@ -592,7 +606,6 @@ export default withSnackbar(class PersonList extends React.Component {
                 </Button>
             </DialogActions>
           </Dialog>
-
         ) : null}
       </div>);
 

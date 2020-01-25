@@ -192,7 +192,7 @@ function AppReact() {
       icon: <CreateIcon />,
       content:
         <Typography component="div" className={classes.root}>
-          <PersonList loaded={loadedDataFunc} shouldload={loadedData}/>
+          <PersonList loaded={loadedDataFunc} shouldload={loadedData} />
         </Typography>
     },
     {
@@ -217,7 +217,7 @@ function AppReact() {
       </div>,
       content:
         <Typography component="div" className={classes.root}>
-          <CountingList search={searchValue} loaded={loadedDataFunc} shouldload={loadedData}/>
+          <CountingList search={searchValue} loaded={loadedDataFunc} shouldload={loadedData} />
         </Typography>
     },
     {
@@ -241,7 +241,7 @@ function AppReact() {
         />
       </div>,
       content: <Typography component="div" className={classes.root}>
-        <PaymentList search={searchValue} loaded={loadedDataFunc} shouldload={loadedData}/>
+        <PaymentList search={searchValue} loaded={loadedDataFunc} shouldload={loadedData} />
       </Typography>
     },
     {
@@ -287,7 +287,7 @@ function AppReact() {
               .then(data => {
                 let persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "Code", "Totaalbedrag", "Betaald"]];
                 data.forEach((person: PersonObjectInterface) => {
-                  let amount = (person.rondeBedrag * person.rondes + person.vastBedrag ).toFixed(2);
+                  let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
                   let userArray = [
                     person.id.toString(),
                     person.naam,
@@ -300,7 +300,7 @@ function AppReact() {
                     person.create_time,
                     person.code,
                     amount,
-                    String((person.betaald)? 1: 0)
+                    String((person.betaald) ? 1 : 0)
                   ];
                   persons.push(userArray);
                 })
@@ -321,7 +321,7 @@ function AppReact() {
                   .then(data => {
                     let persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "Code", "Totaalbedrag", "Betaald"]];
                     data.forEach((person: PersonObjectInterface) => {
-                      let amount = (person.rondeBedrag * person.rondes + person.vastBedrag ).toFixed(2);
+                      let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
                       let userArray = [
                         person.id.toString(),
                         person.naam,
@@ -334,7 +334,7 @@ function AppReact() {
                         person.create_time,
                         person.code,
                         amount,
-                        String((person.betaald)? 1: 0)
+                        String((person.betaald) ? 1 : 0)
                       ];
                       persons.push(userArray);
                     })
@@ -447,64 +447,64 @@ function AppReact() {
         variantError: classes.error,
         variantWarning: classes.warning,
         variantInfo: classes.info,
-    }}>
-      {/* Header */}
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" className={classes.appbarTitle}>
-            {pages[pageValue].name}
-          </Typography>
-          {pages[pageValue].appBar}
-        </Toolbar>
-      </AppBar>
-      {/* Menu */}
-      <Drawer open={drawerState} onClose={toggleDrawer(false)}>
-        <div
-          className={classes.list}
-          role="presentation"
-          onClick={toggleDrawer(false)}
-          onKeyDown={toggleDrawer(false)}
-        >
-          <List>
-            <img src={BedumerLogo} className={classes.logo} />
-            <Typography variant="h6" className={classes.drawerTitle}>Winterloop</Typography>
-            <Typography variant="body2" className={classes.drawerSubTitle}>Administratie</Typography>
-            <Divider />
-            {/* Menu list */}
-            {pages.map((data, index) => (
-              <ListItem button key={index} onClick={() => {
-                setPage(index);
-                setLoadedData(false);
-                history.pushState(
-                  { page: index },
-                  data.name,
-                  "#" + data.name
-                );
-                window.scrollTo(0, 0);
-              }}>
-                <ListItemIcon>{data.icon}</ListItemIcon>
-                <ListItemText>{data.name}</ListItemText>
-              </ListItem>
-            ))}
-          </List>
-        </div>
-      </Drawer>
-      {/* Pages */}
-      {pages.map((data, index) => (
-        <Page value={pageValue} index={index} key={index}>
-          {(pageValue == index)? data.content: null}
-        </Page>
-      ))}
-    </SnackbarProvider>
+      }}>
+        {/* Header */}
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" className={classes.appbarTitle}>
+              {pages[pageValue].name}
+            </Typography>
+            {pages[pageValue].appBar}
+          </Toolbar>
+        </AppBar>
+        {/* Menu */}
+        <Drawer open={drawerState} onClose={toggleDrawer(false)}>
+          <div
+            className={classes.list}
+            role="presentation"
+            onClick={toggleDrawer(false)}
+            onKeyDown={toggleDrawer(false)}
+          >
+            <List>
+              <img src={BedumerLogo} className={classes.logo} />
+              <Typography variant="h6" className={classes.drawerTitle}>Winterloop</Typography>
+              <Typography variant="body2" className={classes.drawerSubTitle}>Administratie</Typography>
+              <Divider />
+              {/* Menu list */}
+              {pages.map((data, index) => (
+                <ListItem button key={index} onClick={() => {
+                  setPage(index);
+                  setLoadedData(false);
+                  history.pushState(
+                    { page: index },
+                    data.name,
+                    "#" + data.name
+                  );
+                  window.scrollTo(0, 0);
+                }}>
+                  <ListItemIcon>{data.icon}</ListItemIcon>
+                  <ListItemText>{data.name}</ListItemText>
+                </ListItem>
+              ))}
+            </List>
+          </div>
+        </Drawer>
+        {/* Pages */}
+        {pages.map((data, index) => (
+          <Page value={pageValue} index={index} key={index}>
+            {(pageValue == index) ? data.content : null}
+          </Page>
+        ))}
+      </SnackbarProvider>
     </ThemeProvider>
   )
 }
 
 ReactDOM.render(
-    <AppReact />,
+  <AppReact />,
   $('div[data-type="main"]')[0]
 );
 

@@ -151,22 +151,22 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
     fetch(serverUrl + '/api/getUsers/')
       .then(response => { var a = response.json(); return a })
       .then(data => {
-          localState.setState({ persons: data, listClickDisabled: false });
-          unfilteredPersons = data;
-          itemData = data
-          renderedData = <div className="list">
-            <AutoSizer>
-              {({ height, width }) => (
-                <FixedSizeList height={height} width={width} itemSize={73} overscanCount={10} itemCount={data.length}>
-                  {this.renderItem}
-                </FixedSizeList>
-              )}
-            </AutoSizer>
-          </div>
+        localState.setState({ persons: data, listClickDisabled: false });
+        unfilteredPersons = data;
+        itemData = data
+        renderedData = <div className="list">
+          <AutoSizer>
+            {({ height, width }) => (
+              <FixedSizeList height={height} width={width} itemSize={73} overscanCount={10} itemCount={data.length}>
+                {this.renderItem}
+              </FixedSizeList>
+            )}
+          </AutoSizer>
+        </div>
 
-          localState.setState({ rendered: renderedData });
+        localState.setState({ rendered: renderedData });
 
-        }
+      }
       )
       .catch(() => {
         this.props.enqueueSnackbar('Kan niet verbinden met database', {
@@ -174,30 +174,30 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
           autoHideDuration: 5000,
         });
         let data = [
-              {
-                "id": 1,
-                "naam": "Kan niet verbinden met database.",
-                "huisnummer": "0",
-                "postcode": "0000AA",
-                "telefoonnummer": "0000000000",
-                "vastBedrag": 0,
-                "rondeBedrag": 0,
-                "rondes": 0,
-                "code": '000000',
-                "create_time": "2019-12-27T15:16:48.000Z",
-                "betaald": 0
-              }
-            ]
-          itemData = data
-          renderedData = <div className="list">
-            <AutoSizer>
-              {({ height, width }) => (
-                <FixedSizeList height={height} width={width} itemSize={73} overscanCount={10} itemCount={data.length}>
-                  {this.renderItem}
-                </FixedSizeList>
-              )}
-            </AutoSizer>
-          </div>
+          {
+            "id": 1,
+            "naam": "Kan niet verbinden met database.",
+            "huisnummer": "0",
+            "postcode": "0000AA",
+            "telefoonnummer": "0000000000",
+            "vastBedrag": 0,
+            "rondeBedrag": 0,
+            "rondes": 0,
+            "code": '000000',
+            "create_time": "2019-12-27T15:16:48.000Z",
+            "betaald": 0
+          }
+        ]
+        itemData = data
+        renderedData = <div className="list">
+          <AutoSizer>
+            {({ height, width }) => (
+              <FixedSizeList height={height} width={width} itemSize={73} overscanCount={10} itemCount={data.length}>
+                {this.renderItem}
+              </FixedSizeList>
+            )}
+          </AutoSizer>
+        </div>
         localState.setState({ rendered: renderedData, listClickDisabled: true });
         _hasFailed = true;
       });
@@ -206,7 +206,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
   componentDidMount() {
     this._isMounted = true;
     localState = this;
-    if ((!_hasLoaded && !_hasFailed)|| !this.props.shouldload) {
+    if ((!_hasLoaded && !_hasFailed) || !this.props.shouldload) {
       this.props.loaded();
       _hasLoaded = true;
       setTimeout(() => { this.getData() }, 0);
@@ -413,7 +413,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
 
         ) : null}
 
-        {/* dialog for round edits */}
+        {/* dialog for payment suggestion */}
         {this.state.paymentDialogOpen ? (
           <Dialog open={this.state.paymentDialogOpen} onClose={() => this.setState({ paymentDialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Afrekenen</DialogTitle>

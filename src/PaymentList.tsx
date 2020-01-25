@@ -147,7 +147,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
         if (localState._isMounted) {
           localState.setState({ persons: data, listClickDisabled: false });
           unfilteredPersons = data;
-          itemData = data
+          itemData = data;
           renderedData = <div className="list">
             <AutoSizer>
               {({ height, width }) => (
@@ -166,22 +166,22 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
           variant: 'error',
           autoHideDuration: 5000,
         });
-        let data =  [
-              {
-                "id": 1,
-                "naam": "Kan niet verbinden met database.",
-                "huisnummer": "0",
-                "postcode": "0000AA",
-                "telefoonnummer": "0000000000",
-                "vastBedrag": 0,
-                "rondeBedrag": 0,
-                "rondes": 0,
-                "code": '000000',
-                "create_time": "2019-12-27T15:16:48.000Z",
-                "betaald": 0
-              }
-            ]
-        itemData = data
+        let data = [
+          {
+            "id": 1,
+            "naam": "Kan niet verbinden met database.",
+            "huisnummer": "0",
+            "postcode": "0000AA",
+            "telefoonnummer": "0000000000",
+            "vastBedrag": 0,
+            "rondeBedrag": 0,
+            "rondes": 0,
+            "code": '000000',
+            "create_time": "2019-12-27T15:16:48.000Z",
+            "betaald": 0
+          }
+        ]
+        itemData = data;
         renderedData = <div className="list">
           <AutoSizer>
             {({ height, width }) => (
@@ -199,7 +199,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
   componentDidMount() {
     this._isMounted = true;
     localState = this;
-    if (!_hasLoaded && !_hasFailed|| !this.props.shouldload) {
+    if (!_hasLoaded && !_hasFailed || !this.props.shouldload) {
       this.props.loaded();
       _hasLoaded = true;
       setTimeout(() => { this.getData() }, 0);
@@ -303,15 +303,14 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                         if (e.status !== 200) {
                           throw e.status;
                         } else {
-                          let persons = this.state.persons
-                          persons[persons.indexOf(this.state.currentPerson)].betaald = true;
+                          itemData[itemData.indexOf(this.state.currentPerson)].betaald = true;
                           this.setState({ paymentDialogOpen: false });
+                          this.forceUpdate();
                         }
                         this.props.enqueueSnackbar('Betalen gelukt', {
                           variant: 'success',
                           autoHideDuration: 5000,
                         });
-                        this.getData();
                       }
                       ).catch(() => {
                         this.props.enqueueSnackbar('Betaal status zetten mislukt', {
@@ -350,10 +349,9 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                   if (e.status !== 200) {
                     throw e.status;
                   } else {
-                    let persons = this.state.persons;
-                    persons[persons.indexOf(this.state.currentPerson)].betaald = true;
+                    itemData[itemData.indexOf(this.state.currentPerson)].betaald = true;
                     this.setState({ paymentDialogOpen: false });
-                    this.getData();
+                    this.forceUpdate();
                   }
                 }
                 ).catch(() => {
