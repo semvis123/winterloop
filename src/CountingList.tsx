@@ -104,6 +104,8 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
     search: string;
     enqueueSnackbar: any;
     closeSnackbar: any;
+    shouldload: boolean;
+    loaded: any;
   }
 
   // Global vars
@@ -204,7 +206,8 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
   componentDidMount() {
     this._isMounted = true;
     localState = this;
-    if (!_hasLoaded && !_hasFailed) {
+    if ((!_hasLoaded && !_hasFailed)|| !this.props.shouldload) {
+      this.props.loaded();
       _hasLoaded = true;
       setTimeout(() => { this.getData() }, 0);
     }

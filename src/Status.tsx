@@ -47,9 +47,6 @@ let style: any = {
   }
 }
 export default class Status extends React.Component {
-  props: {
-    classes: any; // It works
-  }
   state: {
     totalRound: number,
     avgRound: number,

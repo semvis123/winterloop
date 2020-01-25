@@ -90,6 +90,8 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
     search: string;
     enqueueSnackbar: any;
     closeSnackbar: any;
+    shouldload: boolean;
+    loaded: any;
   }
 
   // Global vars
@@ -197,7 +199,8 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
   componentDidMount() {
     this._isMounted = true;
     localState = this;
-    if (!_hasLoaded && !_hasFailed) {
+    if (!_hasLoaded && !_hasFailed|| !this.props.shouldload) {
+      this.props.loaded();
       _hasLoaded = true;
       setTimeout(() => { this.getData() }, 0);
     }

@@ -58,6 +58,7 @@ let _hasFailed: boolean = false;
 let renderedData: React.ReactNode;
 let localState: any;
 let itemData: any;
+let mountTime: number = 0;
 let style: any = {
   fab: {
     position: 'fixed',
@@ -83,6 +84,8 @@ export default withSnackbar(class PersonList extends React.Component {
   props: {
     enqueueSnackbar: any;
     closeSnackbar: any;
+    shouldload: boolean;
+    loaded: any;
   }
 
   // Global vars
@@ -187,7 +190,8 @@ export default withSnackbar(class PersonList extends React.Component {
   componentDidMount() {
     this._isMounted = true;
     localState = this;
-    if (!_hasLoaded && !_hasFailed) {
+    if ((!_hasLoaded && !_hasFailed)|| !this.props.shouldload) {
+      this.props.loaded();
       _hasLoaded = true;
       setTimeout(() => { this.getData() }, 0);
     }

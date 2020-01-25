@@ -175,8 +175,15 @@ function AppReact() {
   const [historyLoaded, setHistory] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState('');
 
+  const [loadedData, setLoadedData] = React.useState(false);
+
   // Setup localstorage
   if (localStorage.getItem('dark') == undefined) { localStorage.setItem('dark', 'false') }
+
+  const loadedDataFunc = () => {
+    console.log("loaded");
+    setLoadedData(true);
+  }
 
   // Page list
   const pages: pageObject = [
@@ -185,7 +192,7 @@ function AppReact() {
       icon: <CreateIcon />,
       content:
         <Typography component="div" className={classes.root}>
-          <PersonList />
+          <PersonList loaded={loadedDataFunc} shouldload={loadedData}/>
         </Typography>
     },
     {
@@ -210,7 +217,7 @@ function AppReact() {
       </div>,
       content:
         <Typography component="div" className={classes.root}>
-          <CountingList search={searchValue} />
+          <CountingList search={searchValue} loaded={loadedDataFunc} shouldload={loadedData}/>
         </Typography>
     },
     {
@@ -234,7 +241,7 @@ function AppReact() {
         />
       </div>,
       content: <Typography component="div" className={classes.root}>
-        <PaymentList search={searchValue} />
+        <PaymentList search={searchValue} loaded={loadedDataFunc} shouldload={loadedData}/>
       </Typography>
     },
     {
@@ -470,6 +477,7 @@ function AppReact() {
             {pages.map((data, index) => (
               <ListItem button key={index} onClick={() => {
                 setPage(index);
+                setLoadedData(false);
                 history.pushState(
                   { page: index },
                   data.name,
