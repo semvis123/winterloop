@@ -305,7 +305,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                         } else {
                           itemData[itemData.indexOf(this.state.currentPerson)].betaald = true;
                           this.setState({ paymentDialogOpen: false });
-                          this.forceUpdate();
+                          this.props.loaded(false);
                         }
                         this.props.enqueueSnackbar('Betalen gelukt', {
                           variant: 'success',
@@ -351,7 +351,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                   } else {
                     itemData[itemData.indexOf(this.state.currentPerson)].betaald = true;
                     this.setState({ paymentDialogOpen: false });
-                    this.forceUpdate();
+                    this.props.loaded(false);
                   }
                 }
                 ).catch(() => {
