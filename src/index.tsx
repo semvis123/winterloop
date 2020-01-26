@@ -180,9 +180,9 @@ function AppReact() {
   // Setup localstorage
   if (localStorage.getItem('dark') == undefined) { localStorage.setItem('dark', 'false') }
 
-  const loadedDataFunc = () => {
+  const loadedDataFunc = (bool: boolean = true) => {
     console.log("loaded");
-    setLoadedData(true);
+    setLoadedData(bool);
   }
 
   // Page list
