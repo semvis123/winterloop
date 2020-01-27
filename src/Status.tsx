@@ -19,6 +19,7 @@ interface PersonObjectInterface {
   rondes: number;
   create_time: string;
   code: string;
+  betaald: number;
 }
 
 // Static vars
@@ -138,7 +139,8 @@ export default class Status extends React.Component {
                 "rondeBedrag": 0,
                 "rondes": 0,
                 "code": '000000',
-                "create_time": "2019-12-27T15:16:48.000Z"
+                "create_time": "2019-12-27T15:16:48.000Z",
+                "betaald": 0
               }
             ], listClickDisabled: true
           }) : null

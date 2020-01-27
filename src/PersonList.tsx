@@ -37,7 +37,7 @@ interface PersonObjectInterface {
   rondes: number;
   create_time: string;
   code: string;
-  betaald: boolean;
+  betaald: number;
 }
 
 interface PersonListStateInterface {
@@ -236,7 +236,10 @@ export default withSnackbar(class PersonList extends React.Component {
               </DialogContentText>
               <DialogContentText>aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
               <DialogContentText>aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
-              <DialogContentText>betaald: {(this.state.currentPerson.betaald) ? 'ja' : 'nee'}</DialogContentText>
+              <DialogContentText>betaald: {
+                (this.state.currentPerson.betaald == 0)?  'nee' : (
+                  (this.state.currentPerson.betaald == 1)? 'contant' : 'pin')
+              }</DialogContentText>
               <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -311,7 +314,8 @@ export default withSnackbar(class PersonList extends React.Component {
                   "rondeBedrag": parseFloat($("#addUserForm [name='rondeBedrag']").val()),
                   "rondes": 0,
                   "code": a.code,
-                  "create_time": "onbekend"
+                  "create_time": "onbekend",
+                  "betaald": 0
                 });
                 localState.setState({ currentPerson: itemData.find(x => x.code == a.code) });
                 this.setState({ addDialogOpen: false, paymentDialogOpen: true });
@@ -474,6 +478,7 @@ export default withSnackbar(class PersonList extends React.Component {
                 type="number"
                 name="vastBedrag"
                 defaultValue={this.state.currentPerson.vastBedrag}
+                disabled={(this.state.currentPerson.betaald!=0)}
                 fullWidth
                 InputProps={{
                   startAdornment: <InputAdornment position="start">€</InputAdornment>,
@@ -485,6 +490,7 @@ export default withSnackbar(class PersonList extends React.Component {
                 type="number"
                 name="rondeBedrag"
                 defaultValue={this.state.currentPerson.rondeBedrag}
+                disabled={(this.state.currentPerson.betaald!=0)}
                 fullWidth
                 InputProps={{
                   startAdornment: <InputAdornment position="start">€</InputAdornment>,
@@ -514,8 +520,8 @@ export default withSnackbar(class PersonList extends React.Component {
                 Annuleren
                 </Button>
               <Button onClick={() => {
-
-                const action = key => (
+                // dialog for paying in cash
+                const action = (key: any) => (
                   <React.Fragment>
                     <Button onClick={() => {
                       this.props.closeSnackbar(key);
@@ -538,7 +544,7 @@ export default withSnackbar(class PersonList extends React.Component {
                         if (e.status !== 200) {
                           throw e.status;
                         } else {
-                          itemData[itemData.findIndex(x => x.code === this.state.currentPerson.code)].betaald = true;
+                          itemData[itemData.findIndex(x => x.code === this.state.currentPerson.code)].betaald = 1;
                           this.setState({ paymentDialogOpen: false });
                         }
                         this.props.enqueueSnackbar('Betalen gelukt', {
@@ -558,6 +564,7 @@ export default withSnackbar(class PersonList extends React.Component {
                     </Button>
                   </React.Fragment>
                 );
+
                 let person = localState.state.currentPerson;
                 let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2)
                   .replace('.', ',')
@@ -578,17 +585,17 @@ export default withSnackbar(class PersonList extends React.Component {
                     'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
                     'Access-Control-Allow-Origin': '*'
                   },
-                  body: "code=" + this.state.currentPerson.code + "&payed=1"
+                  body: "code=" + this.state.currentPerson.code + "&payed=2"
                 }).then((e) => {
                   if (e.status !== 200) {
                     throw e.status;
                   } else {
-                    itemData[itemData.findIndex(x => x.code === this.state.currentPerson.code)].betaald = true;
+                    itemData[itemData.findIndex(x => x.code === this.state.currentPerson.code)].betaald = 2;
                     this.setState({ paymentDialogOpen: false });
                   }
                 }
                 ).catch(() => {
-                  this.props.enqueueSnackbar('Betalen mislukt', {
+                  this.props.enqueueSnackbar('Betalen zetten mislukt', {
                     variant: 'error',
                     autoHideDuration: 5000,
                   });

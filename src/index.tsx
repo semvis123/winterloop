@@ -6,8 +6,7 @@ import './style.scss';
 import CreateIcon from '@material-ui/icons/Create';
 import PollIcon from '@material-ui/icons/Poll';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
-import { createStyles, makeStyles, Theme, ThemeProvider, useTheme, fade } from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { createStyles, makeStyles, Theme, ThemeProvider, fade } from '@material-ui/core/styles';
 import BedumerTheme from './theme';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -132,7 +131,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 
 interface PersonObjectInterface {
-  betaald: boolean;
+  betaald: number;
   id: number;
   naam: string;
   huisnummer: string;
@@ -161,14 +160,10 @@ interface pageObject {
 }
 
 function AppReact() {
-  const theme = useTheme();
   const classes = useStyles(BedumerTheme);
   // States
   const [drawerState, setDrawer] = React.useState(false);
   const [pageValue, setPage] = React.useState(0);
-  const [dialogState, setDialog] = React.useState({
-    0: false
-  });
   const [themeState, setTheme] = React.useState({
     dark: (localStorage.getItem('dark') == 'true') ? true : false
   })
@@ -203,7 +198,7 @@ function AppReact() {
           <SearchIcon />
         </div>
         <InputBase
-          placeholder="Search…"
+          placeholder="Zoeken…"
           classes={{
             root: classes.inputRoot,
             input: classes.inputInput,
@@ -228,7 +223,7 @@ function AppReact() {
           <SearchIcon />
         </div>
         <InputBase
-          placeholder="Search…"
+          placeholder="Zoeken…"
           classes={{
             root: classes.inputRoot,
             input: classes.inputInput,
@@ -300,7 +295,7 @@ function AppReact() {
                     person.create_time,
                     person.code,
                     amount,
-                    String((person.betaald) ? 1 : 0)
+                    String(person.betaald)
                   ];
                   persons.push(userArray);
                 })
@@ -334,7 +329,7 @@ function AppReact() {
                         person.create_time,
                         person.code,
                         amount,
-                        String((person.betaald) ? 1 : 0)
+                        String(person.betaald)
                       ];
                       persons.push(userArray);
                     })
@@ -409,9 +404,6 @@ function AppReact() {
     setPage(history.state.page);
     window.scrollTo(0, 0);
   });
-
-  // Other vars
-  const fullScreenDialog = useMediaQuery(theme.breakpoints.down('sm'));
 
   // Page object
   function Page(props: {

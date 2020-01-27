@@ -38,7 +38,7 @@ interface PersonObjectInterface {
   rondes: number;
   create_time: string;
   code: string;
-  betaald: boolean;
+  betaald: number;
 }
 
 interface CountingListStateInterface {
@@ -258,7 +258,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
         {this.state.dialogOpen ? (
           <Dialog open={this.state.dialogOpen} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">
-              <IconButton aria-label="edit" style={style.editButton} disabled={Boolean(this.state.currentPerson.betaald)} onClick={() => {
+              <IconButton aria-label="edit" style={style.editButton} disabled={(this.state.currentPerson.betaald!=0)} onClick={() => {
                 this.setState({
                   personEdit: this.state.currentPerson.code,
                   changeRoundOpen: true,
@@ -293,7 +293,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                   currentNameSetRound: this.state.currentPerson.naam,
                   setRoundButtonDisabled: false
                 });
-              }} disabled={Boolean(this.state.currentPerson.betaald)} color="secondary">
+              }} disabled={(this.state.currentPerson.betaald!=0)} color="secondary">
                 Rondes invullen
                 </Button>
             </DialogActions>
@@ -334,7 +334,6 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                   // remove error and name
                   this.setState({ persons: persons, codeError: false, currentNameSetRound: name });
 
-                  const { classes } = this.props;
                   renderedData = (
                     <List>
                       {persons.map((person: PersonObjectInterface, i: number) =>
@@ -426,7 +425,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                 </Button>
               <Button onClick={() => {
 
-                const action = key => (
+                const action = (key: any) => (
                   <React.Fragment>
                     <Button onClick={() => {
                       this.props.closeSnackbar(key);
@@ -450,7 +449,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                           throw e.status;
                         } else {
                           let persons = this.state.persons;
-                          persons[persons.indexOf(this.state.currentPerson)].betaald = true;
+                          persons[persons.indexOf(this.state.currentPerson)].betaald = 1;
                           this.setState({ paymentDialogOpen: false });
                         }
                         this.props.enqueueSnackbar('Betalen gelukt', {
@@ -490,18 +489,18 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                     'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
                     'Access-Control-Allow-Origin': '*'
                   },
-                  body: "code=" + this.state.currentPerson.code + "&payed=1"
+                  body: "code=" + this.state.currentPerson.code + "&payed=2"
                 }).then((e) => {
                   if (e.status !== 200) {
                     throw e.status;
                   } else {
                     let persons = this.state.persons;
-                    persons[persons.indexOf(this.state.currentPerson)].betaald = true;
+                    persons[persons.indexOf(this.state.currentPerson)].betaald = 2;
                     this.setState({ paymentDialogOpen: false });
                   }
                 }
                 ).catch(() => {
-                  this.props.enqueueSnackbar('Betalen mislukt', {
+                  this.props.enqueueSnackbar('Betalen zetten mislukt', {
                     variant: 'error',
                     autoHideDuration: 5000,
                   });

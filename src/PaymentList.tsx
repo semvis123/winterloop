@@ -1,5 +1,4 @@
 import React = require('react');
-import $ from 'jquery';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Dialog from '@material-ui/core/Dialog';
@@ -34,7 +33,7 @@ interface PersonObjectInterface {
   rondes: number;
   create_time: string;
   code: string;
-  betaald: boolean;
+  betaald: number;
 }
 
 interface PaymentListStateInterface {
@@ -124,7 +123,9 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
       <ListItem style={style} divider button key={index} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: itemData[index] }) : null}>
         <ListItemText key="code" primary={itemData[index].naam} secondary={itemData[index].code} />
         <ListItemText key="payedParent" primary={
-          <Typography key="payed" align="center" style={styles.betaald}>{Boolean(itemData[index].betaald) ? 'BETAALD' : ''}</Typography>
+          <Typography key="payed" align="center" style={styles.betaald}>{
+              (itemData[index].betaald == 0)?  '' : ((itemData[index].betaald == 1)? 'CONTANT BETAALD' : 'BETAALD MET PIN')
+             }</Typography>
         } />
         <ListItemText primary={
           <Typography align="right">€ {
@@ -198,7 +199,6 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
   componentDidMount() {
     this._isMounted = true;
     localState = this;
-    console.log("hallo paymentlist mounted");
     if (!_hasLoaded && !_hasFailed || !this.props.shouldload) {
       this.props.loaded();
       _hasLoaded = true;
@@ -253,7 +253,9 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                   .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
               }</DialogContentText>
               <DialogContentText>Code: {this.state.currentPerson.code}</DialogContentText>
-              <DialogContentText>Betaald: {Boolean(this.state.currentPerson.betaald) ? 'ja' : 'nee'}</DialogContentText>
+              <DialogContentText>Betaald: {
+                              (this.state.currentPerson.betaald == 0)?  'nee' : ((this.state.currentPerson.betaald == 1)? 'contant' : 'pin')
+              }</DialogContentText>
             </DialogContent>
             <DialogActions>
               <Button onClick={() => this.setState({ dialogOpen: false })} color="primary">
@@ -261,7 +263,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                 </Button>
               <Button onClick={() => {
                 this.setState({ paymentDialogOpen: true, currentNameSetRound: '', personEdit: '' })
-              }} color="secondary" disabled={Boolean(this.state.currentPerson.betaald)}>
+              }} color="secondary" disabled={(this.state.currentPerson.betaald!=0)}>
                 Betalen
                 </Button>
             </DialogActions>
@@ -281,7 +283,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                 </Button>
               <Button onClick={() => {
 
-                const action = key => (
+                const action = (key: any) => (
                   <React.Fragment>
                     <Button onClick={() => {
                       this.props.closeSnackbar(key);
@@ -304,7 +306,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                         if (e.status !== 200) {
                           throw e.status;
                         } else {
-                          itemData[itemData.indexOf(this.state.currentPerson)].betaald = true;
+                          itemData[itemData.indexOf(this.state.currentPerson)].betaald = 1;
                           this.setState({ paymentDialogOpen: false });
                           this.props.loaded(false);
                         }
@@ -345,12 +347,12 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                     'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
                     'Access-Control-Allow-Origin': '*'
                   },
-                  body: "code=" + this.state.currentPerson.code + "&payed=1"
+                  body: "code=" + this.state.currentPerson.code + "&payed=2"
                 }).then((e) => {
                   if (e.status !== 200) {
                     throw e.status;
                   } else {
-                    itemData[itemData.indexOf(this.state.currentPerson)].betaald = true;
+                    itemData[itemData.indexOf(this.state.currentPerson)].betaald = 2;
                     this.setState({ paymentDialogOpen: false });
                     this.props.loaded(false);
                   }

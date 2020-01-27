@@ -33,7 +33,7 @@ CREATE TABLE `user` (
   `rondes` int(11) NOT NULL DEFAULT '0',
   `code` int(6) NOT NULL,
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `betaald` BOOLEAN NOT NULL DEFAULT 0,
+  `betaald` TINYINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`,`naam`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
