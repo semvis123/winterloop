@@ -181,7 +181,6 @@ function AppReact() {
   if (localStorage.getItem('dark') == undefined) { localStorage.setItem('dark', 'false') }
 
   const loadedDataFunc = (bool: boolean = true) => {
-    console.log("loaded");
     setLoadedData(bool);
   }
 
@@ -397,9 +396,11 @@ function AppReact() {
       pages[0].name,
       '#' + pages[0].name
     );
+    document.title = pages[0].name;
   }
 
   if (!historyLoaded) {
+    document.title = pages[history.state.page].name;
     setPage(history.state.page);
     setHistory(true);
   }
@@ -408,10 +409,8 @@ function AppReact() {
   $(window).on('popstate', function() {
     setPage(history.state.page);
     window.scrollTo(0, 0);
+    document.title = pages[history.state.page].name;
   });
-
-  // Other vars
-  const fullScreenDialog = useMediaQuery(theme.breakpoints.down('sm'));
 
   // Page object
   function Page(props: {
@@ -483,6 +482,7 @@ function AppReact() {
                     data.name,
                     "#" + data.name
                   );
+                  document.title = data.name;
                   window.scrollTo(0, 0);
                 }}>
                   <ListItemIcon>{data.icon}</ListItemIcon>
@@ -507,5 +507,3 @@ ReactDOM.render(
   <AppReact />,
   $('div[data-type="main"]')[0]
 );
-
-// https://material-ui.com/getting-started/usage/
