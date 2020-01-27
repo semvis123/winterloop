@@ -207,6 +207,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
     this._isMounted = true;
     localState = this;
     if ((!_hasLoaded && !_hasFailed) || !this.props.shouldload) {
+      renderedData = null;
       this.props.loaded();
       _hasLoaded = true;
       setTimeout(() => { this.getData() }, 0);

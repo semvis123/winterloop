@@ -190,6 +190,7 @@ export default withSnackbar(class PersonList extends React.Component {
     this._isMounted = true;
     localState = this;
     if ((!_hasLoaded && !_hasFailed) || !this.props.shouldload) {
+      renderedData = null;
       this.props.loaded();
       _hasLoaded = true;
       setTimeout(() => { this.getData() }, 0);

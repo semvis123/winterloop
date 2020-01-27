@@ -124,8 +124,8 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
         <ListItemText key="code" primary={itemData[index].naam} secondary={itemData[index].code} />
         <ListItemText key="payedParent" primary={
           <Typography key="payed" align="center" style={styles.betaald}>{
-              (itemData[index].betaald == 0)?  '' : ((itemData[index].betaald == 1)? 'CONTANT BETAALD' : 'BETAALD MET PIN')
-             }</Typography>
+            (itemData[index].betaald == 0) ? '' : ((itemData[index].betaald == 1) ? 'CONTANT BETAALD' : 'BETAALD MET PIN')
+          }</Typography>
         } />
         <ListItemText primary={
           <Typography align="right">€ {
@@ -200,6 +200,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
     this._isMounted = true;
     localState = this;
     if (!_hasLoaded && !_hasFailed || !this.props.shouldload) {
+      renderedData = null;
       this.props.loaded();
       _hasLoaded = true;
       setTimeout(() => { this.getData() }, 0);
@@ -232,7 +233,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
     console.log(this);
     return (
       <div>
-        {this.state.rendered? (this.state.rendered) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
+        {this.state.rendered ? (this.state.rendered) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
 
         {/* dialog for person information */}
         {this.state.dialogOpen ? (
@@ -254,7 +255,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
               }</DialogContentText>
               <DialogContentText>Code: {this.state.currentPerson.code}</DialogContentText>
               <DialogContentText>Betaald: {
-                              (this.state.currentPerson.betaald == 0)?  'nee' : ((this.state.currentPerson.betaald == 1)? 'contant' : 'pin')
+                (this.state.currentPerson.betaald == 0) ? 'nee' : ((this.state.currentPerson.betaald == 1) ? 'contant' : 'pin')
               }</DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -263,7 +264,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                 </Button>
               <Button onClick={() => {
                 this.setState({ paymentDialogOpen: true, currentNameSetRound: '', personEdit: '' })
-              }} color="secondary" disabled={(this.state.currentPerson.betaald!=0)}>
+              }} color="secondary" disabled={(this.state.currentPerson.betaald != 0)}>
                 Betalen
                 </Button>
             </DialogActions>
