@@ -509,7 +509,11 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                 let person = this.state.currentPerson;
                 let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
                 window.location.href = 'sumupmerchant://pay/1.0?amount=' + amount
-                  + '&affiliate-key=' + Config.sumup.affiliateKey + 'currency=' + Config.sumup.currency + '&title=' + Config.sumup.title;
+                + '&total=' + amount
+                + '&affiliate-key=' + Config.sumup.affiliateKey
+                + '&currency=' + Config.sumup.currency
+                + '&title=' + Config.sumup.title
+                + '&callback=' + Config.server.url + '/#Rondes';
                 this.props.enqueueSnackbar('Betalen gelukt', {
                   variant: 'success',
                   autoHideDuration: 5000,
