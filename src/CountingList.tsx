@@ -327,7 +327,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                   var index = persons.findIndex((person: PersonObjectInterface) => {
                     return person.code == $("#setRoundForm [name='code']").val();
                   });
-                  persons[index].rondes = $("#setRoundForm [name='rondes']").val();
+                  persons[index].rondes = Number($("#setRoundForm [name='rondes']").val());
                   this.props.enqueueSnackbar('Rondes toegevoegd', {
                     variant: 'success',
                     autoHideDuration: 5000,

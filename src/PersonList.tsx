@@ -290,8 +290,8 @@ export default withSnackbar(class PersonList extends React.Component {
                 "&huisnummer=" + $("#addUserForm [name='huisnummer']").val() +
                 "&postcode=" + $("#addUserForm [name='postcode']").val() +
                 "&telefoonnummer=" + $("#addUserForm [name='telefoonnummer']").val() +
-                "&vastBedrag=" + $("#addUserForm [name='vastBedrag']").val().replace(',', '.') +
-                "&rondeBedrag=" + $("#addUserForm [name='rondeBedrag']").val().replace(',', '.')
+                "&vastBedrag=" + $("#addUserForm [name='vastBedrag']").val().toString().replace(',', '.') +
+                "&rondeBedrag=" + $("#addUserForm [name='rondeBedrag']").val().toString().replace(',', '.')
             })
               .then(response => {
                 if (response.status !== 200) {
@@ -311,8 +311,8 @@ export default withSnackbar(class PersonList extends React.Component {
                   "huisnummer": $("#addUserForm [name='huisnummer']").val(),
                   "postcode": $("#addUserForm [name='postcode']").val(),
                   "telefoonnummer": $("#addUserForm [name='telefoonnummer']").val(),
-                  "vastBedrag": parseFloat($("#addUserForm [name='vastBedrag']").val()),
-                  "rondeBedrag": parseFloat($("#addUserForm [name='rondeBedrag']").val()),
+                  "vastBedrag": parseFloat($("#addUserForm [name='vastBedrag']").val().toString()),
+                  "rondeBedrag": parseFloat($("#addUserForm [name='rondeBedrag']").val().toString()),
                   "rondes": 0,
                   "code": a.code,
                   "create_time": "onbekend",
@@ -408,8 +408,8 @@ export default withSnackbar(class PersonList extends React.Component {
                 "&huisnummer=" + $("#editUserForm [name='huisnummer']").val() +
                 "&postcode=" + $("#editUserForm [name='postcode']").val() +
                 "&telefoonnummer=" + $("#editUserForm [name='telefoonnummer']").val() +
-                "&vastBedrag=" + $("#editUserForm [name='vastBedrag']").val().replace(',', '.') +
-                "&rondeBedrag=" + $("#editUserForm [name='rondeBedrag']").val().replace(',', '.') +
+                "&vastBedrag=" + $("#editUserForm [name='vastBedrag']").val().toString().replace(',', '.') +
+                "&rondeBedrag=" + $("#editUserForm [name='rondeBedrag']").val().toString().replace(',', '.') +
                 "&id=" + this.state.currentPerson.id
             })
               .then(response => {

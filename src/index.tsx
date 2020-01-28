@@ -22,24 +22,15 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import SettingsIcon from '@material-ui/icons/Settings';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import Switch from '@material-ui/core/Switch';
-import Brightness4Icon from '@material-ui/icons/Brightness4';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
-import StorageIcon from '@material-ui/icons/Storage';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import InputBase from '@material-ui/core/InputBase';
-import * as XLSX from 'xlsx';
 import { SnackbarProvider } from 'notistack';
 import CountingList from './CountingList';
 import PersonList from './PersonList';
 import PaymentList from './PaymentList';
-import * as Config from '../configuration.json';
 import Status from './Status';
+import Settings from './Settings';
 
-const serverUrl = Config.server.url + ':' + Config.server.port;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -130,20 +121,6 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 
-interface PersonObjectInterface {
-  betaald: number;
-  id: number;
-  naam: string;
-  huisnummer: string;
-  postcode: string;
-  telefoonnummer: string;
-  vastBedrag: number;
-  rondeBedrag: number;
-  rondes: number;
-  create_time: string;
-  code: string;
-}
-
 interface pageObject {
   [index: number]: {
     name: string;
@@ -166,7 +143,7 @@ function AppReact() {
   const [pageValue, setPage] = React.useState(0);
   const [themeState, setTheme] = React.useState({
     dark: (localStorage.getItem('dark') == 'true') ? true : false
-  })
+  });
   const [historyLoaded, setHistory] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState('');
 
@@ -246,141 +223,9 @@ function AppReact() {
     {
       name: 'Instellingen',
       icon: <SettingsIcon />,
-      content: <Typography component="div" className={classes.root}>
-        <List subheader={<ListSubheader>Thema</ListSubheader>}>
-          <ListItem button onClick={() => {
-            var darkState = !themeState.dark;
-            setTheme({ dark: darkState });
-            localStorage.setItem('dark', (darkState) ? 'true' : 'false');
-            location.reload();
-          }}>
-            <ListItemIcon>
-              <Brightness4Icon />
-            </ListItemIcon>
-            <ListItemText id="switch-list-label-dark" primary="Donkere modus" />
-            <ListItemSecondaryAction>
-              <Switch
-                edge="end"
-                onChange={() => {
-                  var darkState = !themeState.dark;
-                  setTheme({ dark: darkState });
-                  localStorage.setItem('dark', (darkState) ? 'true' : 'false');
-                  location.reload();
-                }}
-                checked={themeState.dark}
-                inputProps={{ 'aria-labelledby': 'switch-list-label-dark' }}
-              />
-            </ListItemSecondaryAction>
-          </ListItem>
-        </List>
-
-        <List subheader={<ListSubheader>Database</ListSubheader>}>
-          <ListItem button onClick={() => {
-            fetch(serverUrl + '/api/getUsers/') // change this to yourip:4322
-              .then(response => { var a = response.json(); return a })
-              .then(data => {
-                let persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "Code", "Totaalbedrag", "Betaald"]];
-                data.forEach((person: PersonObjectInterface) => {
-                  let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
-                  let userArray = [
-                    person.id.toString(),
-                    person.naam,
-                    person.huisnummer,
-                    person.postcode,
-                    person.telefoonnummer,
-                    person.vastBedrag.toString(),
-                    person.rondeBedrag.toString(),
-                    person.rondes.toString(),
-                    person.create_time,
-                    person.code,
-                    amount,
-                    String(person.betaald)
-                  ];
-                  persons.push(userArray);
-                })
-                const wb = XLSX.utils.book_new();
-                const wsAll = XLSX.utils.aoa_to_sheet(persons);
-                XLSX.utils.book_append_sheet(wb, wsAll, "Personen");
-                XLSX.writeFile(wb, "export.xlsx");
-              });
-          }}>
-            <ListItemIcon>
-              <StorageIcon />
-            </ListItemIcon>
-            <ListItemText id="switch-list-label-dark" primary="Database Exporteren naar Excel" />
-            <ListItemSecondaryAction>
-              <IconButton edge="end" aria-label="download" onClick={() => {
-                fetch(serverUrl + '/api/getUsers/')
-                  .then(response => { var a = response.json(); return a })
-                  .then(data => {
-                    let persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "Code", "Totaalbedrag", "Betaald"]];
-                    data.forEach((person: PersonObjectInterface) => {
-                      let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
-                      let userArray = [
-                        person.id.toString(),
-                        person.naam,
-                        person.huisnummer,
-                        person.postcode,
-                        person.telefoonnummer,
-                        person.vastBedrag.toString(),
-                        person.rondeBedrag.toString(),
-                        person.rondes.toString(),
-                        person.create_time,
-                        person.code,
-                        amount,
-                        String(person.betaald)
-                      ];
-                      persons.push(userArray);
-                    })
-                    const wb = XLSX.utils.book_new();
-                    const wsAll = XLSX.utils.aoa_to_sheet(persons);
-                    XLSX.utils.book_append_sheet(wb, wsAll, "Personen");
-                    XLSX.writeFile(wb, "export.xlsx");
-                  });
-              }}>
-                <GetAppIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-          <ListItem button onClick={() => {
-            fetch(serverUrl + '/api/emptyDB/', {
-              method: 'post',
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' }
-            }).then((e) => {
-              if (e.status !== 200) {
-                console.log(e);
-              }
-              else {
-                alert("database successvol geleegd.");
-                //success
-              }
-            });
-          }}>
-            <ListItemIcon>
-              <StorageIcon />
-            </ListItemIcon>
-            <ListItemText id="switch-list-label-dark" primary="Database legen" />
-            <ListItemSecondaryAction>
-              <IconButton edge="end" aria-label="delete" onClick={() => {
-                fetch(serverUrl + '/api/emptyDB/', {
-                  method: 'post',
-                  headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' }
-                }).then((e) => {
-                  if (e.status !== 200) {
-                    console.log(e);
-                  }
-                  else {
-                    alert("database successvol geleegd.");
-                    //success
-                  }
-                });
-              }}>
-                <DeleteForeverIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-        </List>
-      </Typography>
+      content: <Settings
+        themeState={themeState.dark}
+        setThemeState={(e) => {setTheme(e)}}></Settings>
     },
   ]
 
