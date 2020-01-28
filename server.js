@@ -112,6 +112,12 @@ app.post('/api/setPayed/', async (req, res) => {
     });
 });
 
+app.get('/api/sumupCallback/', (req, res) => {
+    console.log(req.query['smp-status']);
+    console.log(req.query['smp-message']);
+    res.status(200).send("success");
+})
+
 app.post('/api/removeRound/', async (req, res) => {
     var par = req.body; // get parameters from url
     con.query("UPDATE winterloop.user SET rondes = rondes - 1 WHERE code = ?", [par.code], (e) => {
