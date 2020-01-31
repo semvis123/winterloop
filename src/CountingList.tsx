@@ -9,7 +9,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import * as Config from '../configuration.json';
 import { IconButton, Typography, Fab, Zoom, TextField } from '@material-ui/core';
 import PersonIcon from '@material-ui/icons/Person';
@@ -253,7 +253,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
             <PersonIcon />
           </Fab>
         </Zoom>
-        {this.state.rendered ? (this.state.rendered) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
+        {this.state.rendered ? (this.state.rendered) : <LinearProgress/>} {/*loader moet nog gecenterd worden */}
 
         {/* dialog for person information */}
         {this.state.dialogOpen ? (
@@ -323,7 +323,8 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                     throw "error server code: " + e.status;
                   }
                   // update the list values
-                  let persons = this.state.persons;
+                  let persons = itemData;
+                  console.log(persons);
                   var index = persons.findIndex((person: PersonObjectInterface) => {
                     return person.code == $("#setRoundForm [name='code']").val();
                   });
@@ -356,7 +357,8 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                   this.state.personEdit != '' ? this.setState({ paymentDialogOpen: true, changeRoundOpen: false, currentNameSetRound: '', personEdit: '' }) : null;
                 }
               }
-              ).catch(() => {
+            ).catch((e) => {
+                console.log(e);
                 this.props.enqueueSnackbar('Rondes toevoegen mislukt', {
                   variant: 'error',
                   autoHideDuration: 5000,

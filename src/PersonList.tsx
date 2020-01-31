@@ -7,7 +7,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import $ from 'jquery';
 import { withSnackbar } from 'notistack';
 import AddIcon from '@material-ui/icons/Add';
@@ -17,6 +16,7 @@ import { Zoom, Fab, IconButton } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import { FixedSizeList } from 'react-window';
 import AutoSizer from "react-virtualized-auto-sizer";
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 import * as Config from '../configuration.json';
 import theme from './theme';
@@ -109,6 +109,7 @@ export default withSnackbar(class PersonList extends React.Component {
       }
     }
   }
+
   renderItem({ index, style }) {
     return (
       <ListItem style={style} divider button key={index} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: itemData[index] }) : null}>
@@ -211,7 +212,7 @@ export default withSnackbar(class PersonList extends React.Component {
           </Fab>
         </Zoom>
 
-        {this.state.persons ? (this.state.persons) : <CircularProgress color="secondary" />} {/* Moet een skeleton worden */}
+        {this.state.persons ? (this.state.persons) : <LinearProgress/>} {/* Moet een skeleton worden */}
         {this.state.dialogOpen ? (
           <Dialog open={this.state.dialogOpen} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">
@@ -390,7 +391,7 @@ export default withSnackbar(class PersonList extends React.Component {
               <Button onClick={() => this.setState({ addDialogOpen: false })} color="primary">
                 Annuleren
               </Button>
-              <Button color="primary" type="submit">
+              <Button color="secondary" type="submit">
                 Opslaan
               </Button>
             </DialogActions>
@@ -502,7 +503,7 @@ export default withSnackbar(class PersonList extends React.Component {
               <Button onClick={() => this.setState({ editDialogOpen: false })} color="primary">
                 Annuleren
               </Button>
-              <Button color="primary" type="submit">
+              <Button color="secondary" type="submit">
                 Opslaan
               </Button>
             </DialogActions>

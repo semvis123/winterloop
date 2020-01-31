@@ -7,7 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import * as Config from '../configuration.json';
 import { Typography } from '@material-ui/core';
 import { withSnackbar } from 'notistack';
@@ -233,7 +233,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
     console.log(this);
     return (
       <div>
-        {this.state.rendered ? (this.state.rendered) : <CircularProgress color="secondary" />} {/*loader moet nog gecenterd worden */}
+        {this.state.rendered ? (this.state.rendered) : <LinearProgress />} {/*loader moet nog gecenterd worden */}
 
         {/* dialog for person information */}
         {this.state.dialogOpen ? (
