@@ -206,7 +206,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
       setTimeout(() => { this.getData() }, 0);
     }
     // searching persons
-    if (search != this.props.search && _hasLoaded) {
+    if (search != this.props.search && _hasLoaded && unfilteredPersons != undefined) {
       search = this.props.search;
       const persons = unfilteredPersons.filter((person: PersonObjectInterface) => {
         return ((person.naam.toLocaleLowerCase().indexOf(this.props.search.toLocaleLowerCase()) !== -1) || (String(person.code).indexOf(this.props.search) !== -1));
