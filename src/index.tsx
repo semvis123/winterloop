@@ -161,6 +161,23 @@ function AppReact() {
     {
       name: 'Registratie',
       icon: <CreateIcon />,
+      appBar: <div className={classes.search}>
+        <div className={classes.searchIcon}>
+          <SearchIcon />
+        </div>
+        <InputBase
+          placeholder="Zoeken…"
+          classes={{
+            root: classes.inputRoot,
+            input: classes.inputInput,
+          }}
+          onChange={(event: any) => {
+            console.log(event.target.value);
+            setSearchValue(event.target.value);
+          }}
+          inputProps={{ 'aria-label': 'search' }}
+        />
+      </div>,
       content:
         <Typography component="div" className={classes.root}>
           <PersonList loaded={loadedDataFunc} shouldload={loadedData} />

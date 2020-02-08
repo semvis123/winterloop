@@ -49,6 +49,8 @@ interface PersonListStateInterface {
   addDialogOpen: boolean;
   editDialogOpen: any;
   data?: any;
+  personEdit: string;
+  
 }
 
 // Static vars
@@ -57,6 +59,8 @@ let _hasLoaded: boolean = false;
 let _hasFailed: boolean = false;
 let renderedData: React.ReactNode;
 let localState: any;
+let search: string = "";
+let unfilteredPersons: any;
 let itemData: any;
 let style: any = {
   fab: {
@@ -93,13 +97,15 @@ export default withSnackbar(class PersonList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      persons: null,
+      persons: [],
       dialogOpen: false,
       currentPerson: null,
       listClickDisabled: false,
       addDialogOpen: false,
       editDialogOpen: false,
-      paymentDialogOpen: false
+      paymentDialogOpen: false,
+      personEdit: "",
+
     };
 
     if (_hasLoaded && !_hasFailed) {
@@ -128,7 +134,9 @@ export default withSnackbar(class PersonList extends React.Component {
         var a = response.json();
         return a;
       }).then(data => {
+        localState.setState({ persons: data });
         itemData = data
+        unfilteredPersons = data;
         renderedData = <div className="list">
           <AutoSizer>
             {({ height, width }) => (
@@ -138,7 +146,6 @@ export default withSnackbar(class PersonList extends React.Component {
             )}
           </AutoSizer>
         </div>
-
         // Update component when it is mounted
         localState.setState({
           persons: renderedData,

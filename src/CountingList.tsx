@@ -302,8 +302,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
         ) : null}
 
         {/* dialog for round edits */}
-        {this.state.changeRoundOpen ? (
-          <Dialog open={this.state.changeRoundOpen} onClose={() => this.setState({ changeRoundOpen: false, currentNameSetRound: '', personEdit: '' })} aria-labelledby="form-dialog-title">
+           <Dialog open={this.state.changeRoundOpen} onClose={() => this.setState({ changeRoundOpen: false, currentNameSetRound: '', personEdit: '' })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Rondes invullen</DialogTitle>
             <form autoComplete="off" id="setRoundForm" action="#" method="POST" onSubmit={e => {
               e.preventDefault(); // remove the redirect
