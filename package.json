@@ -19,9 +19,9 @@
   "homepage": "https://github.com/semvis123/winterloop#readme",
   "description": "",
   "dependencies": {
-    "@material-ui/core": "^4.8.1",
-    "@material-ui/icons": "^4.5.1",
-    "@types/jquery": "^3.3.31",
+    "@material-ui/core": "^4.9.2",
+    "@material-ui/icons": "^4.9.1",
+    "@types/jquery": "^3.3.32",
     "@types/react": "^16.9.19",
     "@types/react-dom": "^16.9.5",
     "body-parser": "^1.19.0",
@@ -30,7 +30,7 @@
     "faker": "^4.1.0",
     "glob": "^7.1.6",
     "jquery": "^3.4.1",
-    "mysql": "^2.17.1",
+    "mysql": "^2.18.1",
     "notistack": "^0.9.7",
     "prop-types": "^15.7.2",
     "react": "^16.12.0",
@@ -39,19 +39,19 @@
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-virtuoso": "^0.12.6",
     "react-window": "^1.8.5",
-    "sass": "^1.24.0",
-    "uncss": "^0.17.2",
-    "xlsx": "^0.15.4"
+    "sass": "^1.25.0",
+    "uncss": "^0.17.3",
+    "xlsx": "^0.15.5"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.15.0",
-    "@typescript-eslint/parser": "^2.15.0",
+    "@typescript-eslint/eslint-plugin": "^2.19.2",
+    "@typescript-eslint/parser": "^2.19.2",
     "cssnano": "^4.1.10",
     "eslint": "^6.8.0",
-    "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-react": "^7.18.3",
     "eslint-plugin-react-hooks": "^2.3.0",
     "node-sass": "^4.13.1",
-    "postcss-modules": "^1.4.1",
+    "postcss-modules": "^1.5.0",
     "postcss-uncss": "^0.17.0",
     "typescript": "^3.7.5"
   }

@@ -191,7 +191,9 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
             )}
           </AutoSizer>
         </div>
-        localState.setState({ rendered: renderedData, listClickDisabled: true });
+        if (localState._isMounted) {
+          localState.setState({ rendered: renderedData, listClickDisabled: true });
+        }
         _hasFailed = true;
       })
   }

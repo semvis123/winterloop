@@ -25,6 +25,9 @@ import theme from './theme';
 const serverUrl = Config.server.url + ':' + Config.server.port;
 
 // Define interfaces
+interface PersonListInterface {
+  search: string;
+}
 
 interface PersonObjectInterface {
   id: number;
@@ -41,6 +44,7 @@ interface PersonObjectInterface {
 }
 
 interface PersonListStateInterface {
+  rendered: any;
   paymentDialogOpen: boolean;
   persons?: React.ReactNode,
   dialogOpen: boolean;
@@ -50,7 +54,7 @@ interface PersonListStateInterface {
   editDialogOpen: any;
   data?: any;
   personEdit: string;
-  
+
 }
 
 // Static vars
@@ -79,12 +83,13 @@ let style: any = {
 
 
 // Dit is de lijst voor alle personen
-export default withSnackbar(class PersonList extends React.Component {
+export default withSnackbar(class PersonList extends React.Component<PersonListInterface> {
   // Define interfaces
   // To keep TypeScript happy
   state: PersonListStateInterface;
 
   props: {
+    search: string;
     enqueueSnackbar: any;
     closeSnackbar: any;
     shouldload: boolean;
@@ -105,7 +110,7 @@ export default withSnackbar(class PersonList extends React.Component {
       editDialogOpen: false,
       paymentDialogOpen: false,
       personEdit: "",
-
+      rendered: null,
     };
 
     if (_hasLoaded && !_hasFailed) {
@@ -137,18 +142,23 @@ export default withSnackbar(class PersonList extends React.Component {
         localState.setState({ persons: data });
         itemData = data
         unfilteredPersons = data;
+        const persons = unfilteredPersons.filter((person: PersonObjectInterface) => {
+          return ((person.naam.toLocaleLowerCase().indexOf(this.props.search.toLocaleLowerCase()) !== -1) || (String(person.code).indexOf(this.props.search) !== -1));
+        });
+        itemData = persons;
         renderedData = <div className="list">
           <AutoSizer>
             {({ height, width }) => (
-              <FixedSizeList height={height} width={width} itemSize={73} overscanCount={10} itemCount={data.length}>
+              <FixedSizeList height={height} width={width} itemSize={73} overscanCount={10} itemCount={persons.length}>
                 {this.renderItem}
               </FixedSizeList>
             )}
           </AutoSizer>
-        </div>
+        </div>;
+
         // Update component when it is mounted
         localState.setState({
-          persons: renderedData,
+          rendered: renderedData,
           listClickDisabled: false
         });
 
@@ -186,7 +196,7 @@ export default withSnackbar(class PersonList extends React.Component {
         </div>
 
         localState._isMounted ? localState.setState({
-          persons: renderedData,
+          rendered: renderedData,
           listClickDisabled: true
         }) : null;
 
@@ -202,6 +212,25 @@ export default withSnackbar(class PersonList extends React.Component {
       this.props.loaded();
       _hasLoaded = true;
       setTimeout(() => { this.getData() }, 0);
+    }
+
+    // searching persons
+    if (search != this.props.search && _hasLoaded) {
+      search = this.props.search;
+      const persons = unfilteredPersons.filter((person: PersonObjectInterface) => {
+        return ((person.naam.toLocaleLowerCase().indexOf(this.props.search.toLocaleLowerCase()) !== -1) || (String(person.code).indexOf(this.props.search) !== -1));
+      });
+      itemData = persons;
+      renderedData = <div className="list">
+        <AutoSizer>
+          {({ height, width }) => (
+            <FixedSizeList height={height} width={width} itemSize={73} overscanCount={10} itemCount={persons.length}>
+              {this.renderItem}
+            </FixedSizeList>
+          )}
+        </AutoSizer>
+      </div>;
+      this.setState({ rendered: renderedData });
     }
   }
 
@@ -219,7 +248,7 @@ export default withSnackbar(class PersonList extends React.Component {
           </Fab>
         </Zoom>
 
-        {this.state.persons ? (this.state.persons) : <LinearProgress/>} {/* Moet een skeleton worden */}
+        {this.state.rendered ? (this.state.rendered) : <LinearProgress/>} {/* Moet een skeleton worden */}
         {this.state.dialogOpen ? (
           <Dialog open={this.state.dialogOpen} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">

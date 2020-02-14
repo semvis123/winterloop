@@ -135,6 +135,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
       }
     }
   }
+
   renderItem({ index, style }) {
     return (
       <ListItem style={style} divider button key={index} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: itemData[index] }) : null}>
@@ -412,7 +413,6 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
             </form>
           </Dialog>
 
-        ) : null}
 
         {/* dialog for payment suggestion */}
         {this.state.paymentDialogOpen ? (

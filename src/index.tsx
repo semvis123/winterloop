@@ -120,7 +120,6 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-
 interface pageObject {
   [index: number]: {
     name: string;
@@ -138,6 +137,7 @@ interface pageObject {
 
 function AppReact() {
   const classes = useStyles(BedumerTheme);
+  
   // States
   const [drawerState, setDrawer] = React.useState(false);
   const [pageValue, setPage] = React.useState(0);
@@ -180,7 +180,7 @@ function AppReact() {
       </div>,
       content:
         <Typography component="div" className={classes.root}>
-          <PersonList loaded={loadedDataFunc} shouldload={loadedData} />
+          <PersonList search={searchValue} loaded={loadedDataFunc} shouldload={loadedData} />
         </Typography>
     },
     {
