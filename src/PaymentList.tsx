@@ -142,7 +142,13 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
   getData() {
     // Haal de data op van de database
     fetch(serverUrl + '/api/getUsers/')
-      .then(response => { var a = response.json(); return a })
+      .then(response => {
+        if (response.status !== 200) {
+          throw "error server code: " + response.status;
+        }
+        var a = response.json();
+        return a }
+      )
       .then(data => {
         if (localState._isMounted) {
           localState.setState({ persons: data, listClickDisabled: false });
@@ -235,7 +241,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
     console.log(this);
     return (
       <div>
-        {this.state.rendered ? (this.state.rendered) : <LinearProgress />} {/*loader moet nog gecenterd worden */}
+        {this.state.rendered || <LinearProgress />} {/*loader moet nog gecenterd worden */}
 
         {/* dialog for person information */}
         {this.state.dialogOpen ? (

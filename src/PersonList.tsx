@@ -116,7 +116,7 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
     if (_hasLoaded && !_hasFailed) {
       this.state = {
         ...this.state,
-        persons: renderedData,
+        rendered: renderedData,
       }
     }
   }
@@ -139,7 +139,6 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
         var a = response.json();
         return a;
       }).then(data => {
-        localState.setState({ persons: data });
         itemData = data
         unfilteredPersons = data;
         const persons = unfilteredPersons.filter((person: PersonObjectInterface) => {
@@ -158,6 +157,7 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
 
         // Update component when it is mounted
         localState.setState({
+          persons: data,
           rendered: renderedData,
           listClickDisabled: false
         });
@@ -215,7 +215,7 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
     }
 
     // searching persons
-    if (search != this.props.search && _hasLoaded) {
+    if (search != this.props.search && _hasLoaded && unfilteredPersons != undefined) {
       search = this.props.search;
       const persons = unfilteredPersons.filter((person: PersonObjectInterface) => {
         return ((person.naam.toLocaleLowerCase().indexOf(this.props.search.toLocaleLowerCase()) !== -1) || (String(person.code).indexOf(this.props.search) !== -1));
@@ -248,7 +248,7 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
           </Fab>
         </Zoom>
 
-        {this.state.rendered ? (this.state.rendered) : <LinearProgress/>} {/* Moet een skeleton worden */}
+        {this.state.rendered || <LinearProgress/>} {/* Moet een skeleton worden */}
         {this.state.dialogOpen ? (
           <Dialog open={this.state.dialogOpen} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">
@@ -357,7 +357,7 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
                 });
                 localState.setState({ currentPerson: itemData.find(x => x.code == a.code) });
                 this.setState({ addDialogOpen: false, paymentDialogOpen: true });
-                this.getData();
+                this.props.loaded(false);
               })
               .catch(() => {
                 this.setState({ addDialogOpen: false });
@@ -453,13 +453,12 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
                 if (response.status !== 200) {
                   throw "error server code: " + response.status;
                 }
-                this.getData();
                 this.setState({ editDialogOpen: false, dialogOpen: false });
                 this.props.enqueueSnackbar('Persoon successvol bijgewerkt', {
                   variant: 'success',
                   autoHideDuration: 5000,
                 });
-                this.getData();
+                this.props.loaded(false);
               })
               .catch((e) => {
                 console.log(e);
@@ -589,6 +588,7 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
                           variant: 'success',
                           autoHideDuration: 5000,
                         });
+                        this.props.loaded(false);
                       }
                       ).catch(() => {
                         this.props.enqueueSnackbar('Betaal status zetten mislukt', {
