@@ -357,7 +357,34 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
                 });
                 localState.setState({ currentPerson: itemData.find(x => x.code == a.code) });
                 this.setState({ addDialogOpen: false, paymentDialogOpen: true });
-                this.props.loaded(false);
+
+                renderedData = null;
+                _hasLoaded = true;
+                this.getData();
+
+
+                // searching persons
+                if (search != this.props.search && _hasLoaded && unfilteredPersons != undefined) {
+                  search = this.props.search;
+                  const persons = unfilteredPersons.filter((person: PersonObjectInterface) => {
+                    return ((person.naam.toLocaleLowerCase().indexOf(this.props.search.toLocaleLowerCase()) !== -1) || (String(person.code).indexOf(this.props.search) !== -1));
+                  });
+                  itemData = persons;
+                  renderedData = <div className="list">
+                    <AutoSizer>
+                      {({ height, width }) => (
+                        <FixedSizeList height={height} width={width} itemSize={73} overscanCount={10} itemCount={persons.length}>
+                          {this.renderItem}
+                        </FixedSizeList>
+                      )}
+                    </AutoSizer>
+                  </div>;
+                  this.setState({ rendered: renderedData });
+}
+
+
+
+
               })
               .catch(() => {
                 this.setState({ addDialogOpen: false });
@@ -550,6 +577,13 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
           <Dialog open={this.state.paymentDialogOpen} onClose={() => this.setState({ paymentDialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Afrekenen</DialogTitle>
             <DialogContent>
+              <DialogContentText>Totaalbedrag van: € {
+                (this.state.currentPerson.rondeBedrag * this.state.currentPerson.rondes
+                 + this.state.currentPerson.vastBedrag).toFixed(2)
+                .replace('.', ',')
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+              }</DialogContentText>
+
               <DialogContentText>Wilt u direct afrekenen?</DialogContentText>
             </DialogContent>
             <DialogActions>

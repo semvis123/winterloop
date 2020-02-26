@@ -419,6 +419,12 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
           <Dialog open={this.state.paymentDialogOpen} onClose={() => this.setState({ paymentDialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Afrekenen</DialogTitle>
             <DialogContent>
+            <DialogContentText>Totaalbedrag van: € {
+              (this.state.currentPerson.rondeBedrag * this.state.currentPerson.rondes
+               + this.state.currentPerson.vastBedrag).toFixed(2)
+              .replace('.', ',')
+              .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+            }</DialogContentText>
               <DialogContentText>Wilt u direct afrekenen?</DialogContentText>
             </DialogContent>
             <DialogActions>
