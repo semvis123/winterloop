@@ -1,59 +1,39 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import $ from 'jquery';
-import { ThemeProvider, AppBar, Toolbar, IconButton, Typography } from '@material-ui/core';
-import { SnackbarProvider } from 'notistack';
-import BedumerTheme from './theme';
-import MenuIcon from '@material-ui/icons/Menu';
+import React, { useState, useEffect } from 'React';
+// eslint-disable-next-line no-unused-vars
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
-const App = class App extends React.Component {
-  // Define states
-  state: {
+// Create style
+const useStyle = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    }
+  })
+);
 
-  }
+// Export component
+export default function Main(props) {
+  // Import style
+  const ReactClasses = useStyle(props);
 
   // Global vars
-  _isMounted = false;
-  classes = {
-    
-  }
+  this._isMounted = false;
 
-  constructor(props) {
-    super(props);
-  }
+  // Declare states and set default states
+  const [state, setState] = useState({});
 
-  componentDidMount() {
+  // Declare effects
+  useEffect(() => {
+    // Make sure object is mounted
     this._isMounted = true;
-  }
 
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
+    // Cleanup effect
+    return function Cleanup() {
+      // Make sure object is unmounted
+      this._isMounted = false;
+    }
+  })
 
-  render() {
-    return <ThemeProvider theme={BedumerTheme}>
-      <SnackbarProvider
-        maxSnack={3}
-        classes={{
-
-        }}
-      >
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton edge="start" color="inherit" aria-label="menu">
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6">
-
-            </Typography>
-          </Toolbar>
-        </AppBar>
-      </SnackbarProvider>
-    </ThemeProvider>
-  }
+  // Render
+  return <div className={ReactClasses.root}></div>;
 }
-
-ReactDOM.render(
-  <App/>,
-  $('div[data-type="main"]')[0]
-)

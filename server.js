@@ -12,6 +12,7 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({
     extended: true
 })); // support encoded bodies
+app.disable("x-powered-by");
 
 var con = mysql.createConnection(Config.mysql);
 
