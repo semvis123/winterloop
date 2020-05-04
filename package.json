@@ -29,7 +29,7 @@
     "express": "^4.17.1",
     "faker": "^4.1.0",
     "glob": "^7.1.6",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "mysql": "^2.18.1",
     "notistack": "^0.9.9",
     "prop-types": "^15.7.2",
