@@ -1,6 +1,6 @@
 {
   "name": "winterloop",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "main": "index.js",
   "scripts": {
     "start": "parcel serve index.html --port 4321",
@@ -19,11 +19,11 @@
   "homepage": "https://github.com/semvis123/winterloop#readme",
   "description": "",
   "dependencies": {
-    "@material-ui/core": "^4.9.5",
+    "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
-    "@types/jquery": "^3.3.33",
-    "@types/react": "^16.9.23",
-    "@types/react-dom": "^16.9.5",
+    "@types/jquery": "^3.5.1",
+    "@types/react": "^16.9.49",
+    "@types/react-dom": "^16.9.8",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
@@ -31,28 +31,25 @@
     "glob": "^7.1.6",
     "jquery": "^3.5.0",
     "mysql": "^2.18.1",
-    "notistack": "^0.9.9",
+    "notistack": "^0.9.17",
     "prop-types": "^15.7.2",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0",
-    "react-list": "^0.8.13",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-list": "^0.8.15",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-virtuoso": "^0.12.6",
     "react-window": "^1.8.5",
-    "sass": "^1.26.2",
-    "uncss": "^0.17.3",
-    "xlsx": "^0.15.5"
+    "sass": "^1.26.10",
+    "xlsx": "^0.15.6"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.22.0",
-    "@typescript-eslint/parser": "^2.22.0",
-    "cssnano": "^4.1.10",
+    "@typescript-eslint/eslint-plugin": "^2.34.0",
+    "@typescript-eslint/parser": "^2.34.0",
     "eslint": "^6.8.0",
-    "eslint-plugin-react": "^7.18.3",
-    "eslint-plugin-react-hooks": "^2.5.0",
-    "node-sass": "^4.13.1",
-    "postcss-modules": "^1.5.0",
-    "postcss-uncss": "^0.17.0",
-    "typescript": "^3.8.3"
+    "eslint-plugin-react": "^7.20.6",
+    "eslint-plugin-react-hooks": "^2.5.1",
+    "node-sass": "^4.14.1",
+    "parcel": "^1.12.4",
+    "typescript": "^3.9.7"
   }
 }
