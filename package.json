@@ -23,7 +23,7 @@
     "@material-ui/icons": "^4.9.1",
     "@types/jquery": "^3.5.5",
     "@types/react": "^16.9.49",
-    "@types/react-dom": "^16.9.8",
+    "@types/react-dom": "^17.0.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
@@ -35,11 +35,11 @@
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-list": "^0.8.15",
+    "react-list": "^0.8.16",
     "react-virtualized-auto-sizer": "^1.0.2",
-    "react-virtuoso": "^0.20.0",
+    "react-virtuoso": "^1.5.4",
     "react-window": "^1.8.5",
-    "sass": "^1.32.5",
+    "sass": "^1.32.6",
     "xlsx": "^0.16.6"
   },
   "devDependencies": {
