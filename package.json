@@ -34,7 +34,7 @@
     "notistack": "^1.0.3",
     "prop-types": "^15.7.2",
     "react": "^16.14.0",
-    "react-dom": "^16.13.1",
+    "react-dom": "^16.14.0",
     "react-list": "^0.8.16",
     "react-virtualized-auto-sizer": "^1.0.4",
     "react-window": "^1.8.6",
