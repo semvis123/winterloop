@@ -20,7 +20,7 @@
   "description": "",
   "dependencies": {
     "@material-ui/core": "^4.11.0",
-    "@material-ui/icons": "^4.9.1",
+    "@material-ui/icons": "^4.11.2",
     "@types/jquery": "^3.5.5",
     "@types/react": "^16.9.49",
     "@types/react-dom": "^17.0.0",
