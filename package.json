@@ -36,7 +36,7 @@
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-list": "^0.8.16",
-    "react-virtualized-auto-sizer": "^1.0.4",
+    "react-virtualized-auto-sizer": "^1.0.5",
     "react-window": "^1.8.6",
     "react-virtuoso": "^1.5.14",
     "sass": "^1.32.8",
