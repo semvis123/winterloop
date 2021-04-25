@@ -27,7 +27,7 @@ Local sponsored walk management
 
 **After you installed the needed packages start the server by running these commands simultaneously:**
 
-3) `npm run-script build **or when developing** npm start`
+3) `npm run-script build` **or when developing** `npm start`
 
 4) `node server.js`
 
