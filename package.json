@@ -39,7 +39,7 @@
     "react-virtualized-auto-sizer": "^1.0.6",
     "react-window": "^1.8.6",
     "react-virtuoso": "^1.10.8",
-    "sass": "^1.37.5",
+    "sass": "^1.38.0",
     "xlsx": "^0.17.1"
   },
   "devDependencies": {
