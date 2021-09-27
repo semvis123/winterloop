@@ -38,7 +38,7 @@
     "react-list": "^0.8.16",
     "react-virtualized-auto-sizer": "^1.0.6",
     "react-window": "^1.8.6",
-    "react-virtuoso": "^2.2.0",
+    "react-virtuoso": "^2.2.1",
     "sass": "^1.42.1",
     "xlsx": "^0.17.2"
   },
