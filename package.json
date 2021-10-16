@@ -2,6 +2,9 @@
   "name": "winterloop",
   "version": "0.2.0",
   "main": "index.js",
+  "targets": {
+    "main": false
+  },
   "scripts": {
     "start": "parcel serve index.html --port 4321",
     "build": "parcel build --dist-dir build --no-source-maps --public-url . index.html"
