@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "parcel serve index.html --port 4321",
-    "build": "parcel build -d build --no-source-maps --public-url . index.html"
+    "build": "parcel build --dist-dir build --no-source-maps --public-url . index.html"
   },
   "repository": {
     "type": "git",
@@ -37,15 +37,16 @@
     "react-dom": "^17.0.2",
     "react-list": "^0.8.16",
     "react-virtualized-auto-sizer": "^1.0.6",
-    "react-window": "^1.8.6",
     "react-virtuoso": "^2.2.2",
+    "react-window": "^1.8.6",
     "sass": "^1.42.1",
     "xlsx": "^0.17.3"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.34.0",
-    "@typescript-eslint/parser": "^2.34.0",
-    "eslint": "^6.8.0",
+    "@parcel/transformer-sass": "^2.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^8.0.1",
     "eslint-plugin-react": "^7.26.1",
     "eslint-plugin-react-hooks": "^4.1.1",
     "node-sass": "^6.0.1",
