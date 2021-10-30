@@ -42,12 +42,12 @@
     "react-virtualized-auto-sizer": "^1.0.6",
     "react-virtuoso": "^2.2.4",
     "react-window": "^1.8.6",
-    "sass": "^1.43.3",
+    "sass": "^1.43.4",
     "xlsx": "^0.17.3"
   },
   "devDependencies": {
     "@parcel/transformer-sass": "^2.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.2.0",
     "@typescript-eslint/parser": "^5.2.0",
     "eslint": "^8.1.0",
     "eslint-plugin-react": "^7.26.1",
