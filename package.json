@@ -43,7 +43,7 @@
     "react-virtuoso": "^2.2.7",
     "react-window": "^1.8.6",
     "sass": "^1.43.4",
-    "xlsx": "^0.17.3"
+    "xlsx": "^0.17.4"
   },
   "devDependencies": {
     "@parcel/transformer-sass": "^2.0.0",
