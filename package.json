@@ -29,7 +29,7 @@
     "@types/react-dom": "^17.0.11",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
-    "express": "^4.17.1",
+    "express": "^4.17.2",
     "faker": "^5.5.3",
     "glob": "^7.2.0",
     "jquery": "^3.6.0",
