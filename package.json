@@ -40,14 +40,14 @@
     "react-dom": "^17.0.2",
     "react-list": "^0.8.16",
     "react-virtualized-auto-sizer": "^1.0.6",
-    "react-virtuoso": "^2.3.1",
+    "react-virtuoso": "^2.6.0",
     "react-window": "^1.8.6",
     "sass": "^1.45.1",
     "xlsx": "^0.17.4"
   },
   "devDependencies": {
     "@parcel/transformer-sass": "^2.2.0",
-    "@typescript-eslint/eslint-plugin": "^5.6.0",
+    "@typescript-eslint/eslint-plugin": "^5.11.0",
     "@typescript-eslint/parser": "^5.7.0",
     "eslint": "^8.5.0",
     "eslint-plugin-react": "^7.27.1",
