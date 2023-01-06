@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@emotion/react': ^11.10.5
   '@emotion/styled': ^11.10.5
+  '@faker-js/faker': ^7.6.0
   '@mui/icons-material': ^5.11.0
   '@mui/material': ^5.11.3
   '@mui/styles': ^5.11.2
@@ -19,7 +20,6 @@ specifiers:
   eslint-plugin-react: ^7.31.11
   eslint-plugin-react-hooks: ^4.6.0
   express: ^4.18.2
-  faker: ^6.6.6
   glob: ^8.0.3
   jquery: ^3.6.3
   mysql: ^2.18.1
@@ -41,6 +41,7 @@ specifiers:
 dependencies:
   '@emotion/react': 11.10.5_jp5qgyg6plq757v5hojp7ls2oe
   '@emotion/styled': 11.10.5_jp5djshq6aqfasno3mth3hguci
+  '@faker-js/faker': 7.6.0
   '@mui/icons-material': 5.11.0_oiuuhmk4wjjpe4qb2sby7usney
   '@mui/material': 5.11.3_lskpmcsdi7ipu6qpuapyu56ihm
   '@mui/styles': 5.11.2_kzbn2opkn2327fwg5yzwzya5o4
@@ -51,7 +52,6 @@ dependencies:
   body-parser: 1.20.1
   cors: 2.8.5
   express: 4.18.2
-  faker: 6.6.6
   glob: 8.0.3
   jquery: 3.6.3
   mysql: 2.18.1
@@ -445,6 +445,11 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@faker-js/faker/7.6.0:
+    resolution: {integrity: sha512-XK6BTq1NDMo9Xqw/YkYyGjSsg44fbNwYRx7QK2CuoQgyy+f1rrTDHoExVM5PsyXCtfl2vs2vVJ0MN0yN6LppRw==}
+    engines: {node: '>=14.0.0', npm: '>=6.0.0'}
+    dev: false
 
   /@gar/promisify/1.1.3:
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
@@ -2758,10 +2763,6 @@ packages:
       vary: 1.1.2
     transitivePeerDependencies:
       - supports-color
-    dev: false
-
-  /faker/6.6.6:
-    resolution: {integrity: sha512-9tCqYEDHI5RYFQigXFwF1hnCwcWCOJl/hmll0lr5D2Ljjb0o4wphb69wikeJDz5qCEzXCoPvG6ss5SDP6IfOdg==}
     dev: false
 
   /fast-deep-equal/3.1.3:
