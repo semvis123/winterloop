@@ -14,17 +14,21 @@ Local sponsored walk management\
 
 * **Open cmd in the main folder then run these commands:**
 
-  1) `npm install`
+  1) `npm install --legacy-peer-deps`
 
   2) `npm install --dev`
 
 
 
-  **After you installed the needed packages start the server by running these commands simultaneously:**
+  **After you installed the needed packages start the server by this command:**
 
-  3) `npm run-script build` **or when developing** `npm start`
+  1) `npm run start`
 
-  4) `node server.mjs`
+  **Or manually start the frontend and backend:**
+
+  1) `npm run-script frontend`
+
+  2) `npm run-script backend`
 
 
 **The server should now be running, you can access it by going to the following url: localhost:4321/**

@@ -3,6 +3,7 @@ import Typography from '@mui/material/Typography';
 import * as Config from '../configuration.json';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import { ListItem } from '@mui/material';
 
 
 // Grab server url from configuration file
@@ -35,6 +36,9 @@ const style: any = {
   },
   text: {
     color: (localStorage.getItem('dark') == 'true') ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
   },
   value: {
     color: (localStorage.getItem('dark') == 'true') ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
@@ -42,10 +46,13 @@ const style: any = {
   },
   card: {
     marginTop: 10,
-    maxWidth: 500,
+    maxWidth: 650,
     margin: '0 auto',
     borderWidth: 10
-  }
+  },
+  cardContainer: {
+    marginTop: 30,
+  },
 }
 export default class Status extends React.Component {
   state: {
@@ -159,77 +166,96 @@ export default class Status extends React.Component {
     this._isMounted = false;
   }
   render() {
+
     if (renderedData == null || !_hasLoaded) {
       renderedData = (
-        <Card style={style.card} raised={true}>
+        <Card sx={style.card} raised={true}>
           <CardContent>
-            <Typography style={style.title} gutterBottom variant="h5"><b>Opbrengsten</b></Typography>
-            <Typography style={style.text} gutterBottom><b>Totale opbrengst</b>
-              <span style={style.value}>€ {
-                this.state.totalValue.toFixed(2) // always two decimal digits
-                  .replace('.', ',') // replace decimal point character with ,
-                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')// use . as a separator
-              }</span>
-            </Typography>
-            <Typography style={style.text} gutterBottom><b>Totale opbrengst van rondes</b>
-              <span style={style.value}>€ {
-                this.state.roundValue.toFixed(2)
-                  .replace('.', ',')
-                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-              }
-              </span>
-            </Typography>
-            <Typography style={style.text} gutterBottom><b>Totale opbrengst van vaste bedragen</b>
-              <span style={style.value}>€ {
-                this.state.fixedValue.toFixed(2)
-                  .replace('.', ',')
-                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-              }
-              </span>
-            </Typography>
-            <Typography style={style.text} gutterBottom><b>Gemiddelde opbrengst</b>
-              <span style={style.value}>€ {
-                (this.state.avgTotalValue.toFixed(2) == "NaN") ? '0,00' :
-                  this.state.avgTotalValue.toFixed(2)
+            <ListItem divider>
+              <Typography style={style.title} gutterBottom variant="h5"><b>Opbrengsten</b></Typography>
+            </ListItem>
+            <ListItem divider>
+              <Typography style={style.text} gutterBottom><b>Totale opbrengst</b>
+                <span style={style.value}>€ {
+                  this.state.totalValue.toFixed(2) // always two decimal digits
+                    .replace('.', ',') // replace decimal point character with ,
+                    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')// use . as a separator
+                }</span>
+              </Typography>
+            </ListItem>
+            <ListItem divider>
+              <Typography style={style.text} gutterBottom><b>Totale opbrengst van rondes</b>
+                <span style={style.value}>€ {
+                  this.state.roundValue.toFixed(2)
                     .replace('.', ',')
                     .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-              }
-              </span>
-            </Typography>
-            <Typography style={style.text} gutterBottom><b>Gemiddelde opbrengst van rondes</b>
-              <span style={style.value}>€ {
-                (this.state.avgRoundValue.toFixed(2) == "NaN") ? '0,00' :
-                  this.state.avgRoundValue.toFixed(2)
+                }
+                </span>
+              </Typography>
+            </ListItem>
+            <ListItem divider>
+              <Typography style={style.text} gutterBottom><b>Totale opbrengst van vaste bedragen</b>
+                <span style={style.value}>€ {
+                  this.state.fixedValue.toFixed(2)
                     .replace('.', ',')
                     .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-              }
-              </span>
-            </Typography>
-            <Typography style={style.text} gutterBottom><b>Gemiddelde opbrengst van vaste bedragen</b>
-              <span style={style.value}>€ {
-                (this.state.avgFixedValue.toFixed(2) == "NaN") ? '0,00' :
-                  this.state.avgFixedValue.toFixed(2)
-                    .replace('.', ',')
-                    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+                }
+                </span>
+              </Typography>
+            </ListItem>
+            <ListItem divider>
+              <Typography style={style.text} gutterBottom><b>Gemiddelde opbrengst</b>
+                <span style={style.value}>€ {
+                  (this.state.avgTotalValue.toFixed(2) == "NaN") ? '0,00' :
+                    this.state.avgTotalValue.toFixed(2)
+                      .replace('.', ',')
+                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+                }
+                </span>
+              </Typography>
+            </ListItem>
+            <ListItem divider>
+              <Typography style={style.text} gutterBottom><b>Gemiddelde opbrengst van rondes</b>
+                <span style={style.value}>€ {
+                  (this.state.avgRoundValue.toFixed(2) == "NaN") ? '0,00' :
+                    this.state.avgRoundValue.toFixed(2)
+                      .replace('.', ',')
+                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+                }
+                </span>
+              </Typography>
+            </ListItem>
+            <ListItem divider>
+              <Typography style={style.text} gutterBottom><b>Gemiddelde opbrengst van vaste bedragen</b>
+                <span style={style.value}>€ {
+                  (this.state.avgFixedValue.toFixed(2) == "NaN") ? '0,00' :
+                    this.state.avgFixedValue.toFixed(2)
+                      .replace('.', ',')
+                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
 
-              }
-              </span>
-            </Typography>
-            <Typography style={style.text} gutterBottom><b>Aantal lopers</b>
-              <span style={style.value}>{this.state.persons}</span>
-            </Typography>
-            <Typography style={style.text} gutterBottom><b>Gemiddeld aantal rondes</b>
-              <span style={style.value}>{
-                (this.state.avgRound.toFixed(2) == "NaN") ? '0,00' :
-                  this.state.avgRound.toFixed(2)
-                    .replace('.', ',')
-                    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-              }</span>
-            </Typography>
+                }
+                </span>
+              </Typography>
+            </ListItem>
+            <ListItem divider>
+              <Typography style={style.text} gutterBottom><b>Aantal lopers</b>
+                <span style={style.value}>{this.state.persons}</span>
+              </Typography>
+            </ListItem>
+            <ListItem divider>
+              <Typography style={style.text} gutterBottom><b>Gemiddeld aantal rondes</b>
+                <span style={style.value}>{
+                  (this.state.avgRound.toFixed(2) == "NaN") ? '0,00' :
+                    this.state.avgRound.toFixed(2)
+                      .replace('.', ',')
+                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+                }</span>
+              </Typography>
+            </ListItem>
           </CardContent>
         </Card>)
     }
-    return (<div>
+    return (<div style={style.cardContainer}>
       {renderedData}
     </div>);
   }
