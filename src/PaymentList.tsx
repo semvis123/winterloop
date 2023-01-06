@@ -1,5 +1,5 @@
 import React = require('react');
-import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -120,7 +120,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
 
   renderItem({ index, style }) {
     return (
-      <ListItem style={style} divider button key={index} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: itemData[index] }) : null}>
+      <ListItemButton style={style} divider key={index} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: itemData[index] }) : null}>
         <ListItemText key="code" primary={itemData[index].naam} secondary={itemData[index].code} />
         <ListItemText key="payedParent" primary={
           <Typography key="payed" align="center" style={styles.betaald}>{
@@ -135,7 +135,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
               .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
           }</Typography>
         } />
-      </ListItem>
+      </ListItemButton>
     );
   }
 

@@ -1,7 +1,6 @@
 import {
   ListSubheader,
   List,
-  ListItem,
   ListItemIcon,
   ListItemSecondaryAction,
   Switch,
@@ -17,6 +16,7 @@ import * as Config from '../configuration.json';
 import StorageIcon from '@mui/icons-material/Storage';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { ListItemButton } from "@mui/material";
 
 const serverUrl = Config.server.url + ':' + Config.server.port;
 
@@ -82,7 +82,7 @@ export default withStyles({
     return (
       <div className={classes.root}>
         <List subheader={<ListSubheader>Thema</ListSubheader>}>
-          <ListItem button onClick={() => {
+          <ListItemButton onClick={() => {
             const darkState = !this.props.themeState;
             this.props.setThemeState(darkState);
             localStorage.setItem('dark', (darkState) ? 'true' : 'false');
@@ -95,21 +95,15 @@ export default withStyles({
             <ListItemSecondaryAction>
               <Switch
                 edge="end"
-                onChange={() => {
-                  const darkState = !this.props.themeState;
-                  this.props.setThemeState(darkState);
-                  localStorage.setItem('dark', (darkState) ? 'true' : 'false');
-                  location.reload();
-                }}
                 checked={this.props.themeState}
                 inputProps={{ 'aria-labelledby': 'switch-list-label-dark' }}
               />
             </ListItemSecondaryAction>
-          </ListItem>
+          </ListItemButton>
         </List>
 
         <List subheader={<ListSubheader>Database</ListSubheader>}>
-            <ListItem button onClick={() => {
+            <ListItemButton onClick={() => {
               fetch(serverUrl + '/api/getUsers/') // change this to yourip:4322
                 .then(response => response.json())
                 .then(data => {
@@ -146,41 +140,16 @@ export default withStyles({
                 <IconButton
                   edge="end"
                   aria-label="download"
-                  onClick={() => {
-                    fetch(serverUrl + '/api/getUsers/')
-                      .then(response => response.json())
-                      .then(data => {
-                        const persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "Code", "Totaalbedrag", "Betaald"]];
-                        data.forEach((person: PersonObjectInterface) => {
-                          const amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
-                          const userArray = [
-                            person.id.toString(),
-                            person.naam,
-                            person.huisnummer,
-                            person.postcode,
-                            person.telefoonnummer,
-                            person.vastBedrag.toString(),
-                            person.rondeBedrag.toString(),
-                            person.rondes.toString(),
-                            person.create_time,
-                            person.code,
-                            amount,
-                            String(person.betaald)
-                          ];
-                          persons.push(userArray);
-                        })
-                        const wb = XLSX.utils.book_new();
-                        const wsAll = XLSX.utils.aoa_to_sheet(persons);
-                        XLSX.utils.book_append_sheet(wb, wsAll, "Personen");
-                        XLSX.writeFile(wb, "export.xlsx");
-                      });
-                  }}
                   size="large">
                   <GetAppIcon />
                 </IconButton>
               </ListItemSecondaryAction>
-            </ListItem>
-            <ListItem button onClick={() => {
+            </ListItemButton>
+            <ListItemButton onClick={() => {
+              const confirmation = confirm("Weet je zeker dat je de database wilt legen?");
+              if (!confirmation) {
+                return;
+              }
               fetch(serverUrl + '/api/emptyDB/', {
                 method: 'post',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' }
@@ -202,25 +171,11 @@ export default withStyles({
                 <IconButton
                   edge="end"
                   aria-label="delete"
-                  onClick={() => {
-                    fetch(serverUrl + '/api/emptyDB/', {
-                      method: 'post',
-                      headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' }
-                    }).then((e) => {
-                      if (e.status !== 200) {
-                        console.log(e);
-                      }
-                      else {
-                        alert("database successvol geleegd.");
-                        //success
-                      }
-                    });
-                  }}
                   size="large">
                   <DeleteForeverIcon />
                 </IconButton>
               </ListItemSecondaryAction>
-            </ListItem>
+            </ListItemButton>
           </List>
       </div>
     );

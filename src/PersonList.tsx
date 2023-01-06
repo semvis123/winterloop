@@ -1,5 +1,5 @@
 import React = require('react');
-import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -123,9 +123,9 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
 
   renderItem({ index, style }) {
     return (
-      <ListItem style={style} divider button key={index} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: itemData[index] }) : null}>
+      <ListItemButton style={style} divider key={index} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: itemData[index] }) : null}>
         <ListItemText id={itemData[index].id.toString()} primary={itemData[index].naam} secondary={itemData[index].code} />
-      </ListItem>
+      </ListItemButton>
     )
   }
 

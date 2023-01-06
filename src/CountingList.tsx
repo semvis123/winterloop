@@ -1,7 +1,7 @@
 import React = require('react');
 import $ from 'jquery';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -138,12 +138,12 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
 
   renderItem({ index, style }) {
     return (
-      <ListItem style={style} divider button key={index} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: itemData[index] }) : null}>
+      <ListItemButton style={style} divider key={index} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: itemData[index] }) : null}>
         <ListItemText primary={itemData[index].naam} secondary={itemData[index].code} />
         <ListItemText primary={
           <Typography align="right">{itemData[index].rondes}</Typography>
         } />
-      </ListItem>
+      </ListItemButton>
     )
   }
 
@@ -344,12 +344,12 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                   renderedData = (
                     <List>
                       {persons.map((person: PersonObjectInterface, i: number) =>
-                        <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
+                        <ListItemButton divider key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
                           <ListItemText primary={person.naam} secondary={person.code} />
                           <ListItemText primary={
                             <Typography align="right">{person.rondes}</Typography>
                           } />
-                        </ListItem>
+                        </ListItemButton>
                       )}
                     </List>)
 
@@ -446,7 +446,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                         variant: 'error',
                         autoHideDuration: 5000,
                       });
-                    }}>
+                    }} color="error">
                       Annuleren
                     </Button>
                     <Button onClick={() => {

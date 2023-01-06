@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography';
 import Drawer from '@mui/material/Drawer';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import BedumerLogo from './logo.js';
@@ -30,7 +30,6 @@ import PaymentList from './PaymentList';
 import Status from './Status';
 import Settings from './Settings';
 import { SnackbarProvider } from "notistack";
-
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -339,7 +338,7 @@ export default function Main() {
                 <Divider />
                 {/* Menu list */}
                 {pages.map((data, index) => (
-                  <ListItem button key={index} onClick={() => {
+                  <ListItemButton key={index} onClick={() => {
                     setPage(index);
                     setLoadedData(false);
                     history.pushState(
@@ -352,7 +351,7 @@ export default function Main() {
                   }}>
                     <ListItemIcon>{data.icon}</ListItemIcon>
                     <ListItemText>{data.name}</ListItemText>
-                  </ListItem>
+                  </ListItemButton>
                 ))}
               </List>
             </div>
