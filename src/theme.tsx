@@ -1,4 +1,4 @@
-import { createTheme, adaptV4Theme } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 import $ from 'jquery';
 
 $('div[data-type="main"]').css({
@@ -6,7 +6,7 @@ $('div[data-type="main"]').css({
 });
 
 /*creeer een thema*/
-export default createTheme(adaptV4Theme({
+export default createTheme({
   palette: {
     mode: (localStorage.getItem('dark') == 'true') ? 'dark' : 'light',
     primary: {
@@ -25,4 +25,4 @@ export default createTheme(adaptV4Theme({
       // hint: (localStorage.getItem('dark') == 'true') ? 'rgba(255, 255, 255, 0.38)' : 'rgba(0, 0, 0, 0.38)'
     }
   }
-}));
+});
