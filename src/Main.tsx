@@ -137,7 +137,7 @@ interface pageObject {
 }
 
 
-export default function Main(props: any) {
+export default function Main() {
   const classes = useStyles(BedumerTheme);
   
   // States

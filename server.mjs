@@ -4,7 +4,7 @@ const require = createRequire(import.meta.url);
 const Config = require('./configuration.json');
 
 import { faker } from '@faker-js/faker/locale/nl';
-import mysql from 'mysql';
+import mysql from 'mysql2';
 import express from 'express';
 import util from 'util';
 import cors from 'cors';
