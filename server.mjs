@@ -149,7 +149,7 @@ app.post('/api/removeUser/', async (req, res) => {
             res.status(500).send(e.sqlMessage);
             throw e;
         } else {
-            if (r[0].betaald == 1) {
+            if (r[0].betaald > 0) {
                 res.status(500).send("User has already paid");
                 throw "User has already paid";
             }
