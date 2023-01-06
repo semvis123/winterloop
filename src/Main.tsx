@@ -61,7 +61,17 @@ const useStyles = makeStyles((theme: Theme) =>
     logo: {
       margin: 16,
       width: 218,
-      boxSizing: 'content-box'
+      boxSizing: 'content-box',
+      backgroundColor: (localStorage.getItem('dark') == 'true') ? '#000000' : '#ffffff',
+    },
+    logoAppBar: {
+        [theme.breakpoints.down('sm')]: {
+            display: 'none',
+        },    
+        margin: 16,
+        width: 218,
+        boxSizing: 'content-box',
+        backgroundColor: (localStorage.getItem('dark') == 'true') ? '#000000' : '#ffffff',      
     },
     fab: {
       position: 'fixed',
@@ -83,7 +93,7 @@ const useStyles = makeStyles((theme: Theme) =>
       '&:hover': {
         backgroundColor: alpha(theme.palette.common.white, 0.25),
       },
-      marginLeft: 0,
+      marginLeft: 10,
       width: '100%',
       [theme.breakpoints.up('sm')]: {
         marginLeft: theme.spacing(1),
@@ -320,6 +330,9 @@ export default function Main() {
               <Typography variant="h6" className={classes.appbarTitle}>
                 {pages[pageValue].name}
               </Typography>
+
+              <img src={BedumerLogo} className={[classes.logoAppBar]} />
+
               {pages[pageValue].appBar}
             </Toolbar>
           </AppBar>
