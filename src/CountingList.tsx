@@ -300,7 +300,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                   currentNameSetRound: this.state.currentPerson.naam,
                   setRoundButtonDisabled: false
                 });
-              }} disabled={(this.state.currentPerson.betaald!=0)} color="secondary">
+              }} disabled={(this.state.currentPerson.betaald!=0)} color="secondary" variant="contained">
                 Rondes invullen
                 </Button>
             </DialogActions>
@@ -411,7 +411,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                 <Button onClick={() => this.setState({ changeRoundOpen: false, currentNameSetRound: '', personEdit: '' })} color="primary">
                   Annuleren
                 </Button>
-                <Button type="submit" color="secondary" disabled={this.state.setRoundButtonDisabled}>
+                <Button type="submit" color="secondary" variant='contained' disabled={this.state.setRoundButtonDisabled}>
                   Verander rondes
                 </Button>
               </DialogActions>
@@ -434,7 +434,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
             </DialogContent>
             <DialogActions>
               <Button onClick={() => this.setState({ paymentDialogOpen: false })} color="primary">
-                Annuleren
+                Later
                 </Button>
               <Button onClick={() => {
 
@@ -477,7 +477,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                         });
                       });
                       this.props.closeSnackbar(key);
-                    }}>
+                    }} color="secondary" variant='contained'>
                       Gelukt
                     </Button>
                   </React.Fragment>
@@ -492,7 +492,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                   persist: true,
                   action,
                 });
-              }} color="secondary">
+              }} color="secondary" variant='contained'>
                 Contant
                 </Button>
               <Button onClick={() => {
@@ -530,7 +530,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                   variant: 'success',
                   autoHideDuration: 5000,
                 });
-              }} color="secondary">
+              }} color="secondary" variant='contained'>
                 Sumup
                 </Button>
             </DialogActions>

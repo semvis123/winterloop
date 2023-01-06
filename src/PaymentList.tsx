@@ -272,7 +272,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                 </Button>
               <Button onClick={() => {
                 this.setState({ paymentDialogOpen: true, currentNameSetRound: '', personEdit: '' })
-              }} color="secondary" disabled={(this.state.currentPerson.betaald != 0)}>
+              }} color="secondary" disabled={(this.state.currentPerson.betaald != 0)} variant="contained">
                 Betalen
                 </Button>
             </DialogActions>
@@ -300,7 +300,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                         variant: 'error',
                         autoHideDuration: 5000,
                       });
-                    }}>
+                    }} color="error">
                       Annuleren
                           </Button>
                     <Button onClick={() => {
@@ -331,7 +331,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                         });
                       });
                       this.props.closeSnackbar(key);
-                    }}>
+                    }} color="secondary" variant="contained">
                       Gelukt
                           </Button>
                   </React.Fragment>
@@ -346,7 +346,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                   persist: true,
                   action,
                 });
-              }} color="secondary">
+              }} color="secondary" variant="contained">
                 Contant
                 </Button>
               <Button onClick={() => {
@@ -384,7 +384,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                   variant: 'success',
                   autoHideDuration: 5000,
                 });
-              }} color="secondary">
+              }} color="secondary" variant="contained">
                 Sumup
                 </Button>
             </DialogActions>

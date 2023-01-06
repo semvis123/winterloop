@@ -265,23 +265,23 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
               {this.state.currentPerson.naam}
             </DialogTitle>
             <DialogContent>
-              <DialogContentText>id: {this.state.currentPerson.id}</DialogContentText>
-              <DialogContentText>postcode: {this.state.currentPerson.postcode}</DialogContentText>
-              <DialogContentText>huisnummer: {this.state.currentPerson.huisnummer}</DialogContentText>
-              <DialogContentText>telefoonnummer: {this.state.currentPerson.telefoonnummer}</DialogContentText>
-              <DialogContentText>vast bedrag: €{
+              <DialogContentText>Id: {this.state.currentPerson.id}</DialogContentText>
+              <DialogContentText>Postcode: {this.state.currentPerson.postcode}</DialogContentText>
+              <DialogContentText>Huisnummer: {this.state.currentPerson.huisnummer}</DialogContentText>
+              <DialogContentText>Telefoonnummer: {this.state.currentPerson.telefoonnummer}</DialogContentText>
+              <DialogContentText>Vast bedrag: €{
                 this.state.currentPerson.vastBedrag.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}
               </DialogContentText>
-              <DialogContentText>ronde bedrag: €{
+              <DialogContentText>Ronde bedrag: €{
                 this.state.currentPerson.rondeBedrag.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}
               </DialogContentText>
-              <DialogContentText>aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
-              <DialogContentText>aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
-              <DialogContentText>betaald: {
+              <DialogContentText>Aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
+              <DialogContentText>Aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
+              <DialogContentText>Betaald: {
                 (this.state.currentPerson.betaald == 0)?  'nee' : (
                   (this.state.currentPerson.betaald == 1)? 'contant' : 'pin')
               }</DialogContentText>
-              <DialogContentText>code: {this.state.currentPerson.code}</DialogContentText>
+              <DialogContentText>Code: {this.state.currentPerson.code}</DialogContentText>
             </DialogContent>
             <DialogActions>
               <Button onClick={() => this.setState({ dialogOpen: false })} color="primary">
@@ -312,7 +312,7 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
                     this.getData();
                     this.setState({ dialogOpen: false });
                   });
-              }} color="secondary">
+              }} color="error" variant="contained" disabled={!!this.state.currentPerson.betaald}>
                 Verwijderen
                 </Button>
             </DialogActions>
@@ -456,7 +456,7 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
               <Button onClick={() => this.setState({ addDialogOpen: false })} color="primary">
                 Annuleren
               </Button>
-              <Button color="secondary" type="submit">
+              <Button color="secondary" type="submit" variant="contained">
                 Opslaan
               </Button>
             </DialogActions>
@@ -567,7 +567,7 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
               <Button onClick={() => this.setState({ editDialogOpen: false })} color="primary">
                 Annuleren
               </Button>
-              <Button color="secondary" type="submit">
+              <Button color="secondary" type="submit" variant="contained">
                 Opslaan
               </Button>
             </DialogActions>
@@ -590,7 +590,7 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
             </DialogContent>
             <DialogActions>
               <Button onClick={() => this.setState({ paymentDialogOpen: false })} color="primary">
-                Annuleren
+                Later
                 </Button>
               <Button onClick={() => {
                 // dialog for paying in cash
@@ -602,7 +602,7 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
                         variant: 'error',
                         autoHideDuration: 5000,
                       });
-                    }}>
+                    }} color="error">
                       Annuleren
                     </Button>
                     <Button onClick={() => {
@@ -633,7 +633,7 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
                         });
                       });
                       this.props.closeSnackbar(key);
-                    }}>
+                    }} color="secondary" variant='contained'>
                       Gelukt
                     </Button>
                   </React.Fragment>
@@ -649,7 +649,7 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
                   persist: true,
                   action,
                 });
-              }} color="secondary">
+              }} color="secondary" variant='contained'>
                 Contant
                 </Button>
               <Button onClick={() => {
@@ -686,7 +686,7 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
                   variant: 'success',
                   autoHideDuration: 5000,
                 });
-              }} color="secondary">
+              }} color="secondary" variant='contained'>
                 Sumup
                 </Button>
             </DialogActions>
