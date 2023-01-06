@@ -153,16 +153,16 @@ app.post('/api/removeUser/', async (req, res) => {
                 res.status(500).send("User has already paid");
                 throw "User has already paid";
             }
-        }
-    });
 
-    con.query("DELETE FROM winterloop.user WHERE code = ?", [par.code], e => {
-        if (e) {
-            res.status(500).send(e.sqlMessage);
-        } else {
-            res.status(200).send("success");
+            con.query("DELETE FROM winterloop.user WHERE code = ?", [par.code], e => {
+                if (e) {
+                    res.status(500).send(e.sqlMessage);
+                } else {
+                    res.status(200).send("success");
+                }
+            });
         }
-    });
+    })
 });
 app.post('/api/emptyDB/', async (req, res) => {
     console.log(req);
