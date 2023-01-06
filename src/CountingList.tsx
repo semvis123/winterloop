@@ -1,19 +1,19 @@
 import React = require('react');
 import $ from 'jquery';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Button from '@material-ui/core/Button';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
+import LinearProgress from '@mui/material/LinearProgress';
 import * as Config from '../configuration.json';
-import { IconButton, Typography, Fab, Zoom, TextField } from '@material-ui/core';
-import PersonIcon from '@material-ui/icons/Person';
-import EditIcon from '@material-ui/icons/Edit';
+import { IconButton, Typography, Fab, Zoom, TextField } from '@mui/material';
+import PersonIcon from '@mui/icons-material/Person';
+import EditIcon from '@mui/icons-material/Edit';
 import theme from './theme';
 import { withSnackbar } from 'notistack';
 import { FixedSizeList } from 'react-window';
@@ -77,7 +77,7 @@ let localState: any;
 let search: string = "";
 let unfilteredPersons: any;
 let itemData: any;
-let style: any = {
+const style: any = {
   fab: {
     position: 'fixed',
     bottom: 16,
@@ -138,19 +138,19 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
 
   renderItem({ index, style }) {
     return (
-      <ListItem style={style} divider button key={index} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: itemData[index] }) : null}>
+      <ListItemButton style={style} divider key={index} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: itemData[index] }) : null}>
         <ListItemText primary={itemData[index].naam} secondary={itemData[index].code} />
         <ListItemText primary={
           <Typography align="right">{itemData[index].rondes}</Typography>
         } />
-      </ListItem>
+      </ListItemButton>
     )
   }
 
   getData() {
     // Haal de data op van de database
     fetch(serverUrl + '/api/getUsers/')
-      .then(response => { var a = response.json(); return a })
+      .then(response => response.json())
       .then(data => {
         localState.setState({ persons: data, listClickDisabled: false });
         unfilteredPersons = data;
@@ -174,7 +174,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
           variant: 'error',
           autoHideDuration: 5000,
         });
-        let data = [
+        const data = [
           {
             "id": 1,
             "naam": "Kan niet verbinden met database.",
@@ -245,7 +245,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
         >
           <Fab color="secondary" style={style.fab} onClick={() => {
             this.setState({ changeRoundOpen: true });
-            let codes = new Array();
+            const codes = new Array();
             this.state.persons.forEach((person: PersonObjectInterface) => {
               codes.push(person.code);
             });
@@ -260,15 +260,20 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
         {this.state.dialogOpen ? (
           <Dialog open={this.state.dialogOpen} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">
-              <IconButton aria-label="edit" style={style.editButton} disabled={(this.state.currentPerson.betaald!=0)} onClick={() => {
-                this.setState({
-                  personEdit: this.state.currentPerson.code,
-                  changeRoundOpen: true,
-                  codeError: false,
-                  currentNameSetRound: this.state.currentPerson.naam,
-                  setRoundButtonDisabled: false
-                });
-              }}>
+              <IconButton
+                aria-label="edit"
+                style={style.editButton}
+                disabled={(this.state.currentPerson.betaald!=0)}
+                onClick={() => {
+                  this.setState({
+                    personEdit: this.state.currentPerson.code,
+                    changeRoundOpen: true,
+                    codeError: false,
+                    currentNameSetRound: this.state.currentPerson.naam,
+                    setRoundButtonDisabled: false
+                  });
+                }}
+                size="large">
                 <EditIcon />
               </IconButton>
               {this.state.currentPerson.naam}
@@ -295,7 +300,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                   currentNameSetRound: this.state.currentPerson.naam,
                   setRoundButtonDisabled: false
                 });
-              }} disabled={(this.state.currentPerson.betaald!=0)} color="secondary">
+              }} disabled={(this.state.currentPerson.betaald!=0)} color="secondary" variant="contained">
                 Rondes invullen
                 </Button>
             </DialogActions>
@@ -323,9 +328,9 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                     throw "error server code: " + e.status;
                   }
                   // update the list values
-                  let persons = itemData;
+                  const persons = itemData;
                   console.log(persons);
-                  var index = persons.findIndex((person: PersonObjectInterface) => {
+                  const index = persons.findIndex((person: PersonObjectInterface) => {
                     return person.code == $("#setRoundForm [name='code']").val();
                   });
                   persons[index].rondes = Number($("#setRoundForm [name='rondes']").val());
@@ -339,12 +344,12 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                   renderedData = (
                     <List>
                       {persons.map((person: PersonObjectInterface, i: number) =>
-                        <ListItem divider button key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
+                        <ListItemButton divider key={i} onClick={() => !this.state.listClickDisabled ? this.setState({ dialogOpen: true, currentPerson: persons[i] }) : null}>
                           <ListItemText primary={person.naam} secondary={person.code} />
                           <ListItemText primary={
                             <Typography align="right">{person.rondes}</Typography>
                           } />
-                        </ListItem>
+                        </ListItemButton>
                       )}
                     </List>)
 
@@ -379,7 +384,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                   onChange={(e) => {
                     if (this.state.persons.some((person: PersonObjectInterface) => person.code == e.target.value)) {
                       // grab name of user to display it
-                      let name: string = this.state.persons.find(
+                      const name: string = this.state.persons.find(
                         (person: PersonObjectInterface) => {
                           return person.code == e.target.value
                         }).naam;
@@ -406,7 +411,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                 <Button onClick={() => this.setState({ changeRoundOpen: false, currentNameSetRound: '', personEdit: '' })} color="primary">
                   Annuleren
                 </Button>
-                <Button type="submit" color="secondary" disabled={this.state.setRoundButtonDisabled}>
+                <Button type="submit" color="secondary" variant='contained' disabled={this.state.setRoundButtonDisabled}>
                   Verander rondes
                 </Button>
               </DialogActions>
@@ -429,7 +434,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
             </DialogContent>
             <DialogActions>
               <Button onClick={() => this.setState({ paymentDialogOpen: false })} color="primary">
-                Annuleren
+                Later
                 </Button>
               <Button onClick={() => {
 
@@ -441,7 +446,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                         variant: 'error',
                         autoHideDuration: 5000,
                       });
-                    }}>
+                    }} color="error">
                       Annuleren
                     </Button>
                     <Button onClick={() => {
@@ -456,7 +461,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                         if (e.status !== 200) {
                           throw e.status;
                         } else {
-                          let persons = this.state.persons;
+                          const persons = this.state.persons;
                           persons[persons.indexOf(this.state.currentPerson)].betaald = 1;
                           this.setState({ paymentDialogOpen: false });
                         }
@@ -472,13 +477,13 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                         });
                       });
                       this.props.closeSnackbar(key);
-                    }}>
+                    }} color="secondary" variant='contained'>
                       Gelukt
                     </Button>
                   </React.Fragment>
                 );
-                let person = this.state.currentPerson;
-                let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2)
+                const person = this.state.currentPerson;
+                const amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2)
                   .replace('.', ',')
                   .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
 
@@ -487,7 +492,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                   persist: true,
                   action,
                 });
-              }} color="secondary">
+              }} color="secondary" variant='contained'>
                 Contant
                 </Button>
               <Button onClick={() => {
@@ -502,7 +507,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                   if (e.status !== 200) {
                     throw e.status;
                   } else {
-                    let persons = this.state.persons;
+                    const persons = this.state.persons;
                     persons[persons.indexOf(this.state.currentPerson)].betaald = 2;
                     this.setState({ paymentDialogOpen: false });
                   }
@@ -513,8 +518,8 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                     autoHideDuration: 5000,
                   });
                 });
-                let person = this.state.currentPerson;
-                let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
+                const person = this.state.currentPerson;
+                const amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
                 window.location.href = 'sumupmerchant://pay/1.0?amount=' + amount
                 + '&total=' + amount
                 + '&affiliate-key=' + Config.sumup.affiliateKey
@@ -525,13 +530,14 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                   variant: 'success',
                   autoHideDuration: 5000,
                 });
-              }} color="secondary">
+              }} color="secondary" variant='contained'>
                 Sumup
                 </Button>
             </DialogActions>
           </Dialog>
         ) : null}
-      </div>);
+      </div>
+    );
 
   }
 });

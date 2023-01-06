@@ -1,8 +1,8 @@
 import React = require('react');
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import * as Config from '../configuration.json';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 
 
 // Grab server url from configuration file
@@ -28,7 +28,7 @@ let _hasLoaded: boolean = false;
 let _hasFailed: boolean = false;
 let renderedData: React.ReactNode;
 let localState: any;
-let style: any = {
+const style: any = {
   title: {
     color: (localStorage.getItem('dark') == 'true') ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
     textAlign: 'center',
@@ -85,7 +85,7 @@ export default class Status extends React.Component {
   getData() {
     // Haal de data op van de database
     this._isMounted ? fetch(serverUrl + '/api/getUsers/')
-      .then(response => { var a = response.json(); return a })
+      .then(response => response.json())
       .then(data => {
         // calculate values
         let totalRound = 0;

@@ -1,15 +1,15 @@
 import React = require('react');
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Button from '@material-ui/core/Button';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
+import LinearProgress from '@mui/material/LinearProgress';
 import * as Config from '../configuration.json';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { withSnackbar } from 'notistack';
 import { FixedSizeList } from 'react-window';
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -72,7 +72,7 @@ let localState: any;
 let search: string = "";
 let unfilteredPersons: any;
 let itemData: any;
-let styles: any = {
+const styles: any = {
   betaald: {
     color: '#4CAF50',
     fontWeight: 'bold'
@@ -120,7 +120,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
 
   renderItem({ index, style }) {
     return (
-      <ListItem style={style} divider button key={index} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: itemData[index] }) : null}>
+      <ListItemButton style={style} divider key={index} onClick={() => !localState.state.listClickDisabled ? localState.setState({ dialogOpen: true, currentPerson: itemData[index] }) : null}>
         <ListItemText key="code" primary={itemData[index].naam} secondary={itemData[index].code} />
         <ListItemText key="payedParent" primary={
           <Typography key="payed" align="center" style={styles.betaald}>{
@@ -135,8 +135,8 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
               .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
           }</Typography>
         } />
-      </ListItem>
-    )
+      </ListItemButton>
+    );
   }
 
   getData() {
@@ -146,8 +146,8 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
         if (response.status !== 200) {
           throw "error server code: " + response.status;
         }
-        var a = response.json();
-        return a }
+        return response.json();
+       }
       )
       .then(data => {
         if (localState._isMounted) {
@@ -172,7 +172,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
           variant: 'error',
           autoHideDuration: 5000,
         });
-        let data = [
+        const data = [
           {
             "id": 1,
             "naam": "Kan niet verbinden met database.",
@@ -272,7 +272,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                 </Button>
               <Button onClick={() => {
                 this.setState({ paymentDialogOpen: true, currentNameSetRound: '', personEdit: '' })
-              }} color="secondary" disabled={(this.state.currentPerson.betaald != 0)}>
+              }} color="secondary" disabled={(this.state.currentPerson.betaald != 0)} variant="contained">
                 Betalen
                 </Button>
             </DialogActions>
@@ -300,7 +300,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                         variant: 'error',
                         autoHideDuration: 5000,
                       });
-                    }}>
+                    }} color="error">
                       Annuleren
                           </Button>
                     <Button onClick={() => {
@@ -331,13 +331,13 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                         });
                       });
                       this.props.closeSnackbar(key);
-                    }}>
+                    }} color="secondary" variant="contained">
                       Gelukt
                           </Button>
                   </React.Fragment>
                 );
-                let person = this.state.currentPerson;
-                let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2)
+                const person = this.state.currentPerson;
+                const amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2)
                   .replace('.', ',')
                   .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
 
@@ -346,7 +346,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                   persist: true,
                   action,
                 });
-              }} color="secondary">
+              }} color="secondary" variant="contained">
                 Contant
                 </Button>
               <Button onClick={() => {
@@ -372,8 +372,8 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                     autoHideDuration: 5000,
                   });
                 });
-                let person = this.state.currentPerson;
-                let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
+                const person = this.state.currentPerson;
+                const amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
                 window.location.href = 'sumupmerchant://pay/1.0?amount=' + amount
                 + '&total=' + amount
                 + '&affiliate-key=' + Config.sumup.affiliateKey
@@ -384,7 +384,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                   variant: 'success',
                   autoHideDuration: 5000,
                 });
-              }} color="secondary">
+              }} color="secondary" variant="contained">
                 Sumup
                 </Button>
             </DialogActions>
@@ -392,7 +392,8 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
 
         ) : null}
 
-      </div>);
+      </div>
+    );
 
   }
 });

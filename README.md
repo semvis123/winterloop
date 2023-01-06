@@ -24,7 +24,7 @@ Local sponsored walk management\
 
   3) `npm run-script build` **or when developing** `npm start`
 
-  4) `node server.js`
+  4) `node server.mjs`
 
 
 **The server should now be running, you can access it by going to the following url: localhost:4321/**

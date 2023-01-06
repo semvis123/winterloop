@@ -1,12 +1,19 @@
-const mysql = require('mysql');
-const express = require('express');
-const util = require('util');
-const cors = require('cors');
-const app = express().use('*', cors());
-const bodyParser = require('body-parser');
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+
 const Config = require('./configuration.json');
+
+import { faker } from '@faker-js/faker/locale/nl';
+import mysql from 'mysql2';
+import express from 'express';
+import util from 'util';
+import cors from 'cors';
+
+import bodyParser from 'body-parser';
+
+const app = express().use('*', cors());
 const port = Config.server.port;
-var faker = require('faker/locale/nl');
+
 
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({
@@ -14,7 +21,7 @@ app.use(bodyParser.urlencoded({
 })); // support encoded bodies
 app.disable("x-powered-by");
 
-var con = mysql.createConnection(Config.mysql);
+const con = mysql.createConnection(Config.mysql);
 
 console.log('SERVER: starting');
 
@@ -50,7 +57,7 @@ app.get('/code/', async (req, res) => {
 app.get('/api/getUsers/', (req, res) => {
     con.query('SELECT * FROM winterloop.user ORDER BY naam', (e, r) => { // Error, Result
         console.log(r);
-        var arr = new Array();
+        const arr = new Array();
         r.forEach(ele => {
             arr.push({
                 'id': ele.id,
@@ -70,30 +77,30 @@ app.get('/api/getUsers/', (req, res) => {
     });
 })
 app.post('/api/addUser/', async (req, res) => {
-    var code = await genCode();
-    var par = req.body; // get parameters from url
+    const code = await genCode();
+    const par = req.body; // get parameters from url
     con.query("INSERT INTO winterloop.user (`naam`,`huisnummer`,`postcode`,`telefoonnummer`,`vastBedrag`,`rondeBedrag`,`code`)" +
-      " VALUES (?,?,?,?,?,?,?)", [par.naam, par.huisnummer, par.postcode, par.telefoonnummer, par.vastBedrag, par.rondeBedrag, code], (e) => {
-        if (e) {
-            res.status(500).send(e.sqlMessage);
-        } else {
-            res.status(200).send('{"code": ' + String(code) + '}');
-        }
-    });
+        " VALUES (?,?,?,?,?,?,?)", [par.naam, par.huisnummer, par.postcode, par.telefoonnummer, par.vastBedrag, par.rondeBedrag, code], (e) => {
+            if (e) {
+                res.status(500).send(e.sqlMessage);
+            } else {
+                res.status(200).send('{"code": ' + String(code) + '}');
+            }
+        });
 });
 app.post('/api/editUser/', async (req, res) => {
-    var par = req.body; // get parameters from url
+    const par = req.body; // get parameters from url
     con.query("UPDATE winterloop.user SET naam = ?, huisnummer = ?,postcode = ?,telefoonnummer = ?,vastBedrag = ?, rondeBedrag = ? WHERE id=?",
-     [par.naam, par.huisnummer, par.postcode, par.telefoonnummer, par.vastBedrag, par.rondeBedrag, par.id], (e) => {
-        if (e) {
-            res.status(500).send(e.sqlMessage);
-        } else {
-            res.status(200).send('success');
-        }
-    });
+        [par.naam, par.huisnummer, par.postcode, par.telefoonnummer, par.vastBedrag, par.rondeBedrag, par.id], (e) => {
+            if (e) {
+                res.status(500).send(e.sqlMessage);
+            } else {
+                res.status(200).send('success');
+            }
+        });
 });
 app.post('/api/addRound/', async (req, res) => {
-    var par = req.body; // get parameters from url
+    const par = req.body; // get parameters from url
     con.query("UPDATE winterloop.user SET rondes = rondes + 1 WHERE code = ?", [par.code], (e) => {
         if (e) {
             res.status(500).send(e.sqlMessage);
@@ -103,7 +110,7 @@ app.post('/api/addRound/', async (req, res) => {
     });
 });
 app.post('/api/setPayed/', async (req, res) => {
-    var par = req.body; // get parameters from url
+    const par = req.body; // get parameters from url
     con.query("UPDATE winterloop.user SET betaald = ? WHERE code = ?", [par.payed, par.code], (e) => {
         if (e) {
             res.status(500).send(e.sqlMessage);
@@ -114,7 +121,7 @@ app.post('/api/setPayed/', async (req, res) => {
 });
 
 app.post('/api/removeRound/', async (req, res) => {
-    var par = req.body; // get parameters from url
+    const par = req.body; // get parameters from url
     con.query("UPDATE winterloop.user SET rondes = rondes - 1 WHERE code = ?", [par.code], (e) => {
         if (e) {
             res.status(500).send(e.sqlMessage);
@@ -124,7 +131,7 @@ app.post('/api/removeRound/', async (req, res) => {
     });
 });
 app.post('/api/setRound/', async (req, res) => {
-    var par = req.body; // get parameters from url
+    const par = req.body; // get parameters from url
     con.query("UPDATE winterloop.user SET rondes = ? WHERE code = ?", [par.rondes, par.code], (e) => {
         if (e) {
             res.status(500).send(e.sqlMessage);
@@ -135,18 +142,30 @@ app.post('/api/setRound/', async (req, res) => {
 });
 app.post('/api/removeUser/', async (req, res) => {
     console.log(req);
-    var par = req.body;
-    con.query("DELETE FROM winterloop.user WHERE code = ?", [par.code], e => {
+    const par = req.body;
+    // check if user has paid
+    con.query("SELECT betaald FROM winterloop.user WHERE code = ?", [par.code], (e, r) => {
         if (e) {
             res.status(500).send(e.sqlMessage);
+            throw e;
         } else {
-            res.status(200).send("success");
+            if (r[0].betaald > 0) {
+                res.status(500).send("User has already paid");
+                throw "User has already paid";
+            }
+
+            con.query("DELETE FROM winterloop.user WHERE code = ?", [par.code], e => {
+                if (e) {
+                    res.status(500).send(e.sqlMessage);
+                } else {
+                    res.status(200).send("success");
+                }
+            });
         }
-    });
+    })
 });
 app.post('/api/emptyDB/', async (req, res) => {
     console.log(req);
-    var par = req.body;
     con.query("DELETE FROM winterloop.user", e => {
         if (e) {
             res.status(500).send(e.sqlMessage);
@@ -158,18 +177,26 @@ app.post('/api/emptyDB/', async (req, res) => {
 
 app.post('/api/fillDB/', async (req, res) => {
     // randomly fills database
-    var par = req.body;
+    const par = req.body;
     console.log(req);
-    for (i = 0; i < par.count; i++) {
-        var code = await genCode();
-        pers = faker.helpers.userCard(); // generates random user
-        console.log(pers)
+    for (let i = 0; i < par.count; i++) {
+        const code = await genCode();
+        const person = [
+            faker.name.fullName(),
+            faker.address.buildingNumber().replace("[a-zA-Z]", ""),
+            faker.address.zipCode().replace(" ", ""),
+            faker.phone.number(),
+            (Math.random() * 1000.00).toFixed(2),
+            (Math.random() * 1000.00).toFixed(2),
+            code
+        ]
         con.query("INSERT INTO winterloop.user (`naam`,`huisnummer`,`postcode`,`telefoonnummer`,`vastBedrag`,`rondeBedrag`,`code`)" +
-        " VALUES (?,?,?,?,?,?,?)", [pers.name, pers.address.suite.replace("[a-zA-Z]", ""), pers.address.zipcode.replace(" ", ""), pers.phone,(Math.random() * 1000.00).toFixed(2),(Math.random() * 1000.00).toFixed(2), code], (e) => {
-            if (e) {
-                res.status(500).send(e.sqlMessage);
-            }
-        });
+            " VALUES (?,?,?,?,?,?,?)", person, (e) => {
+                if (e) {
+                    res.status(500).send(e.sqlMessage);
+                }
+                console.log(person);
+            });
     }
     res.status(200).send('success');
 });
