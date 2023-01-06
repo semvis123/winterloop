@@ -72,7 +72,7 @@ let localState: any;
 let search: string = "";
 let unfilteredPersons: any;
 let itemData: any;
-let styles: any = {
+const styles: any = {
   betaald: {
     color: '#4CAF50',
     fontWeight: 'bold'
@@ -146,8 +146,8 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
         if (response.status !== 200) {
           throw "error server code: " + response.status;
         }
-        var a = response.json();
-        return a }
+        return response.json();
+       }
       )
       .then(data => {
         if (localState._isMounted) {
@@ -172,7 +172,7 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
           variant: 'error',
           autoHideDuration: 5000,
         });
-        let data = [
+        const data = [
           {
             "id": 1,
             "naam": "Kan niet verbinden met database.",
@@ -336,8 +336,8 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                           </Button>
                   </React.Fragment>
                 );
-                let person = this.state.currentPerson;
-                let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2)
+                const person = this.state.currentPerson;
+                const amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2)
                   .replace('.', ',')
                   .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
 
@@ -372,8 +372,8 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
                     autoHideDuration: 5000,
                   });
                 });
-                let person = this.state.currentPerson;
-                let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
+                const person = this.state.currentPerson;
+                const amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
                 window.location.href = 'sumupmerchant://pay/1.0?amount=' + amount
                 + '&total=' + amount
                 + '&affiliate-key=' + Config.sumup.affiliateKey

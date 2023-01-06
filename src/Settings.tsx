@@ -83,7 +83,7 @@ export default withStyles({
       <div className={classes.root}>
         <List subheader={<ListSubheader>Thema</ListSubheader>}>
           <ListItem button onClick={() => {
-            var darkState = !this.props.themeState;
+            const darkState = !this.props.themeState;
             this.props.setThemeState(darkState);
             localStorage.setItem('dark', (darkState) ? 'true' : 'false');
             location.reload();
@@ -96,7 +96,7 @@ export default withStyles({
               <Switch
                 edge="end"
                 onChange={() => {
-                  var darkState = !this.props.themeState;
+                  const darkState = !this.props.themeState;
                   this.props.setThemeState(darkState);
                   localStorage.setItem('dark', (darkState) ? 'true' : 'false');
                   location.reload();
@@ -111,12 +111,12 @@ export default withStyles({
         <List subheader={<ListSubheader>Database</ListSubheader>}>
             <ListItem button onClick={() => {
               fetch(serverUrl + '/api/getUsers/') // change this to yourip:4322
-                .then(response => { var a = response.json(); return a })
+                .then(response => response.json())
                 .then(data => {
-                  let persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "Code", "Totaalbedrag", "Betaald"]];
+                  const persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "Code", "Totaalbedrag", "Betaald"]];
                   data.forEach((person: PersonObjectInterface) => {
-                    let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
-                    let userArray = [
+                    const amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
+                    const userArray = [
                       person.id.toString(),
                       person.naam,
                       person.huisnummer,
@@ -148,12 +148,12 @@ export default withStyles({
                   aria-label="download"
                   onClick={() => {
                     fetch(serverUrl + '/api/getUsers/')
-                      .then(response => { var a = response.json(); return a })
+                      .then(response => response.json())
                       .then(data => {
-                        let persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "Code", "Totaalbedrag", "Betaald"]];
+                        const persons = [["Id", "Naam", "Huisnummer", "Postcode", "Telefoonnummer", "Vast bedrag", "Ronde bedrag", "Rondes", "Aanmaak datum", "Code", "Totaalbedrag", "Betaald"]];
                         data.forEach((person: PersonObjectInterface) => {
-                          let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
-                          let userArray = [
+                          const amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
+                          const userArray = [
                             person.id.toString(),
                             person.naam,
                             person.huisnummer,

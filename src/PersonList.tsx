@@ -66,7 +66,7 @@ let localState: any;
 let search: string = "";
 let unfilteredPersons: any;
 let itemData: any;
-let style: any = {
+const style: any = {
   fab: {
     position: 'fixed',
     bottom: 16,
@@ -136,8 +136,7 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
         if (response.status !== 200) {
           throw "error server code: " + response.status;
         }
-        var a = response.json();
-        return a;
+        return response.json();
       }).then(data => {
         itemData = data
         unfilteredPersons = data;
@@ -169,7 +168,7 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
           autoHideDuration: 5000,
         });
 
-        let data = [
+        const data = [
           {
             "id": 1,
             "naam": "Kan niet verbinden met database.",
@@ -338,8 +337,7 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
                 if (response.status !== 200) {
                   throw "error server code: " + response.status;
                 }
-                var a = response.json();
-                return a
+                return response.json();
               })
               .then((a) => {
                 this.props.enqueueSnackbar('Persoon toegevoegd met code: ' + a.code, {
@@ -641,8 +639,8 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
                   </React.Fragment>
                 );
 
-                let person = localState.state.currentPerson;
-                let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2)
+                const person = localState.state.currentPerson;
+                const amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2)
                   .replace('.', ',')
                   .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
 
@@ -676,8 +674,8 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
                     autoHideDuration: 5000,
                   });
                 });
-                let person = localState.state.currentPerson;
-                let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
+                const person = localState.state.currentPerson;
+                const amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
                 window.location.href = 'sumupmerchant://pay/1.0?amount=' + amount
                 + '&total=' + amount
                 + '&affiliate-key=' + Config.sumup.affiliateKey

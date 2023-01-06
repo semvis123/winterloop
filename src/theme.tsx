@@ -22,7 +22,7 @@ export default createTheme(adaptV4Theme({
       primary: (localStorage.getItem('dark') == 'true') ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
       secondary: (localStorage.getItem('dark') == 'true') ? 'rgba(255, 255, 255, 0.54)' : 'rgba(0, 0, 0, 0.54)',
       disabled: (localStorage.getItem('dark') == 'true') ? 'rgba(255, 255, 255, 0.38)' : 'rgba(0, 0, 0, 0.38)',
-      hint: (localStorage.getItem('dark') == 'true') ? 'rgba(255, 255, 255, 0.38)' : 'rgba(0, 0, 0, 0.38)'
+      // hint: (localStorage.getItem('dark') == 'true') ? 'rgba(255, 255, 255, 0.38)' : 'rgba(0, 0, 0, 0.38)'
     }
   }
 }));

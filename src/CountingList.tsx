@@ -77,7 +77,7 @@ let localState: any;
 let search: string = "";
 let unfilteredPersons: any;
 let itemData: any;
-let style: any = {
+const style: any = {
   fab: {
     position: 'fixed',
     bottom: 16,
@@ -150,7 +150,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
   getData() {
     // Haal de data op van de database
     fetch(serverUrl + '/api/getUsers/')
-      .then(response => { var a = response.json(); return a })
+      .then(response => response.json())
       .then(data => {
         localState.setState({ persons: data, listClickDisabled: false });
         unfilteredPersons = data;
@@ -174,7 +174,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
           variant: 'error',
           autoHideDuration: 5000,
         });
-        let data = [
+        const data = [
           {
             "id": 1,
             "naam": "Kan niet verbinden met database.",
@@ -245,7 +245,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
         >
           <Fab color="secondary" style={style.fab} onClick={() => {
             this.setState({ changeRoundOpen: true });
-            let codes = new Array();
+            const codes = new Array();
             this.state.persons.forEach((person: PersonObjectInterface) => {
               codes.push(person.code);
             });
@@ -328,9 +328,9 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                     throw "error server code: " + e.status;
                   }
                   // update the list values
-                  let persons = itemData;
+                  const persons = itemData;
                   console.log(persons);
-                  var index = persons.findIndex((person: PersonObjectInterface) => {
+                  const index = persons.findIndex((person: PersonObjectInterface) => {
                     return person.code == $("#setRoundForm [name='code']").val();
                   });
                   persons[index].rondes = Number($("#setRoundForm [name='rondes']").val());
@@ -384,7 +384,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                   onChange={(e) => {
                     if (this.state.persons.some((person: PersonObjectInterface) => person.code == e.target.value)) {
                       // grab name of user to display it
-                      let name: string = this.state.persons.find(
+                      const name: string = this.state.persons.find(
                         (person: PersonObjectInterface) => {
                           return person.code == e.target.value
                         }).naam;
@@ -461,7 +461,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                         if (e.status !== 200) {
                           throw e.status;
                         } else {
-                          let persons = this.state.persons;
+                          const persons = this.state.persons;
                           persons[persons.indexOf(this.state.currentPerson)].betaald = 1;
                           this.setState({ paymentDialogOpen: false });
                         }
@@ -482,8 +482,8 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                     </Button>
                   </React.Fragment>
                 );
-                let person = this.state.currentPerson;
-                let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2)
+                const person = this.state.currentPerson;
+                const amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2)
                   .replace('.', ',')
                   .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
 
@@ -507,7 +507,7 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                   if (e.status !== 200) {
                     throw e.status;
                   } else {
-                    let persons = this.state.persons;
+                    const persons = this.state.persons;
                     persons[persons.indexOf(this.state.currentPerson)].betaald = 2;
                     this.setState({ paymentDialogOpen: false });
                   }
@@ -518,8 +518,8 @@ export default withSnackbar(class CountingList extends React.Component<CountingL
                     autoHideDuration: 5000,
                   });
                 });
-                let person = this.state.currentPerson;
-                let amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
+                const person = this.state.currentPerson;
+                const amount = (person.rondeBedrag * person.rondes + person.vastBedrag).toFixed(2);
                 window.location.href = 'sumupmerchant://pay/1.0?amount=' + amount
                 + '&total=' + amount
                 + '&affiliate-key=' + Config.sumup.affiliateKey

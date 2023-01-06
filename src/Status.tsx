@@ -28,7 +28,7 @@ let _hasLoaded: boolean = false;
 let _hasFailed: boolean = false;
 let renderedData: React.ReactNode;
 let localState: any;
-let style: any = {
+const style: any = {
   title: {
     color: (localStorage.getItem('dark') == 'true') ? 'rgba(255, 255, 255, 0.87)' : 'rgba(0, 0, 0, 0.87)',
     textAlign: 'center',
@@ -85,7 +85,7 @@ export default class Status extends React.Component {
   getData() {
     // Haal de data op van de database
     this._isMounted ? fetch(serverUrl + '/api/getUsers/')
-      .then(response => { var a = response.json(); return a })
+      .then(response => response.json())
       .then(data => {
         // calculate values
         let totalRound = 0;
