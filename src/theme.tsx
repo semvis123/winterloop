@@ -1,4 +1,4 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createTheme, adaptV4Theme } from '@mui/material/styles';
 import $ from 'jquery';
 
 $('div[data-type="main"]').css({
@@ -6,9 +6,9 @@ $('div[data-type="main"]').css({
 });
 
 /*creeer een thema*/
-export default createMuiTheme({
+export default createTheme(adaptV4Theme({
   palette: {
-    type: (localStorage.getItem('dark') == 'true') ? 'dark' : 'light',
+    mode: (localStorage.getItem('dark') == 'true') ? 'dark' : 'light',
     primary: {
       main: '#3268B1'
     },
@@ -25,4 +25,4 @@ export default createMuiTheme({
       hint: (localStorage.getItem('dark') == 'true') ? 'rgba(255, 255, 255, 0.38)' : 'rgba(0, 0, 0, 0.38)'
     }
   }
-});
+}));

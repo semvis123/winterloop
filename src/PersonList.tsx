@@ -1,22 +1,22 @@
 import React = require('react');
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Button from '@material-ui/core/Button';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
 import $ from 'jquery';
 import { withSnackbar } from 'notistack';
-import AddIcon from '@material-ui/icons/Add';
-import TextField from '@material-ui/core/TextField';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import { Zoom, Fab, IconButton } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
+import AddIcon from '@mui/icons-material/Add';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import { Zoom, Fab, IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import { FixedSizeList } from 'react-window';
 import AutoSizer from "react-virtualized-auto-sizer";
-import LinearProgress from '@material-ui/core/LinearProgress';
+import LinearProgress from '@mui/material/LinearProgress';
 
 import * as Config from '../configuration.json';
 import theme from './theme';
@@ -252,11 +252,15 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
         {this.state.dialogOpen ? (
           <Dialog open={this.state.dialogOpen} onClose={() => this.setState({ dialogOpen: false })} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">
-              <IconButton aria-label="edit" style={style.editButton} onClick={() => {
-                this.setState({
-                  editDialogOpen: true
-                });
-              }}>
+              <IconButton
+                aria-label="edit"
+                style={style.editButton}
+                onClick={() => {
+                  this.setState({
+                    editDialogOpen: true
+                  });
+                }}
+                size="large">
                 <EditIcon />
               </IconButton>
               {this.state.currentPerson.naam}
@@ -690,7 +694,8 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
             </DialogActions>
           </Dialog>
         ) : null}
-      </div>);
+      </div>
+    );
 
   }
 });

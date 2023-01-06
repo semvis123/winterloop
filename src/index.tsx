@@ -3,33 +3,43 @@ import React = require('react');
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import './style.scss';
-import CreateIcon from '@material-ui/icons/Create';
-import PollIcon from '@material-ui/icons/Poll';
-import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
-import { createStyles, makeStyles, Theme, ThemeProvider, fade } from '@material-ui/core/styles';
+import CreateIcon from '@mui/icons-material/Create';
+import PollIcon from '@mui/icons-material/Poll';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import { Theme, ThemeProvider, StyledEngineProvider, alpha } from '@mui/material/styles';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
 import BedumerTheme from './theme';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Drawer from '@material-ui/core/Drawer';
-import Divider from '@material-ui/core/Divider';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Drawer from '@mui/material/Drawer';
+import Divider from '@mui/material/Divider';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import BedumerLogo from './logo.js';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
-import SettingsIcon from '@material-ui/icons/Settings';
-import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
-import InputBase from '@material-ui/core/InputBase';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
+import SettingsIcon from '@mui/icons-material/Settings';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import InputBase from '@mui/material/InputBase';
 import { SnackbarProvider } from 'notistack';
 import CountingList from './CountingList';
 import PersonList from './PersonList';
 import PaymentList from './PaymentList';
 import Status from './Status';
 import Settings from './Settings';
+
+
+
+declare module '@mui/styles/defaultTheme' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
+
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -79,9 +89,9 @@ const useStyles = makeStyles((theme: Theme) =>
     search: {
       position: 'relative',
       borderRadius: theme.shape.borderRadius,
-      backgroundColor: fade(theme.palette.common.white, 0.15),
+      backgroundColor: alpha(theme.palette.common.white, 0.15),
       '&:hover': {
-        backgroundColor: fade(theme.palette.common.white, 0.25),
+        backgroundColor: alpha(theme.palette.common.white, 0.25),
       },
       marginLeft: 0,
       width: '100%',
@@ -297,67 +307,75 @@ function AppReact() {
   }
 
   return (
-    <ThemeProvider theme={BedumerTheme}>
-      <SnackbarProvider maxSnack={3} classes={{
-        variantSuccess: classes.success,
-        variantError: classes.error,
-        variantWarning: classes.warning,
-        variantInfo: classes.info,
-      }}>
-        {/* Header */}
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" className={classes.appbarTitle}>
-              {pages[pageValue].name}
-            </Typography>
-            {pages[pageValue].appBar}
-          </Toolbar>
-        </AppBar>
-        {/* Menu */}
-        <Drawer open={drawerState} onClose={toggleDrawer(false)}>
-          <div
-            className={classes.list}
-            role="presentation"
-            onClick={toggleDrawer(false)}
-            onKeyDown={toggleDrawer(false)}
-          >
-            <List>
-              <img src={BedumerLogo} className={classes.logo} />
-              <Typography variant="h6" className={classes.drawerTitle}>Winterloop</Typography>
-              <Typography variant="body2" className={classes.drawerSubTitle}>Administratie</Typography>
-              <Divider />
-              {/* Menu list */}
-              {pages.map((data, index) => (
-                <ListItem button key={index} onClick={() => {
-                  setPage(index);
-                  setLoadedData(false);
-                  history.pushState(
-                    { page: index },
-                    data.name,
-                    "#" + data.name
-                  );
-                  document.title = data.name;
-                  window.scrollTo(0, 0);
-                }}>
-                  <ListItemIcon>{data.icon}</ListItemIcon>
-                  <ListItemText>{data.name}</ListItemText>
-                </ListItem>
-              ))}
-            </List>
-          </div>
-        </Drawer>
-        {/* Pages */}
-        {pages.map((data, index) => (
-          <Page value={pageValue} index={index} key={index}>
-            {(pageValue == index) ? data.content : null}
-          </Page>
-        ))}
-      </SnackbarProvider>
-    </ThemeProvider>
-  )
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={BedumerTheme}>
+        <SnackbarProvider maxSnack={3} classes={{
+          variantSuccess: classes.success,
+          variantError: classes.error,
+          variantWarning: classes.warning,
+          variantInfo: classes.info,
+        }}>
+          {/* Header */}
+          <AppBar position="static">
+            <Toolbar>
+              <IconButton
+                edge="start"
+                className={classes.menuButton}
+                color="inherit"
+                aria-label="menu"
+                onClick={toggleDrawer(true)}
+                size="large">
+                <MenuIcon />
+              </IconButton>
+              <Typography variant="h6" className={classes.appbarTitle}>
+                {pages[pageValue].name}
+              </Typography>
+              {pages[pageValue].appBar}
+            </Toolbar>
+          </AppBar>
+          {/* Menu */}
+          <Drawer open={drawerState} onClose={toggleDrawer(false)}>
+            <div
+              className={classes.list}
+              role="presentation"
+              onClick={toggleDrawer(false)}
+              onKeyDown={toggleDrawer(false)}
+            >
+              <List>
+                <img src={BedumerLogo} className={classes.logo} />
+                <Typography variant="h6" className={classes.drawerTitle}>Winterloop</Typography>
+                <Typography variant="body2" className={classes.drawerSubTitle}>Administratie</Typography>
+                <Divider />
+                {/* Menu list */}
+                {pages.map((data, index) => (
+                  <ListItem button key={index} onClick={() => {
+                    setPage(index);
+                    setLoadedData(false);
+                    history.pushState(
+                      { page: index },
+                      data.name,
+                      "#" + data.name
+                    );
+                    document.title = data.name;
+                    window.scrollTo(0, 0);
+                  }}>
+                    <ListItemIcon>{data.icon}</ListItemIcon>
+                    <ListItemText>{data.name}</ListItemText>
+                  </ListItem>
+                ))}
+              </List>
+            </div>
+          </Drawer>
+          {/* Pages */}
+          {pages.map((data, index) => (
+            <Page value={pageValue} index={index} key={index}>
+              {(pageValue == index) ? data.content : null}
+            </Page>
+          ))}
+        </SnackbarProvider>
+      </ThemeProvider>
+    </StyledEngineProvider>
+  );
 }
 
 ReactDOM.render(
