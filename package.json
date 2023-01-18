@@ -28,7 +28,7 @@
     "@emotion/styled": "^11.10.5",
     "@faker-js/faker": "^7.6.0",
     "@mui/icons-material": "^5.11.0",
-    "@mui/material": "^5.11.3",
+    "@mui/material": "^5.11.5",
     "@mui/styles": "^5.11.2",
     "@parcel/transformer-inline-string": "^2.8.2",
     "@types/jquery": "^3.5.16",
