@@ -30,7 +30,7 @@ import PaymentList from './PaymentList';
 import Status from './Status';
 import Settings from './Settings';
 import { SnackbarProvider } from "notistack";
-
+import type { pageObject } from "./index.d";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -129,21 +129,6 @@ const useStyles = makeStyles((theme: Theme) =>
     info: { color: 'white' },
   }),
 );
-
-interface pageObject {
-  [index: number]: {
-    name: string;
-    icon: React.ReactNode;
-    content: React.ReactNode;
-    appBar?: React.ReactNode;
-    fab?: {
-      name: string;
-      icon: React.ReactNode;
-      action: any;
-    }
-  }
-  map: any;
-}
 
 
 export default function Main() {
@@ -331,7 +316,7 @@ export default function Main() {
                 {pages[pageValue].name}
               </Typography>
 
-              <img src={BedumerLogo} className={[classes.logoAppBar]} />
+              <img src={BedumerLogo} className={classes.logoAppBar} />
 
               {pages[pageValue].appBar}
             </Toolbar>

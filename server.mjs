@@ -67,6 +67,8 @@ app.get('/api/getUsers/', (req, res) => {
                 'telefoonnummer': ele.telefoonnummer,
                 'vastBedrag': ele.vastBedrag,
                 'rondeBedrag': ele.rondeBedrag,
+                'vastBedragQR': ele.vastBedragQR,
+                'rondeBedragQR': ele.rondeBedragQR,
                 'rondes': ele.rondes,
                 'code': ele.code,
                 'create_time': ele.create_time,
@@ -79,8 +81,8 @@ app.get('/api/getUsers/', (req, res) => {
 app.post('/api/addUser/', async (req, res) => {
     const code = await genCode();
     const par = req.body; // get parameters from url
-    con.query("INSERT INTO winterloop.user (`naam`,`huisnummer`,`postcode`,`telefoonnummer`,`vastBedrag`,`rondeBedrag`,`code`)" +
-        " VALUES (?,?,?,?,?,?,?)", [par.naam, par.huisnummer, par.postcode, par.telefoonnummer, par.vastBedrag, par.rondeBedrag, code], (e) => {
+    con.query("INSERT INTO winterloop.user (`naam`,`huisnummer`,`postcode`,`telefoonnummer`,`vastBedrag`,`rondeBedrag`, `vastBedragQR`,`rondeBedragQR`,`code`)" +
+        " VALUES (?,?,?,?,?,?,?,?,?)", [par.naam, par.huisnummer, par.postcode, par.telefoonnummer, par.vastBedrag, par.rondeBedrag, par.vastBedragQR, par.rondeBedragQR, code], (e) => {
             if (e) {
                 res.status(500).send(e.sqlMessage);
             } else {
@@ -90,8 +92,8 @@ app.post('/api/addUser/', async (req, res) => {
 });
 app.post('/api/editUser/', async (req, res) => {
     const par = req.body; // get parameters from url
-    con.query("UPDATE winterloop.user SET naam = ?, huisnummer = ?,postcode = ?,telefoonnummer = ?,vastBedrag = ?, rondeBedrag = ? WHERE id=?",
-        [par.naam, par.huisnummer, par.postcode, par.telefoonnummer, par.vastBedrag, par.rondeBedrag, par.id], (e) => {
+    con.query("UPDATE winterloop.user SET naam = ?, huisnummer = ?,postcode = ?,telefoonnummer = ?,vastBedrag = ?, rondeBedrag = ?, vastBedragQR = ?, rondeBedragQR = ? WHERE id=?",
+        [par.naam, par.huisnummer, par.postcode, par.telefoonnummer, par.vastBedrag, par.rondeBedrag, par.vastBedragQR, par.rondeBedragQR, par.id], (e) => {
             if (e) {
                 res.status(500).send(e.sqlMessage);
             } else {
@@ -186,12 +188,14 @@ app.post('/api/fillDB/', async (req, res) => {
             faker.address.buildingNumber().replace("[a-zA-Z]", ""),
             faker.address.zipCode().replace(" ", ""),
             faker.phone.number(),
-            (Math.random() * 1000.00).toFixed(2),
-            (Math.random() * 1000.00).toFixed(2),
+            (Math.random() * 100.00).toFixed(2),
+            (Math.random() * 10.00).toFixed(2),
+            (Math.random() * 100.00).toFixed(2),
+            (Math.random() * 10.00).toFixed(2),
             code
         ]
-        con.query("INSERT INTO winterloop.user (`naam`,`huisnummer`,`postcode`,`telefoonnummer`,`vastBedrag`,`rondeBedrag`,`code`)" +
-            " VALUES (?,?,?,?,?,?,?)", person, (e) => {
+        con.query("INSERT INTO winterloop.user (`naam`,`huisnummer`,`postcode`,`telefoonnummer`,`vastBedrag`,`rondeBedrag`, `vastBedragQR`,`rondeBedragQR` ,`code`)" +
+            " VALUES (?,?,?,?,?,?,?,?,?)", person, (e) => {
                 if (e) {
                     res.status(500).send(e.sqlMessage);
                 }
