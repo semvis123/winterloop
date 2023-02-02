@@ -16,7 +16,7 @@ Local sponsored walk management\
 
   1) `npm install --legacy-peer-deps`
 
-  2) `npm install --dev`
+  2) `npm install --dev --legacy-peer-deps`
 
 
 
