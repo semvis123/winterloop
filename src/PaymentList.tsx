@@ -13,55 +13,10 @@ import { Typography } from '@mui/material';
 import { withSnackbar } from 'notistack';
 import { FixedSizeList } from 'react-window';
 import AutoSizer from "react-virtualized-auto-sizer";
+import type { PaymentListInterface, PaymentListStateInterface, PersonObjectInterface } from './index.d';
 
 // Grab server url from configuration file
 const serverUrl = Config.server.url + ':' + Config.server.port;
-
-// Define interfaces
-interface PaymentListInterface {
-  search: string;
-}
-
-interface PersonObjectInterface {
-  id: number;
-  naam: string;
-  huisnummer: string;
-  postcode: string;
-  telefoonnummer: string;
-  vastBedrag: number;
-  rondeBedrag: number;
-  rondes: number;
-  create_time: string;
-  code: string;
-  betaald: number;
-}
-
-interface PaymentListStateInterface {
-  codeError: any;
-  persons?: {
-    [index: number]: PersonObjectInterface;
-    map: any;
-    filter: any;
-    length: number;
-    indexOf: any;
-    forEach: any;
-    some: any;
-    findIndex: any;
-    find: any;
-  }
-  rendered?: React.ReactNode;
-
-  dialogOpen: boolean;
-  currentPerson: PersonObjectInterface;
-  listClickDisabled: boolean;
-  paymentDialogOpen: boolean;
-  codes: {
-    [index: number]: number;
-  }
-  currentNameSetRound: string;
-  setRoundButtonDisabled: boolean;
-  personEdit: string;
-}
 
 // Static vars
 // Deze worden niet verwijdert als het component herlaad
@@ -181,6 +136,8 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
             "telefoonnummer": "0000000000",
             "vastBedrag": 0,
             "rondeBedrag": 0,
+            "vastBedragQR": 0,
+            "rondeBedragQR": 0,
             "rondes": 0,
             "code": '000000',
             "create_time": "2019-12-27T15:16:48.000Z",
@@ -253,6 +210,12 @@ export default withSnackbar(class PaymentList extends React.Component<PaymentLis
               </DialogContentText>
               <DialogContentText>Ronde bedrag: €{
                 this.state.currentPerson.rondeBedrag.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}
+              </DialogContentText>
+              <DialogContentText>Vast bedrag (QR): €{
+                this.state.currentPerson.vastBedragQR.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}
+              </DialogContentText>
+              <DialogContentText>Ronde bedrag (QR): €{
+                this.state.currentPerson.rondeBedragQR.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}
               </DialogContentText>
               <DialogContentText>Aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
               <DialogContentText>Te betalen: €{

@@ -20,42 +20,11 @@ import LinearProgress from '@mui/material/LinearProgress';
 
 import * as Config from '../configuration.json';
 import theme from './theme';
+import type { PersonListInterface, PersonListStateInterface, PersonObjectInterface } from './index.d';
 
 // Grab server url from configuration file
 const serverUrl = Config.server.url + ':' + Config.server.port;
 
-// Define interfaces
-interface PersonListInterface {
-  search: string;
-}
-
-interface PersonObjectInterface {
-  id: number;
-  naam: string;
-  huisnummer: string;
-  postcode: string;
-  telefoonnummer: string;
-  vastBedrag: number;
-  rondeBedrag: number;
-  rondes: number;
-  create_time: string;
-  code: string;
-  betaald: number;
-}
-
-interface PersonListStateInterface {
-  rendered: any;
-  paymentDialogOpen: boolean;
-  persons?: React.ReactNode,
-  dialogOpen: boolean;
-  currentPerson: PersonObjectInterface;
-  listClickDisabled: boolean;
-  addDialogOpen: boolean;
-  editDialogOpen: any;
-  data?: any;
-  personEdit: string;
-
-}
 
 // Static vars
 // Deze worden niet verwijdert als het component herlaad
@@ -177,6 +146,8 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
             "telefoonnummer": "0000000000",
             "vastBedrag": 0,
             "rondeBedrag": 0,
+            "vastBedragQR": 0,
+            "rondeBedragQR": 0,
             "rondes": 0,
             "code": '00000',
             "create_time": "2019-12-27T15:16:48.000Z"
@@ -275,6 +246,13 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
               <DialogContentText>Ronde bedrag: €{
                 this.state.currentPerson.rondeBedrag.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}
               </DialogContentText>
+              <DialogContentText>Vast bedrag QR: €{
+                this.state.currentPerson.vastBedragQR.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}
+              </DialogContentText>
+              <DialogContentText>Ronde bedrag QR: €{
+                this.state.currentPerson.rondeBedragQR.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')}
+              </DialogContentText>
+
               <DialogContentText>Aantal rondes: {this.state.currentPerson.rondes}</DialogContentText>
               <DialogContentText>Aanmaak datum: {this.state.currentPerson.create_time}</DialogContentText>
               <DialogContentText>Betaald: {
@@ -326,12 +304,15 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
             fetch(serverUrl + '/api/addUser/', {
               method: 'post',
               headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' },
-              body: "naam=" + $("#addUserForm [name='naam']").val() +
+              body: "naam=" + encodeURIComponent($("#addUserForm [name='naam']").val().toString()) +
                 "&huisnummer=" + $("#addUserForm [name='huisnummer']").val() +
                 "&postcode=" + $("#addUserForm [name='postcode']").val() +
                 "&telefoonnummer=" + $("#addUserForm [name='telefoonnummer']").val() +
                 "&vastBedrag=" + $("#addUserForm [name='vastBedrag']").val().toString().replace(',', '.') +
-                "&rondeBedrag=" + $("#addUserForm [name='rondeBedrag']").val().toString().replace(',', '.')
+                "&rondeBedrag=" + $("#addUserForm [name='rondeBedrag']").val().toString().replace(',', '.') +
+                "&vastBedragQR=" + $("#addUserForm [name='vastBedragQR']").val().toString().replace(',', '.') +
+                "&rondeBedragQR=" + $("#addUserForm [name='rondeBedragQR']").val().toString().replace(',', '.')
+
             })
               .then(response => {
                 if (response.status !== 200) {
@@ -352,6 +333,8 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
                   "telefoonnummer": $("#addUserForm [name='telefoonnummer']").val(),
                   "vastBedrag": parseFloat($("#addUserForm [name='vastBedrag']").val().toString()),
                   "rondeBedrag": parseFloat($("#addUserForm [name='rondeBedrag']").val().toString()),
+                  "vastBedragQR": parseFloat($("#addUserForm [name='vastBedragQR']").val().toString()),
+                  "rondeBedragQR": parseFloat($("#addUserForm [name='rondeBedragQR']").val().toString()),
                   "rondes": 0,
                   "code": a.code,
                   "create_time": "onbekend",
@@ -383,10 +366,6 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
                   </div>;
                   this.setState({ rendered: renderedData });
 }
-
-
-
-
               })
               .catch(() => {
                 this.setState({ addDialogOpen: false });
@@ -451,6 +430,26 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
                   startAdornment: <InputAdornment position="start">€</InputAdornment>,
                 }}
               />
+              <TextField
+                margin="dense"
+                label="Vast bedrag (QR)"
+                type="number"
+                name="vastBedragQR"
+                fullWidth
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                }}
+              />
+              <TextField
+                margin="dense"
+                label="Bedrag per ronde (QR)"
+                type="number"
+                name="rondeBedragQR"
+                fullWidth
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                }}
+              />
             </DialogContent>
             <DialogActions>
               <Button onClick={() => this.setState({ addDialogOpen: false })} color="primary">
@@ -470,12 +469,14 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
             fetch(serverUrl + '/api/editUser/', {
               method: 'post',
               headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'Access-Control-Allow-Origin': '*' },
-              body: "naam=" + $("#editUserForm [name='naam']").val() +
+              body: "naam=" + encodeURIComponent($("#editUserForm [name='naam']").val().toString()) +
                 "&huisnummer=" + $("#editUserForm [name='huisnummer']").val() +
                 "&postcode=" + $("#editUserForm [name='postcode']").val() +
                 "&telefoonnummer=" + $("#editUserForm [name='telefoonnummer']").val() +
                 "&vastBedrag=" + $("#editUserForm [name='vastBedrag']").val().toString().replace(',', '.') +
                 "&rondeBedrag=" + $("#editUserForm [name='rondeBedrag']").val().toString().replace(',', '.') +
+                "&vastBedragQR=" + $("#editUserForm [name='vastBedragQR']").val().toString().replace(',', '.') +
+                "&rondeBedragQR=" + $("#editUserForm [name='rondeBedragQR']").val().toString().replace(',', '.') +
                 "&id=" + this.state.currentPerson.id
             })
               .then(response => {
@@ -557,6 +558,28 @@ export default withSnackbar(class PersonList extends React.Component<PersonListI
                 name="rondeBedrag"
                 defaultValue={this.state.currentPerson.rondeBedrag}
                 disabled={(this.state.currentPerson.betaald!=0)}
+                fullWidth
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                }}
+              />
+              <TextField
+                margin="dense"
+                label="Vast bedrag (QR)"
+                type="number"
+                name="vastBedragQR"
+                defaultValue={this.state.currentPerson.vastBedragQR}
+                fullWidth
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                }}
+              />
+              <TextField
+                margin="dense"
+                label="Bedrag per ronde (QR)"
+                type="number"
+                name="rondeBedragQR"
+                defaultValue={this.state.currentPerson.rondeBedragQR}
                 fullWidth
                 InputProps={{
                   startAdornment: <InputAdornment position="start">€</InputAdornment>,

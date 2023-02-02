@@ -4,24 +4,11 @@ import * as Config from '../configuration.json';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { ListItem } from '@mui/material';
+import { PersonObjectInterface } from './index.d';
 
 
 // Grab server url from configuration file
 const serverUrl = Config.server.url + ':' + Config.server.port;
-
-interface PersonObjectInterface {
-  id: number;
-  naam: string;
-  huisnummer: string;
-  postcode: string;
-  telefoonnummer: string;
-  vastBedrag: number;
-  rondeBedrag: number;
-  rondes: number;
-  create_time: string;
-  code: string;
-  betaald: number;
-}
 
 // Static vars
 // Deze worden niet verwijdert als het component herlaad
@@ -64,6 +51,18 @@ export default class Status extends React.Component {
     avgRoundValue: number,
     fixedValue: number,
     avgFixedValue: number,
+
+    roundValueNormal: number,
+    avgRoundValueNormal: number,
+    fixedValueNormal: number,
+    avgFixedValueNormal: number,
+
+    roundValueQR: number,
+    avgRoundValueQR: number,
+    fixedValueQR: number,
+    avgFixedValueQR: number,
+
+
     persons: number,
     rendered?: React.ReactNode
   };
@@ -79,15 +78,18 @@ export default class Status extends React.Component {
       avgRoundValue: 0,
       fixedValue: 0,
       avgFixedValue: 0,
-      persons: 0
-    };
+      persons: 0,
 
-    if (_hasLoaded && !_hasFailed) {
-      this.state = {
-        ...this.state,
-        rendered: renderedData,
-      }
-    }
+      roundValueNormal: 0,
+      avgRoundValueNormal: 0,
+      fixedValueNormal: 0,
+      avgFixedValueNormal: 0,
+
+      roundValueQR: 0,
+      avgRoundValueQR: 0,
+      fixedValueQR: 0,
+      avgFixedValueQR: 0,
+    };
   }
   getData() {
     // Haal de data op van de database
@@ -103,32 +105,72 @@ export default class Status extends React.Component {
         let avgRoundValue = 0;
         let fixedValue = 0;
         let avgFixedValue = 0;
+
+
+        let roundValueNormal = 0;
+        let avgRoundValueNormal = 0;
+        let fixedValueNormal = 0;
+        let avgFixedValueNormal = 0;
+
+        let roundValueQR = 0;
+        let avgRoundValueQR = 0;
+        let fixedValueQR = 0;
+        let avgFixedValueQR = 0;
+
+
         let persons = 0;
         data.forEach((person: PersonObjectInterface) => {
           totalRound += person.rondes;
           avgRound += person.rondes;
-          roundValue += person.rondeBedrag * person.rondes;
-          avgRoundValue += person.rondeBedrag * person.rondes;
-          fixedValue += person.vastBedrag;
-          avgFixedValue += person.vastBedrag;
-          totalValue += person.rondes * person.rondeBedrag + person.vastBedrag;
-          avgTotalValue += person.rondes * person.rondeBedrag + person.vastBedrag;
+          roundValue += person.rondeBedrag * person.rondes + person.rondeBedragQR * person.rondes;
+          avgRoundValue += person.rondeBedrag * person.rondes + person.rondeBedragQR * person.rondes;
+          fixedValue += person.vastBedrag + person.vastBedragQR;
+          avgFixedValue += person.vastBedrag + person.vastBedragQR;
+
+          roundValueNormal += person.rondeBedrag * person.rondes;
+          avgRoundValueNormal += person.rondeBedrag * person.rondes;
+          roundValueQR += person.rondeBedragQR * person.rondes;
+          avgRoundValueQR += person.rondeBedragQR * person.rondes;
+
+          fixedValueNormal += person.vastBedrag;
+          avgFixedValueNormal += person.vastBedrag;
+          fixedValueQR += person.vastBedragQR;
+          avgFixedValueQR += person.vastBedragQR;
+
+          totalValue += person.rondes * person.rondeBedrag + person.vastBedrag + person.rondes * person.rondeBedragQR + person.vastBedragQR;
+          avgTotalValue += person.rondes * person.rondeBedrag + person.vastBedrag + person.rondes * person.rondeBedragQR + person.vastBedragQR;
           persons++;
         });
         avgRound /= persons;
         avgTotalValue /= persons;
         avgRoundValue /= persons;
         avgFixedValue /= persons;
+        avgRoundValueNormal /= persons;
+        avgRoundValueQR /= persons;
+        avgFixedValueNormal /= persons;
+        avgFixedValueQR /= persons;
+
+
         this._isMounted ? localState.setState({
-          totalRound: totalRound,
-          avgRound: avgRound,
-          totalValue: totalValue,
-          avgTotalValue: avgTotalValue,
-          roundValue: roundValue,
-          avgRoundValue: avgRoundValue,
-          fixedValue: fixedValue,
-          avgFixedValue: avgFixedValue,
-          persons: persons
+          totalRound,
+          avgRound,
+          totalValue,
+          avgTotalValue,
+          roundValue,
+          avgRoundValue,
+          fixedValue,
+          avgFixedValue,
+          persons,
+
+          roundValueNormal,
+          avgRoundValueNormal,
+          fixedValueNormal,
+          avgFixedValueNormal,
+
+          roundValueQR,
+          avgRoundValueQR,
+          fixedValueQR,
+          avgFixedValueQR,
         }) : null;
         _hasLoaded = true;
       })
@@ -144,6 +186,8 @@ export default class Status extends React.Component {
                 "telefoonnummer": "0000000000",
                 "vastBedrag": 0,
                 "rondeBedrag": 0,
+                "vastBedragQR": 0,
+                "rondeBedragQR": 0,
                 "rondes": 0,
                 "code": '000000',
                 "create_time": "2019-12-27T15:16:48.000Z",
@@ -158,103 +202,174 @@ export default class Status extends React.Component {
   componentDidMount() {
     this._isMounted = true;
     localState = this;
-    if (!_hasLoaded && !_hasFailed) {
-      setTimeout(() => { this.getData() }, 0);
-    }
+    setTimeout(() => { this.getData() }, 0);
   }
   componentWillUnmount() {
     this._isMounted = false;
   }
   render() {
+    const currencyFormatter = Intl.NumberFormat('nl-NL', {
+      style: 'currency',
+      currency: 'EUR',
+      minimumFractionDigits: 2
+    })
+    const formatMoney = (amount) => currencyFormatter.format(Number.isNaN(amount) ? 0 : amount)
+    
+    renderedData = (
+      <Card sx={style.card} raised={true}>
+        <CardContent>
+          <ListItem divider>
+            <Typography style={style.title} gutterBottom variant="h5"><b>Statistieken</b></Typography>
+          </ListItem>
+          <ListItem divider>
+            <Typography style={style.text} gutterBottom><b>Totale opbrengst</b>
+              <span style={style.value}>{
+                formatMoney(this.state.totalValue)
+              }</span>
+            </Typography>
+          </ListItem>
+          <ListItem divider>
+            <Typography style={style.text} gutterBottom><b>Totale opbrengst van rondes</b>
+            <span style={style.value}>{
+                formatMoney(this.state.roundValue)
+              }</span>
+            </Typography>
+          </ListItem>
+          <ListItem divider>
+            <Typography style={style.text} gutterBottom><b>Totale opbrengst van vaste bedragen</b>
+              <span style={style.value}>{
+                formatMoney(this.state.fixedValue)
+              }</span>
+            </Typography>
+          </ListItem>
 
-    if (renderedData == null || !_hasLoaded) {
-      renderedData = (
-        <Card sx={style.card} raised={true}>
-          <CardContent>
-            <ListItem divider>
-              <Typography style={style.title} gutterBottom variant="h5"><b>Opbrengsten</b></Typography>
-            </ListItem>
-            <ListItem divider>
-              <Typography style={style.text} gutterBottom><b>Totale opbrengst</b>
-                <span style={style.value}>€ {
-                  this.state.totalValue.toFixed(2) // always two decimal digits
-                    .replace('.', ',') // replace decimal point character with ,
-                    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')// use . as a separator
-                }</span>
-              </Typography>
-            </ListItem>
-            <ListItem divider>
-              <Typography style={style.text} gutterBottom><b>Totale opbrengst van rondes</b>
-                <span style={style.value}>€ {
-                  this.state.roundValue.toFixed(2)
+
+
+
+          <ListItem divider>
+            <Typography style={style.text} gutterBottom><b>Totale opbrengst (normaal)</b>
+              <span style={style.value}>{
+                formatMoney(this.state.fixedValueNormal + this.state.roundValueNormal)
+              }</span>
+            </Typography>
+          </ListItem>
+          <ListItem divider>
+            <Typography style={style.text} gutterBottom><b>Totale opbrengst van rondes (normaal)</b>
+            <span style={style.value}>{
+                formatMoney(this.state.roundValueNormal)
+              }</span>
+            </Typography>
+          </ListItem>
+          <ListItem divider>
+            <Typography style={style.text} gutterBottom><b>Totale opbrengst van vaste bedragen (normaal)</b>
+              <span style={style.value}>{
+                formatMoney(this.state.fixedValueNormal)
+              }</span>
+            </Typography>
+          </ListItem>
+
+
+
+          <ListItem divider>
+            <Typography style={style.text} gutterBottom><b>Totale opbrengst (QR)</b>
+              <span style={style.value}>{
+                formatMoney(this.state.fixedValueQR + this.state.roundValueQR)
+              }</span>
+            </Typography>
+          </ListItem>
+          <ListItem divider>
+            <Typography style={style.text} gutterBottom><b>Totale opbrengst van rondes (QR)</b>
+            <span style={style.value}>{
+                formatMoney(this.state.roundValueQR)
+              }</span>
+            </Typography>
+          </ListItem>
+          <ListItem divider>
+            <Typography style={style.text} gutterBottom><b>Totale opbrengst van vaste bedragen (QR)</b>
+              <span style={style.value}>{
+                formatMoney(this.state.fixedValueQR)
+              }</span>
+            </Typography>
+          </ListItem>
+
+
+
+
+
+
+          <ListItem divider>
+            <Typography style={style.text} gutterBottom><b>Gemiddelde opbrengst</b>
+              <span style={style.value}>{
+                formatMoney(this.state.avgTotalValue)
+              }</span>
+            </Typography>
+          </ListItem>
+          <ListItem divider>
+            <Typography style={style.text} gutterBottom><b>Gemiddelde opbrengst van rondes (normaal)</b>
+              <span style={style.value}>{
+                formatMoney(this.state.avgRoundValueNormal)
+              }
+              </span>
+            </Typography>
+          </ListItem>
+          <ListItem divider>
+            <Typography style={style.text} gutterBottom><b>Gemiddelde opbrengst van vaste bedragen (normaal)</b>
+              <span style={style.value}>{
+                formatMoney(this.state.avgFixedValueNormal)
+              }
+              </span>
+            </Typography>
+          </ListItem>
+          <ListItem divider>
+            <Typography style={style.text} gutterBottom><b>Gemiddelde opbrengst van rondes (QR)</b>
+              <span style={style.value}>{
+                formatMoney(this.state.avgRoundValueQR)
+              }
+              </span>
+            </Typography>
+          </ListItem>
+          <ListItem divider>
+            <Typography style={style.text} gutterBottom><b>Gemiddelde opbrengst van vaste bedragen (QR)</b>
+              <span style={style.value}>{
+                formatMoney(this.state.avgFixedValueQR)
+              }
+              </span>
+            </Typography>
+          </ListItem>
+          <ListItem divider>
+            <Typography style={style.text} gutterBottom><b>Gemiddelde opbrengst van rondes (Totaal)</b>
+              <span style={style.value}>{
+                formatMoney(this.state.avgRoundValue)
+              }
+              </span>
+            </Typography>
+          </ListItem>
+          <ListItem divider>
+            <Typography style={style.text} gutterBottom><b>Gemiddelde opbrengst van vaste bedragen (Totaal)</b>
+              <span style={style.value}>{
+                formatMoney(this.state.avgFixedValue)
+              }
+              </span>
+            </Typography>
+          </ListItem>
+          <ListItem divider>
+            <Typography style={style.text} gutterBottom><b>Aantal lopers</b>
+              <span style={style.value}>{this.state.persons}</span>
+            </Typography>
+          </ListItem>
+          <ListItem divider>
+            <Typography style={style.text} gutterBottom><b>Gemiddeld aantal rondes</b>
+              <span style={style.value}>{
+                (this.state.avgRound.toFixed(2) == "NaN") ? '0,00' :
+                  this.state.avgRound.toFixed(2)
                     .replace('.', ',')
                     .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-                }
-                </span>
-              </Typography>
-            </ListItem>
-            <ListItem divider>
-              <Typography style={style.text} gutterBottom><b>Totale opbrengst van vaste bedragen</b>
-                <span style={style.value}>€ {
-                  this.state.fixedValue.toFixed(2)
-                    .replace('.', ',')
-                    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-                }
-                </span>
-              </Typography>
-            </ListItem>
-            <ListItem divider>
-              <Typography style={style.text} gutterBottom><b>Gemiddelde opbrengst</b>
-                <span style={style.value}>€ {
-                  (this.state.avgTotalValue.toFixed(2) == "NaN") ? '0,00' :
-                    this.state.avgTotalValue.toFixed(2)
-                      .replace('.', ',')
-                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-                }
-                </span>
-              </Typography>
-            </ListItem>
-            <ListItem divider>
-              <Typography style={style.text} gutterBottom><b>Gemiddelde opbrengst van rondes</b>
-                <span style={style.value}>€ {
-                  (this.state.avgRoundValue.toFixed(2) == "NaN") ? '0,00' :
-                    this.state.avgRoundValue.toFixed(2)
-                      .replace('.', ',')
-                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-                }
-                </span>
-              </Typography>
-            </ListItem>
-            <ListItem divider>
-              <Typography style={style.text} gutterBottom><b>Gemiddelde opbrengst van vaste bedragen</b>
-                <span style={style.value}>€ {
-                  (this.state.avgFixedValue.toFixed(2) == "NaN") ? '0,00' :
-                    this.state.avgFixedValue.toFixed(2)
-                      .replace('.', ',')
-                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-
-                }
-                </span>
-              </Typography>
-            </ListItem>
-            <ListItem divider>
-              <Typography style={style.text} gutterBottom><b>Aantal lopers</b>
-                <span style={style.value}>{this.state.persons}</span>
-              </Typography>
-            </ListItem>
-            <ListItem divider>
-              <Typography style={style.text} gutterBottom><b>Gemiddeld aantal rondes</b>
-                <span style={style.value}>{
-                  (this.state.avgRound.toFixed(2) == "NaN") ? '0,00' :
-                    this.state.avgRound.toFixed(2)
-                      .replace('.', ',')
-                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-                }</span>
-              </Typography>
-            </ListItem>
-          </CardContent>
-        </Card>)
-    }
+              }</span>
+            </Typography>
+          </ListItem>
+        </CardContent>
+      </Card>)
+    
     return (<div style={style.cardContainer}>
       {renderedData}
     </div>);
