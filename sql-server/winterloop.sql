@@ -30,6 +30,8 @@ CREATE TABLE `user` (
   `telefoonnummer` varchar(45) NOT NULL,
   `vastBedrag` double NOT NULL DEFAULT '0',
   `rondeBedrag` double NOT NULL DEFAULT '0',
+  `vastBedragQR` double NOT NULL DEFAULT '0',
+  `rondeBedragQR` double NOT NULL DEFAULT '0',
   `rondes` int(11) NOT NULL DEFAULT '0',
   `code` int(6) NOT NULL,
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -47,7 +49,8 @@ ADD UNIQUE INDEX `code_UNIQUE` (`code` ASC) VISIBLE;
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'Piet Jan','15a','1234AB','0612345678',50,0.5,0,123456,'2019-12-27 15:16:48',0),(2,'Pieter Jan','15a','1234AB','0623456789',51,0.49,0,223456,'2019-12-27 15:24:30',0);
+INSERT INTO `user` VALUES (1,'Piet Jan','15a','1234AB','0612345678',50,0.5,5,0.1,0,123456,'2019-12-27 15:16:48',0),
+                          (2,'Pieter Jan','15a','1234AB','0623456789',51,0.49,3,0.19,0,223456,'2019-12-27 15:24:30',0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
